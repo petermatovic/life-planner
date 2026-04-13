@@ -6,6 +6,7 @@ import TabAOF from '@/components/TabAOF';
 import TabPrepocty from '@/components/TabPrepocty';
 import TabCiele from '@/components/TabCiele';
 import TabFinancnyPlan from '@/components/TabFinancnyPlan';
+import TabVystup from '@/components/TabVystup';
 import { useAppStore } from '@/store/appStore';
 
 export default function Dashboard() {
@@ -13,7 +14,16 @@ export default function Dashboard() {
   const [activeTab, setActiveTab] = useState('AOF');
 
   // Load global state for header info
-  const { klient } = useAppStore();
+  const state = useAppStore();
+  const { klient } = state;
+
+  const handleExportJSON = () => {
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state, null, 2));
+    const dlAnchorElem = document.createElement('a');
+    dlAnchorElem.setAttribute("href",     dataStr     );
+    dlAnchorElem.setAttribute("download", \`ulozene_\${klient.meno || 'klient'}.json\`);
+    dlAnchorElem.click();
+  };
 
   useEffect(() => {
     if (darkMode) {
@@ -77,7 +87,7 @@ export default function Dashboard() {
               <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition shadow-sm ${darkMode ? 'translate-x-4' : 'translate-x-1'}`} />
             </button>
           </div>
-          <button className="flex items-center justify-center gap-2 w-full py-2 bg-black dark:bg-white text-white dark:text-black font-bold text-xs rounded shadow hover:opacity-90 transition">
+          <button onClick={handleExportJSON} className="flex items-center justify-center gap-2 w-full py-2 bg-black dark:bg-white text-white dark:text-black font-bold text-xs rounded shadow hover:opacity-90 transition">
              <Download size={14} /> Uložiť JSON
           </button>
           <div className="text-[9px] text-center text-[#989FA7] dark:text-[#4D4D4D] font-bold mt-3">Jadro aktualizované (Zustand) • Live math</div>
@@ -104,9 +114,9 @@ export default function Dashboard() {
         </header>
 
         {/* TOP BAR */}
-        <div className="h-16 border-b border-[#D1D1D1] dark:border-[#2A2A2A] bg-white dark:bg-[#1A1A1A] hidden md:flex items-center justify-between px-8 shadow-sm shrink-0 transition-colors duration-300">
+        <div className="h-16 border-b border-[#D1D1D1] dark:border-[#2A2A2A] bg-white dark:bg-[#1A1A1A] hidden md:flex items-center justify-between px-8 shadow-sm shrink-0 transition-colors duration-300 print:hidden">
            <h2 className="text-sm font-bold text-[#4D4D4D] dark:text-[#989FA7]">Aktívny Model: <span className="text-lg text-[#171717] dark:text-[#ededed] ml-2">Rodina <span className="text-[#AB0534]">{klient.meno || 'Vzorová'}</span></span></h2>
-           <button className="flex items-center gap-2 bg-[#EAEAEA] dark:bg-[#2A2A2A] hover:bg-[#D1D1D1] dark:hover:bg-[#333] transition px-4 py-2 rounded text-sm font-bold border border-[#D1D1D1] dark:border-[#4D4D4D] text-[#171717] dark:text-white">
+           <button onClick={() => window.print()} className="flex items-center gap-2 bg-[#EAEAEA] dark:bg-[#2A2A2A] hover:bg-[#D1D1D1] dark:hover:bg-[#333] transition px-4 py-2 rounded text-sm font-bold border border-[#D1D1D1] dark:border-[#4D4D4D] text-[#171717] dark:text-white">
              <FileText size={16} /> Export do PDF
            </button>
         </div>
@@ -117,19 +127,7 @@ export default function Dashboard() {
           {activeTab === 'Prepocty' && <TabPrepocty />}
           {activeTab === 'Ciele' && <TabCiele />}
           {activeTab === 'FinancnyPlan' && <TabFinancnyPlan />}
-
-          {/* OSTATNE TABY */}
-          {activeTab !== 'AOF' && activeTab !== 'Prepocty' && activeTab !== 'Ciele' && activeTab !== 'FinancnyPlan' && (
-            <div className="flex flex-col items-center justify-center p-20 text-center animate-in fade-in zoom-in duration-500">
-              <div className="w-24 h-24 rounded-full bg-[#ECEDED] dark:bg-[#1A1A1A] flex items-center justify-center mb-6 shadow-inner border border-[#D1D1D1] dark:border-[#2A2A2A]">
-                <Target size={40} className="text-[#AB0534]" />
-              </div>
-              <h2 className="text-2xl font-extrabold text-[#171717] dark:text-white mb-2 tracking-tight">Záložka: {activeTab}</h2>
-              <p className="text-sm font-medium text-[#4D4D4D] dark:text-[#989FA7] max-w-md mx-auto leading-relaxed border border-dashed border-[#D1D1D1] dark:border-[#4D4D4D] p-4 rounded bg-white dark:bg-[#1A1A1A]">
-                Logika pre túto sekciu sa analyzuje a bude onedlho napojená na <span className="text-[#AB0534] font-bold">Zustand Central Store</span> zo spoločných dát.
-              </p>
-            </div>
-          )}
+          {activeTab === 'Vystup' && <TabVystup />}
         </div>
       </main>
     </div>
