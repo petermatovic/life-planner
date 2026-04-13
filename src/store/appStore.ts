@@ -13,7 +13,10 @@ export interface Osoba {
 
 export interface Dieta {
   id: number;
+  meno?: string;
   vek: number | '';
+  cielSuma?: number | '';
+  cielDoVeku?: number | '';
 }
 
 export interface Majetok {
@@ -21,6 +24,43 @@ export interface Majetok {
   typ: string; // 'Fyzický', 'Finančný', 'Pasíva'
   nazov: string;
   hodnota: number | '';
+}
+
+export interface InyCiel {
+  id: number;
+  nazov: string;
+  hodnota: number | '';
+  horizont: number | '';
+  checked: boolean;
+}
+
+export interface AofCieleSetup {
+  zabezpecenieKlientKapital: number | '';
+  zabezpeceniePartnerKapital: number | '';
+  zabezpecenieKlientRenta: number | '';
+  zabezpeceniePartnerRenta: number | '';
+  zabezpecenieKlientRentaRoky: number | '';
+  zabezpeceniePartnerRentaRoky: number | '';
+  sociCheckbox: boolean;
+  sociSuma: number | '';
+  
+  byvanieCheckbox: boolean;
+  byvanieSumaUveru: number | '';
+  byvanieSplatnost: number | '';
+  byvanieUrok: number | '';
+  byvanieNesplatenyDiel: number | '';
+  
+  rezervaMDCheckbox: boolean;
+  
+  predcasnaRentaKlientCheckbox: boolean;
+  predcasnaRentaKlientVyska: number | '';
+  predcasnaRentaKlientVek: number | '';
+  
+  predcasnaRentaPartnerCheckbox: boolean;
+  predcasnaRentaPartnerVyska: number | '';
+  predcasnaRentaPartnerVek: number | '';
+  
+  ineCiele: InyCiel[];
 }
 
 interface AppState {
@@ -49,6 +89,9 @@ interface AppState {
     zostatokUcet: number | '';
   };
 
+  // --- AOF Ciele (Spodná tabuľka) ---
+  aofCiele: AofCieleSetup;
+
   // --- Settings ---
   jazyk: string;
   setJazyk: (lang: string) => void;
@@ -61,6 +104,7 @@ interface AppState {
   setDeti: (deti: Dieta[]) => void;
   setMajetok: (majetok: Majetok[]) => void;
   setCashFlow: (data: Partial<AppState['cashFlow']>) => void;
+  setAofCiele: (data: Partial<AofCieleSetup>) => void;
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -83,6 +127,17 @@ export const useAppStore = create<AppState>((set) => ({
     poistNezivotMesacne: '', poistNezivotRocne: '',
     zostatokUcet: '',
   },
+  aofCiele: {
+    zabezpecenieKlientKapital: '', zabezpeceniePartnerKapital: '',
+    zabezpecenieKlientRenta: '', zabezpeceniePartnerRenta: '',
+    zabezpecenieKlientRentaRoky: '', zabezpeceniePartnerRentaRoky: '',
+    sociCheckbox: false, sociSuma: '',
+    byvanieCheckbox: false, byvanieSumaUveru: '', byvanieSplatnost: '', byvanieUrok: '', byvanieNesplatenyDiel: '',
+    rezervaMDCheckbox: false,
+    predcasnaRentaKlientCheckbox: false, predcasnaRentaKlientVyska: '', predcasnaRentaKlientVek: '',
+    predcasnaRentaPartnerCheckbox: false, predcasnaRentaPartnerVyska: '', predcasnaRentaPartnerVek: '',
+    ineCiele: []
+  },
   jazyk: 'SK',
   setKlient: (data) => set((state) => ({ klient: { ...state.klient, ...data } })),
   setPartner: (data) => set((state) => ({ partner: { ...state.partner, ...data } })),
@@ -91,5 +146,6 @@ export const useAppStore = create<AppState>((set) => ({
   setDeti: (deti) => set({ deti }),
   setMajetok: (majetok) => set({ majetok }),
   setCashFlow: (data) => set((state) => ({ cashFlow: { ...state.cashFlow, ...data } })),
+  setAofCiele: (data) => set((state) => ({ aofCiele: { ...state.aofCiele, ...data } })),
   setJazyk: (lang) => set({ jazyk: lang }),
 }));

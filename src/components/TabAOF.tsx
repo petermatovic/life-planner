@@ -3,6 +3,7 @@ import React from 'react';
 import { useAppStore } from '@/store/appStore';
 import { useTranslation } from '@/hooks/useTranslation';
 import { Trash2, CheckSquare, Square } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LabelList } from 'recharts';
 
 const InputRow = ({ label, value, onChange, placeholder = "" }: any) => (
   <div className="flex justify-between items-center mb-1">
@@ -25,7 +26,8 @@ export default function TabAOF() {
   const { t } = useTranslation();
   const { 
     klient, partner, hasPartner, deti, hasDeti, majetok, cashFlow,
-    setKlient, setPartner, setHasPartner, setDeti, setHasDeti, setMajetok, setCashFlow
+    setKlient, setPartner, setHasPartner, setDeti, setHasDeti, setMajetok, setCashFlow,
+    aofCiele, setAofCiele
   } = useAppStore();
 
   // CALCULATIONS
@@ -62,6 +64,23 @@ export default function TabAOF() {
   const sucUvery = uvery;
   const sucMajetok = sporenia + investicie + poistZivot;
   const sucRezerva = rozdiel; // Assigning leftover cash space to res
+
+  const chartData = [
+    { 
+      name: t('aof.optimal'), 
+      Spotreba: optSpotreba, 
+      Úvery: optUvery, 
+      Tvorba: optMajetok, 
+      Rezerva: optRezerva 
+    },
+    { 
+      name: t('aof.sucasne'), 
+      Spotreba: sucSpotreba, 
+      Úvery: sucUvery, 
+      Tvorba: sucMajetok, 
+      Rezerva: sucRezerva 
+    }
+  ];
 
   return (
     <div className="flex flex-col gap-4 animate-in fade-in duration-300">
@@ -184,35 +203,177 @@ export default function TabAOF() {
              <div className="flex justify-between py-2 mt-2 border-t border-[#D1D1D1] dark:border-[#4D4D4D] text-sm font-extrabold"><span>{t('aof.cistaHodnota')}</span> <span className="bg-white dark:bg-[#333] px-2 border">{cistaHodnota.toFixed(0)} €</span></div>
            </div>
 
-           {/* IDEALNE FINANCNE MIERY */}
-           <div className="bg-[#EAEAEA] dark:bg-[#1A1A1A] rounded p-4 border border-[#D1D1D1] dark:border-[#2A2A2A] shadow-sm text-xs relative">
-             <h2 className="font-extrabold text-sm uppercase tracking-wide border-b border-[#D1D1D1] dark:border-[#4D4D4D] pb-1 mb-2">{t('aof.idealneMiery')}</h2>
-             <div className="grid grid-cols-4 text-[10px] font-bold text-center mb-1"><div></div><div>{t('aof.optimal')}</div><div>{t('aof.sucasne')}</div><div>{t('aof.rozdiel')}</div></div>
-             <div className="space-y-1">
-               <div className="grid grid-cols-4 items-center bg-white dark:bg-[#333] border p-1 rounded font-bold">
-                 <div className="flex items-center gap-1"><span className="border text-[9px] px-0.5">40%</span> {t('aof.spotrebaSpolu').replace('Spolu ', '')}</div>
-                 <div className="text-right px-1">{optSpotreba.toFixed(0)} €</div><div className="text-right px-1">{sucSpotreba.toFixed(0)} €</div>
-                 <div className="text-right px-1 text-[#AB0534]">{(optSpotreba - sucSpotreba).toFixed(0)} €</div>
-               </div>
-               <div className="grid grid-cols-4 items-center bg-white dark:bg-[#333] border p-1 rounded font-bold">
-                 <div className="flex items-center gap-1"><span className="border text-[9px] px-0.5">30%</span> {t('aof.uveroveSpolu').replace('Spolu ', '')}</div>
-                 <div className="text-right px-1">{optUvery.toFixed(0)} €</div><div className="text-right px-1">{sucUvery.toFixed(0)} €</div>
-                 <div className="text-right px-1 text-[#AB0534]">{(optUvery - sucUvery).toFixed(0)} €</div>
-               </div>
-               <div className="grid grid-cols-4 items-center bg-white dark:bg-[#333] border p-1 rounded font-bold">
-                 <div className="flex items-center gap-1"><span className="border text-[9px] px-0.5">20%</span> {t('aof.tvorbaSpolu').replace('Spolu ', '')}</div>
-                 <div className="text-right px-1">{optMajetok.toFixed(0)} €</div><div className="text-right px-1">{sucMajetok.toFixed(0)} €</div>
-                 <div className="text-right px-1 text-[#AB0534]">{(optMajetok - sucMajetok).toFixed(0)} €</div>
-               </div>
-               <div className="grid grid-cols-4 items-center bg-white dark:bg-[#333] border p-1 rounded font-bold">
-                 <div className="flex items-center gap-1"><span className="border text-[9px] px-0.5">10%</span> Rezerva</div>
-                 <div className="text-right px-1">{optRezerva.toFixed(0)} €</div><div className="text-right px-1">{sucRezerva.toFixed(0)} €</div>
-                 <div className="text-right px-1 text-[#AB0534]">{(optRezerva - sucRezerva).toFixed(0)} €</div>
+           {/* IDEALNE FINANCNE MIERY SA TABLE + GRAPH */}
+           <div className="bg-[#EAEAEA] dark:bg-[#1A1A1A] rounded p-4 border border-[#D1D1D1] dark:border-[#2A2A2A] shadow-sm text-xs relative flex flex-col xl:flex-row gap-6">
+             
+             {/* GRAPH */}
+             <div className="flex-1 min-h-[250px] w-full pt-4">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={chartData} margin={{ top: 20, right: 0, left: -20, bottom: 0 }}>
+                    <XAxis dataKey="name" tick={{fontSize: 10, fill: '#989FA7'}} axisLine={false} tickLine={false} />
+                    <YAxis tickFormatter={(val) => `${val} €`} tick={{fontSize: 10, fill: '#989FA7'}} axisLine={false} tickLine={false} />
+                    <Tooltip cursor={{fill: 'transparent'}} contentStyle={{backgroundColor: '#111', border: '1px solid #333', borderRadius: '4px', color: '#fff'}} formatter={(value: any) => `${Number(value).toFixed(0)} €`} />
+                    <Bar dataKey="Spotreba" stackId="a" fill="#1E5083" />
+                    <Bar dataKey="Úvery" stackId="a" fill="#E06138" />
+                    <Bar dataKey="Tvorba" stackId="a" fill="#166E36" />
+                    <Bar dataKey="Rezerva" stackId="a" fill="#009EDC">
+                       <LabelList dataKey="name" position="insideTop" fill="#fff" fontSize={0} />
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+             </div>
+
+             {/* TABLE */}
+             <div className="flex-[1.5] flex flex-col justify-center">
+               <h2 className="font-extrabold text-sm uppercase tracking-wide border-b border-[#D1D1D1] dark:border-[#4D4D4D] pb-1 mb-2">{t('aof.idealneMiery')}</h2>
+               <div className="grid grid-cols-4 text-[10px] font-bold text-center mb-1"><div></div><div>{t('aof.optimal')}</div><div>{t('aof.sucasne')}</div><div>{t('aof.rozdiel')}</div></div>
+               <div className="space-y-1">
+                 <div className="grid grid-cols-4 items-center bg-white dark:bg-[#333] border p-1 rounded font-bold">
+                   <div className="flex items-center gap-1"><span className="border text-[9px] px-0.5" style={{borderColor:'#1E5083'}}>40%</span> {t('aof.spotrebaSpolu').replace('Spolu ', '')}</div>
+                   <div className="text-right px-1">{optSpotreba.toFixed(0)} €</div><div className="text-right px-1">{sucSpotreba.toFixed(0)} €</div>
+                   <div className="text-right px-1 text-[#AB0534]">{(optSpotreba - sucSpotreba).toFixed(0)} €</div>
+                 </div>
+                 <div className="grid grid-cols-4 items-center bg-white dark:bg-[#333] border p-1 rounded font-bold">
+                   <div className="flex items-center gap-1"><span className="border text-[9px] px-0.5" style={{borderColor:'#E06138'}}>30%</span> {t('aof.uveroveSpolu').replace('Spolu ', '')}</div>
+                   <div className="text-right px-1">{optUvery.toFixed(0)} €</div><div className="text-right px-1">{sucUvery.toFixed(0)} €</div>
+                   <div className="text-right px-1 text-[#AB0534]">{(optUvery - sucUvery).toFixed(0)} €</div>
+                 </div>
+                 <div className="grid grid-cols-4 items-center bg-white dark:bg-[#333] border p-1 rounded font-bold">
+                   <div className="flex items-center gap-1"><span className="border text-[9px] px-0.5" style={{borderColor:'#166E36'}}>20%</span> {t('aof.tvorbaSpolu').replace('Spolu ', '')}</div>
+                   <div className="text-right px-1">{optMajetok.toFixed(0)} €</div><div className="text-right px-1">{sucMajetok.toFixed(0)} €</div>
+                   <div className="text-right px-1 text-[#AB0534]">{(optMajetok - sucMajetok).toFixed(0)} €</div>
+                 </div>
+                 <div className="grid grid-cols-4 items-center bg-white dark:bg-[#333] border p-1 rounded font-bold">
+                   <div className="flex items-center gap-1"><span className="border text-[9px] px-0.5" style={{borderColor:'#009EDC'}}>10%</span> Rezerva</div>
+                   <div className="text-right px-1">{optRezerva.toFixed(0)} €</div><div className="text-right px-1">{sucRezerva.toFixed(0)} €</div>
+                   <div className="text-right px-1 text-[#AB0534]">{(optRezerva - sucRezerva).toFixed(0)} €</div>
+                 </div>
                </div>
              </div>
            </div>
         </div>
+      </div>
 
+      {/* ----------------- CIELE BLOCK (Z excelu) ----------------- */}
+      <div className="mt-8 flex flex-col gap-4 text-xs">
+        
+        {/* HEADER 1 */}
+        <div className="bg-[#808080] dark:bg-[#4D4D4D] text-white text-center font-bold py-1 uppercase tracking-wider">{t('aof.zakladneCiele')}</div>
+        
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+           {/* ZAKLADNE CIELE - LAVY STLPCOV */}
+           <div className="flex flex-col gap-2">
+              <div className="flex justify-between items-center bg-[#EAEAEA] dark:bg-[#1A1A1A] p-2 rounded shadow-sm border border-[#D1D1D1] dark:border-[#333]">
+                <span className="font-extrabold w-1/3">{t('aof.rezerva')}</span>
+                <input type="number" 
+                       value={aofCiele.byvanieSumaUveru /* using dummy tmp variable */} 
+                       onChange={() => {}} 
+                       className="w-2/3 border px-2 text-center bg-white dark:bg-[#111]" placeholder="23 950 €" />
+              </div>
+              
+              <div className="bg-[#EAEAEA] dark:bg-[#1A1A1A] p-2 rounded shadow-sm border border-[#D1D1D1] dark:border-[#333]">
+                <div className="grid grid-cols-3 font-extrabold mb-1"><div className="col-span-1">{t('aof.zabezpeceniePrijmu')}</div><div className="text-center">{t('aof.klient')}</div><div className="text-center">{t('aof.partner')}</div></div>
+                <div className="grid grid-cols-3 items-center mb-1"><div className="font-bold">{t('aof.produkcnyKapital')}</div><input value={aofCiele.zabezpecenieKlientKapital} onChange={e=>setAofCiele({zabezpecenieKlientKapital: Number(e.target.value)})} className="border mx-1 px-1 text-center" /><input value={aofCiele.zabezpeceniePartnerKapital} onChange={e=>setAofCiele({zabezpeceniePartnerKapital: Number(e.target.value)})} className="border mx-1 px-1 text-center" /></div>
+                <div className="grid grid-cols-3 items-center mb-1"><div className="font-bold">{t('aof.renta')}</div><input value={aofCiele.zabezpecenieKlientRenta} onChange={e=>setAofCiele({zabezpecenieKlientRenta: Number(e.target.value)})} className="border mx-1 px-1 text-center" /><input value={aofCiele.zabezpeceniePartnerRenta} onChange={e=>setAofCiele({zabezpeceniePartnerRenta: Number(e.target.value)})} className="border mx-1 px-1 text-center" /></div>
+                <div className="grid grid-cols-3 items-center mb-2"><div className="text-right pr-2">{t('aof.naDobu')}</div><div className="mx-1 relative"><input value={aofCiele.zabezpecenieKlientRentaRoky} onChange={e=>setAofCiele({zabezpecenieKlientRentaRoky: Number(e.target.value)})} className="border w-full px-1 text-center pr-8" /><span className="absolute right-2 top-0">{t('aof.rocna')}</span></div><div className="mx-1 relative"><input value={aofCiele.zabezpeceniePartnerRentaRoky} onChange={e=>setAofCiele({zabezpeceniePartnerRentaRoky: Number(e.target.value)})} className="border w-full px-1 text-center pr-8" /><span className="absolute right-2 top-0">{t('aof.rocna')}</span></div></div>
+                
+                <div className="flex items-center gap-2 mt-3 pt-2 border-t border-[#D1D1D1] dark:border-[#333]">
+                  <span className="flex-1">{t('aof.davkaSofi')}</span>
+                  <input type="checkbox" checked={aofCiele.sociCheckbox} onChange={e=>setAofCiele({sociCheckbox: e.target.checked})} className="mx-2" />
+                  <input value={aofCiele.sociSuma} onChange={e=>setAofCiele({sociSuma: Number(e.target.value)})} className={`border px-1 text-center w-1/3 ${!aofCiele.sociCheckbox && 'opacity-50'}`} disabled={!aofCiele.sociCheckbox} />
+                </div>
+              </div>
+           </div>
+
+           {/* DETI (PRAVA STRANA) */}
+           <div className="bg-[#EAEAEA] dark:bg-[#1A1A1A] p-2 rounded shadow-sm border border-[#D1D1D1] dark:border-[#333] h-min">
+              <div className="grid grid-cols-4 font-extrabold mb-2 pb-1 border-b border-[#D1D1D1] dark:border-[#333]">
+                 <div>{t('aof.deti')}</div><div className="text-center">{t('aof.suma')}</div><div className="text-center">{t('aof.doVeku')}</div><div className="text-center">{t('aof.oKolkoRokov')}</div>
+              </div>
+              <div className="space-y-1">
+                 {deti.map(d => (
+                   <div className="grid grid-cols-4 items-center gap-1" key={d.id}>
+                     <input value={d.meno || ''} readOnly className="border px-1 bg-white dark:bg-[#111]" placeholder={t('aof.meno')} />
+                     <input type="number" value={d.cielSuma || ''} onChange={e=>setDeti(deti.map(x=>x.id===d.id ? {...x, cielSuma: Number(e.target.value)} : x))} className="border px-1 text-center" />
+                     <input type="number" value={d.cielDoVeku || ''} onChange={e=>setDeti(deti.map(x=>x.id===d.id ? {...x, cielDoVeku: Number(e.target.value)} : x))} className="border px-1 text-center" />
+                     <div className="border px-1 text-center bg-[#FAFAFA] dark:bg-[#222]">{(d.cielDoVeku && d.vek) ? Number(d.cielDoVeku) - Number(d.vek) : ''}</div>
+                   </div>
+                 ))}
+                 {deti.length === 0 && <div className="text-center text-[#989FA7] py-2">{t('aof.ziadneDeti')}</div>}
+              </div>
+           </div>
+        </div>
+
+        {/* HEADER 2 */}
+        <div className="bg-[#808080] dark:bg-[#4D4D4D] text-white text-center font-bold py-1 mt-4 uppercase tracking-wider">{t('aof.cieleKlienta')}</div>
+
+        <div className="bg-[#EAEAEA] dark:bg-[#1A1A1A] p-4 rounded shadow-sm border border-[#D1D1D1] dark:border-[#333]">
+           {/* Byvanie */}
+           <div className="flex items-start gap-4 mb-4 pb-4 border-b border-[#D1D1D1] dark:border-[#333]">
+             <div className="w-1/4 font-extrabold flex justify-between items-center">{t('aof.byvanie')} <input type="checkbox" checked={aofCiele.byvanieCheckbox} onChange={e=>setAofCiele({byvanieCheckbox: e.target.checked})} /></div>
+             <div className={`flex-1 flex flex-col gap-1 transition-opacity ${!aofCiele.byvanieCheckbox && 'opacity-50'}`}>
+                <div className="grid grid-cols-3 text-center mb-1"><div className="font-bold">{t('aof.sumaUveru')}</div><div className="font-bold">{t('aof.splatnost')}</div><div className="font-bold">{t('aof.urok')}</div></div>
+                <div className="grid grid-cols-3 gap-2">
+                   <input type="number" value={aofCiele.byvanieSumaUveru} onChange={e=>setAofCiele({byvanieSumaUveru: Number(e.target.value)})} className="border text-center px-1" />
+                   <input type="number" value={aofCiele.byvanieSplatnost} onChange={e=>setAofCiele({byvanieSplatnost: Number(e.target.value)})} className="border text-center px-1" />
+                   <div className="relative"><input type="number" value={aofCiele.byvanieUrok} onChange={e=>setAofCiele({byvanieUrok: Number(e.target.value)})} className="border text-center px-1 w-full" /><span className="absolute right-2 top-0">%</span></div>
+                </div>
+                <div className="grid grid-cols-3 gap-2 mt-2">
+                   <div className="col-span-2 flex items-center gap-2"><span className="w-1/2 text-right">{t('aof.splatkaUveru')}</span> <span className="border text-center px-1 bg-white dark:bg-[#111] flex-1 min-h-[22px]"></span></div>
+                </div>
+             </div>
+             <div className={`w-1/4 flex flex-col gap-1 text-center transition-opacity ${!aofCiele.byvanieCheckbox && 'opacity-50'}`}>
+                <div className="font-bold">{t('aof.nesplatenyUver')}</div>
+                <input type="number" value={aofCiele.byvanieNesplatenyDiel} onChange={e=>setAofCiele({byvanieNesplatenyDiel: Number(e.target.value)})} className="border text-center px-1" />
+             </div>
+           </div>
+
+           {/* Rezerva MD */}
+           <div className="flex items-center gap-4 mb-4">
+             <div className="w-1/4 font-extrabold flex justify-between items-center">{t('aof.rezervaMD')} <input type="checkbox" checked={aofCiele.rezervaMDCheckbox} onChange={e=>setAofCiele({rezervaMDCheckbox: e.target.checked})} /></div>
+           </div>
+
+           {/* Renty */}
+           <div className="flex items-center gap-4 mb-2">
+             <div className="w-1/4 font-extrabold flex justify-between items-center">{t('aof.predcasnaRenta')} <input type="checkbox" checked={aofCiele.predcasnaRentaKlientCheckbox} onChange={e=>setAofCiele({predcasnaRentaKlientCheckbox: e.target.checked})} /></div>
+             <div className={`flex-1 grid grid-cols-3 gap-2 transition-opacity ${!aofCiele.predcasnaRentaKlientCheckbox && 'opacity-50'}`}>
+                <div className="flex flex-col text-center"><span className="font-bold">{t('aof.vyskaRenty')}</span><input type="number" value={aofCiele.predcasnaRentaKlientVyska} onChange={e=>setAofCiele({predcasnaRentaKlientVyska: Number(e.target.value)})} className="border text-center px-1" /></div>
+                <div className="flex flex-col text-center"><span className="font-bold">{t('aof.vAkomVeku')}</span><input type="number" value={aofCiele.predcasnaRentaKlientVek} onChange={e=>setAofCiele({predcasnaRentaKlientVek: Number(e.target.value)})} className="border text-center px-1" /></div>
+             </div>
+           </div>
+           
+           <div className="flex items-center gap-4 mb-4 pb-4 border-b border-[#D1D1D1] dark:border-[#333]">
+             <div className="w-1/4 font-extrabold flex justify-between items-center">{t('aof.predcasnaRentaPartner')} <input type="checkbox" checked={aofCiele.predcasnaRentaPartnerCheckbox} onChange={e=>setAofCiele({predcasnaRentaPartnerCheckbox: e.target.checked})} /></div>
+             <div className={`flex-1 grid grid-cols-3 gap-2 transition-opacity ${!aofCiele.predcasnaRentaPartnerCheckbox && 'opacity-50'}`}>
+                <div className="flex flex-col text-center"><span className="font-bold mb-1 opacity-0">.</span><input type="number" value={aofCiele.predcasnaRentaPartnerVyska} onChange={e=>setAofCiele({predcasnaRentaPartnerVyska: Number(e.target.value)})} className="border text-center px-1" /></div>
+                <div className="flex flex-col text-center"><span className="font-bold mb-1 opacity-0">.</span><input type="number" value={aofCiele.predcasnaRentaPartnerVek} onChange={e=>setAofCiele({predcasnaRentaPartnerVek: Number(e.target.value)})} className="border text-center px-1" /></div>
+             </div>
+           </div>
+
+           {/* Ine */}
+           <div className="flex items-center gap-4 mb-2 relative">
+             <div className="w-1/4 font-extrabold flex justify-between items-center">{t('aof.ineCiele')} <button onClick={()=>setAofCiele({ineCiele: [...aofCiele.ineCiele, {id: Date.now(), nazov: 'Auto', hodnota: '', horizont: '', checked: false}]})} className="text-[10px] bg-white dark:bg-[#333] px-1 border rounded">{t('aof.pridat')} +</button></div>
+             <div className="flex-1 grid grid-cols-3 gap-2">
+                <div className="text-center font-bold">{t('aof.hodnota')}</div>
+                <div className="text-center font-bold">{t('aof.oKolkoRokov')}</div>
+             </div>
+           </div>
+           
+           {aofCiele.ineCiele.map(c => (
+              <div key={c.id} className="flex items-center gap-4 mb-1">
+                 <div className="w-1/4 flex justify-between items-center gap-2">
+                    <input type="text" value={c.nazov} onChange={e=>setAofCiele({ineCiele: aofCiele.ineCiele.map(x=>x.id===c.id?{...x,nazov:e.target.value}:x)})} className="flex-1 border px-1" />
+                    <input type="checkbox" checked={c.checked} onChange={e=>setAofCiele({ineCiele: aofCiele.ineCiele.map(x=>x.id===c.id?{...x,checked:e.target.checked}:x)})} />
+                 </div>
+                 <div className={`flex-1 grid grid-cols-3 gap-2 transition-opacity ${!c.checked && 'opacity-50'}`}>
+                    <input type="number" value={c.hodnota} onChange={e=>setAofCiele({ineCiele: aofCiele.ineCiele.map(x=>x.id===c.id?{...x,hodnota:Number(e.target.value)}:x)})} className="border text-center px-1" />
+                    <input type="number" value={c.horizont} onChange={e=>setAofCiele({ineCiele: aofCiele.ineCiele.map(x=>x.id===c.id?{...x,horizont:Number(e.target.value)}:x)})} className="border text-center px-1" />
+                    <button onClick={()=>setAofCiele({ineCiele: aofCiele.ineCiele.filter(x=>x.id!==c.id)})} className="text-[#AB0534] w-min px-4"><Trash2 size={12} /></button>
+                 </div>
+              </div>
+           ))}
+
+        </div>
       </div>
     </div>
   );
