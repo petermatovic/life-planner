@@ -83,7 +83,7 @@ export default function Dashboard() {
           <div className="flex bg-[#EAEAEA] dark:bg-[#1A1A1A] rounded p-1.5 border border-[#D1D1D1] dark:border-[#333] mb-3">
              <button onClick={() => state.setJazyk('SK')} className={`flex-1 text-[10px] uppercase tracking-wider font-bold py-1 rounded transition ${state.jazyk === 'SK' ? 'bg-white dark:bg-[#2A2A2A] shadow text-[#AB0534] dark:text-[#ff4a7d]' : 'text-[#989FA7] hover:text-[#4D4D4D]'}`}>SK</button>
              <button onClick={() => state.setJazyk('EN')} className={`flex-1 text-[10px] uppercase tracking-wider font-bold py-1 rounded transition ${state.jazyk === 'EN' ? 'bg-white dark:bg-[#2A2A2A] shadow text-[#AB0534] dark:text-[#ff4a7d]' : 'text-[#989FA7] hover:text-[#4D4D4D]'}`}>EN</button>
-             <button onClick={() => state.setJazyk('DE')} className={`flex-1 text-[10px] uppercase tracking-wider font-bold py-1 rounded transition ${state.jazyk === 'DE' ? 'bg-white dark:bg-[#2A2A2A] shadow text-[#AB0534] dark:text-[#ff4a7d]' : 'text-[#989FA7] hover:text-[#4D4D4D]'}`}>DE</button>
+             <button onClick={() => state.setJazyk('BG')} className={`flex-1 text-[10px] uppercase tracking-wider font-bold py-1 rounded transition ${state.jazyk === 'BG' ? 'bg-white dark:bg-[#2A2A2A] shadow text-[#AB0534] dark:text-[#ff4a7d]' : 'text-[#989FA7] hover:text-[#4D4D4D]'}`}>BG</button>
           </div>
           <div className="flex items-center justify-between mb-3 bg-[#EAEAEA] dark:bg-[#1A1A1A] p-2 rounded border border-[#D1D1D1] dark:border-[#333]">
             <span className="text-xs font-bold text-[#4D4D4D] dark:text-[#989FA7]">{t('sidebar.tema')}</span>
