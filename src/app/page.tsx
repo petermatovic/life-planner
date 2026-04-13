@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from "react";
-import { LayoutDashboard, Target, ShieldCheck, TrendingUp, Presentation, Moon, Sun, Download, FileText, ArrowRight } from 'lucide-react';
+import { LayoutDashboard, Target, ShieldCheck, TrendingUp, Presentation, Download, FileText, ArrowRight } from 'lucide-react';
 import TabAOF from '@/components/TabAOF';
 import TabPrepocty from '@/components/TabPrepocty';
 import TabCiele from '@/components/TabCiele';

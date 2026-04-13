@@ -1,7 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import { useAppStore } from '@/store/appStore';
-import { Target, Plus, Trash2, TrendingUp } from 'lucide-react';
+import { Plus, Trash2 } from 'lucide-react';
 
 export default function TabCiele() {
   const [ciele, setCiele] = useState([
