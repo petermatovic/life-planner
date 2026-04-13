@@ -8,10 +8,12 @@ import TabCiele from '@/components/TabCiele';
 import TabFinancnyPlan from '@/components/TabFinancnyPlan';
 import TabVystup from '@/components/TabVystup';
 import { useAppStore } from '@/store/appStore';
+import { useTranslation } from '@/hooks/useTranslation';
 
 export default function Dashboard() {
   const [darkMode, setDarkMode] = useState(false);
   const [activeTab, setActiveTab] = useState('AOF');
+  const { t } = useTranslation();
 
   // Load global state for header info
   const state = useAppStore();
@@ -34,11 +36,11 @@ export default function Dashboard() {
   }, [darkMode]);
 
   const navItems = [
-    { id: 'AOF', label: 'AOF', icon: LayoutDashboard },
-    { id: 'Ciele', label: 'Ciele', icon: Target },
-    { id: 'Prepocty', label: 'Prepočty zabezpečenia príjmu', icon: ShieldCheck },
-    { id: 'FinancnyPlan', label: 'Finančný plán', icon: TrendingUp },
-    { id: 'Vystup', label: 'Výstup', icon: Presentation }
+    { id: 'AOF', label: t('sidebar.aof'), icon: LayoutDashboard },
+    { id: 'Ciele', label: t('sidebar.ciele'), icon: Target },
+    { id: 'Prepocty', label: t('sidebar.prepocty'), icon: ShieldCheck },
+    { id: 'FinancnyPlan', label: t('sidebar.financnyPlan'), icon: TrendingUp },
+    { id: 'Vystup', label: t('sidebar.vystup'), icon: Presentation }
   ];
 
   const SidebarItem = ({ id, label, icon: Icon }: any) => (
@@ -84,7 +86,7 @@ export default function Dashboard() {
              <button onClick={() => state.setJazyk('DE')} className={`flex-1 text-[10px] uppercase tracking-wider font-bold py-1 rounded transition ${state.jazyk === 'DE' ? 'bg-white dark:bg-[#2A2A2A] shadow text-[#AB0534] dark:text-[#ff4a7d]' : 'text-[#989FA7] hover:text-[#4D4D4D]'}`}>DE</button>
           </div>
           <div className="flex items-center justify-between mb-3 bg-[#EAEAEA] dark:bg-[#1A1A1A] p-2 rounded border border-[#D1D1D1] dark:border-[#333]">
-            <span className="text-xs font-bold text-[#4D4D4D] dark:text-[#989FA7]">Téma prostredia</span>
+            <span className="text-xs font-bold text-[#4D4D4D] dark:text-[#989FA7]">{t('sidebar.tema')}</span>
             <button 
               onClick={() => setDarkMode(!darkMode)}
               className="relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-[#AB0534] focus:ring-offset-1 bg-[#D1D1D1] dark:bg-[#4D4D4D]"
@@ -93,7 +95,7 @@ export default function Dashboard() {
             </button>
           </div>
           <button onClick={handleExportJSON} className="flex items-center justify-center gap-2 w-full py-2 bg-black dark:bg-white text-white dark:text-black font-bold text-xs rounded shadow hover:opacity-90 transition">
-             <Download size={14} /> Uložiť JSON
+             <Download size={14} /> {t('sidebar.ulozitJson')}
           </button>
           <div className="text-[9px] text-center text-[#989FA7] dark:text-[#4D4D4D] font-bold mt-3">Jadro aktualizované (Zustand) • Live math</div>
         </div>
@@ -120,9 +122,9 @@ export default function Dashboard() {
 
         {/* TOP BAR */}
         <div className="h-16 border-b border-[#D1D1D1] dark:border-[#2A2A2A] bg-white dark:bg-[#1A1A1A] hidden md:flex items-center justify-between px-8 shadow-sm shrink-0 transition-colors duration-300 print:hidden">
-           <h2 className="text-sm font-bold text-[#4D4D4D] dark:text-[#989FA7]">Aktívny Model: <span className="text-lg text-[#171717] dark:text-[#ededed] ml-2">Rodina <span className="text-[#AB0534]">{klient.meno || 'Vzorová'}</span></span></h2>
+           <h2 className="text-sm font-bold text-[#4D4D4D] dark:text-[#989FA7]">{t('sidebar.modelText')} <span className="text-lg text-[#171717] dark:text-[#ededed] ml-2">{t('sidebar.rodina')} <span className="text-[#AB0534]">{klient.meno || t('sidebar.vzorova')}</span></span></h2>
            <button onClick={() => window.print()} className="flex items-center gap-2 bg-[#EAEAEA] dark:bg-[#2A2A2A] hover:bg-[#D1D1D1] dark:hover:bg-[#333] transition px-4 py-2 rounded text-sm font-bold border border-[#D1D1D1] dark:border-[#4D4D4D] text-[#171717] dark:text-white">
-             <FileText size={16} /> Export do PDF
+             <FileText size={16} /> {t('sidebar.exportPdf')}
            </button>
         </div>
 
