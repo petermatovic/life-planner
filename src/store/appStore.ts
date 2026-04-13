@@ -49,6 +49,10 @@ interface AppState {
     zostatokUcet: number | '';
   };
 
+  // --- Settings ---
+  jazyk: string;
+  setJazyk: (lang: string) => void;
+
   // --- Actions ---
   setKlient: (data: Partial<Osoba>) => void;
   setPartner: (data: Partial<Osoba>) => void;
@@ -79,7 +83,7 @@ export const useAppStore = create<AppState>((set) => ({
     poistNezivotMesacne: '', poistNezivotRocne: '',
     zostatokUcet: '',
   },
-
+  jazyk: 'SK',
   setKlient: (data) => set((state) => ({ klient: { ...state.klient, ...data } })),
   setPartner: (data) => set((state) => ({ partner: { ...state.partner, ...data } })),
   setHasPartner: (val) => set({ hasPartner: val }),
@@ -87,4 +91,5 @@ export const useAppStore = create<AppState>((set) => ({
   setDeti: (deti) => set({ deti }),
   setMajetok: (majetok) => set({ majetok }),
   setCashFlow: (data) => set((state) => ({ cashFlow: { ...state.cashFlow, ...data } })),
+  setJazyk: (lang) => set({ jazyk: lang }),
 }));
