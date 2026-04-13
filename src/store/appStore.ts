@@ -35,6 +35,7 @@ export interface InyCiel {
 }
 
 export interface AofCieleSetup {
+  zakladnaRezerva: number | '';
   zabezpecenieKlientKapital: number | '';
   zabezpeceniePartnerKapital: number | '';
   zabezpecenieKlientRenta: number | '';
@@ -45,6 +46,7 @@ export interface AofCieleSetup {
   sociSuma: number | '';
   
   byvanieCheckbox: boolean;
+  byvanieNazov: string;
   byvanieSumaUveru: number | '';
   byvanieSplatnost: number | '';
   byvanieUrok: number | '';
@@ -128,11 +130,12 @@ export const useAppStore = create<AppState>((set) => ({
     zostatokUcet: '',
   },
   aofCiele: {
+    zakladnaRezerva: '',
     zabezpecenieKlientKapital: '', zabezpeceniePartnerKapital: '',
     zabezpecenieKlientRenta: '', zabezpeceniePartnerRenta: '',
     zabezpecenieKlientRentaRoky: '', zabezpeceniePartnerRentaRoky: '',
     sociCheckbox: false, sociSuma: '',
-    byvanieCheckbox: false, byvanieSumaUveru: '', byvanieSplatnost: '', byvanieUrok: '', byvanieNesplatenyDiel: '',
+    byvanieCheckbox: false, byvanieNazov: 'Refinancovanie', byvanieSumaUveru: '', byvanieSplatnost: '', byvanieUrok: '', byvanieNesplatenyDiel: '',
     rezervaMDCheckbox: false,
     predcasnaRentaKlientCheckbox: false, predcasnaRentaKlientVyska: '', predcasnaRentaKlientVek: '',
     predcasnaRentaPartnerCheckbox: false, predcasnaRentaPartnerVyska: '', predcasnaRentaPartnerVek: '',

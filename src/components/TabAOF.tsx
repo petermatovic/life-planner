@@ -65,6 +65,15 @@ export default function TabAOF() {
   const sucMajetok = sporenia + investicie + poistZivot;
   const sucRezerva = rozdiel; // Assigning leftover cash space to res
 
+  // Hypotekarna matematika
+  const calcPmt = (suma: number|'', rocky: number|'', urok: number|'') => {
+    if (!suma || !rocky || !urok) return 0;
+    const r = (Number(urok) / 100) / 12;
+    const n = Number(rocky) * 12;
+    return (Number(suma) * r) / (1 - Math.pow(1 + r, -n));
+  };
+  const byvanieSplatka = calcPmt(aofCiele.byvanieSumaUveru, aofCiele.byvanieSplatnost, aofCiele.byvanieUrok);
+
   const chartData = [
     { 
       name: t('aof.optimal'), 
@@ -266,8 +275,8 @@ export default function TabAOF() {
               <div className="flex justify-between items-center bg-[#EAEAEA] dark:bg-[#1A1A1A] p-2 rounded shadow-sm border border-[#D1D1D1] dark:border-[#333]">
                 <span className="font-extrabold w-1/3">{t('aof.rezerva')}</span>
                 <input type="number" 
-                       value={aofCiele.byvanieSumaUveru /* using dummy tmp variable */} 
-                       onChange={() => {}} 
+                       value={aofCiele.zakladnaRezerva || ''} 
+                       onChange={(e) => setAofCiele({zakladnaRezerva: Number(e.target.value) || ''})} 
                        className="w-2/3 border px-2 text-center bg-white dark:bg-[#111]" placeholder="23 950 €" />
               </div>
               
@@ -310,16 +319,16 @@ export default function TabAOF() {
         <div className="bg-[#EAEAEA] dark:bg-[#1A1A1A] p-4 rounded shadow-sm border border-[#D1D1D1] dark:border-[#333]">
            {/* Byvanie */}
            <div className="flex items-start gap-4 mb-4 pb-4 border-b border-[#D1D1D1] dark:border-[#333]">
-             <div className="w-1/4 font-extrabold flex justify-between items-center">{t('aof.byvanie')} <input type="checkbox" checked={aofCiele.byvanieCheckbox} onChange={e=>setAofCiele({byvanieCheckbox: e.target.checked})} /></div>
+             <div className="w-1/4 font-extrabold flex flex-col gap-2">{t('aof.byvanie')} <div className="text-right w-full"><input type="checkbox" checked={aofCiele.byvanieCheckbox} onChange={e=>setAofCiele({byvanieCheckbox: e.target.checked})} /></div><input type="text" value={aofCiele.byvanieNazov} onChange={e=>setAofCiele({byvanieNazov: e.target.value})} className="border font-normal px-1 w-full bg-white dark:bg-[#111]" /></div>
              <div className={`flex-1 flex flex-col gap-1 transition-opacity ${!aofCiele.byvanieCheckbox && 'opacity-50'}`}>
                 <div className="grid grid-cols-3 text-center mb-1"><div className="font-bold">{t('aof.sumaUveru')}</div><div className="font-bold">{t('aof.splatnost')}</div><div className="font-bold">{t('aof.urok')}</div></div>
                 <div className="grid grid-cols-3 gap-2">
                    <input type="number" value={aofCiele.byvanieSumaUveru} onChange={e=>setAofCiele({byvanieSumaUveru: Number(e.target.value)})} className="border text-center px-1" />
                    <input type="number" value={aofCiele.byvanieSplatnost} onChange={e=>setAofCiele({byvanieSplatnost: Number(e.target.value)})} className="border text-center px-1" />
-                   <div className="relative"><input type="number" value={aofCiele.byvanieUrok} onChange={e=>setAofCiele({byvanieUrok: Number(e.target.value)})} className="border text-center px-1 w-full" /><span className="absolute right-2 top-0">%</span></div>
+                   <div className="relative"><input type="number" step="0.1" value={aofCiele.byvanieUrok} onChange={e=>setAofCiele({byvanieUrok: Number(e.target.value)})} className="border text-center px-1 w-full" /><span className="absolute right-2 top-0">%</span></div>
                 </div>
                 <div className="grid grid-cols-3 gap-2 mt-2">
-                   <div className="col-span-2 flex items-center gap-2"><span className="w-1/2 text-right">{t('aof.splatkaUveru')}</span> <span className="border text-center px-1 bg-white dark:bg-[#111] flex-1 min-h-[22px]"></span></div>
+                   <div className="col-span-2 flex items-center gap-2"><span className="w-1/2 text-right">{t('aof.splatkaUveru')}</span> <span className="border text-center px-1 bg-white dark:bg-[#111] flex-1 min-h-[22px] font-bold text-[#AB0534]">{byvanieSplatka > 0 ? `${byvanieSplatka.toFixed(0)} €` : ''}</span></div>
                 </div>
              </div>
              <div className={`w-1/4 flex flex-col gap-1 text-center transition-opacity ${!aofCiele.byvanieCheckbox && 'opacity-50'}`}>
