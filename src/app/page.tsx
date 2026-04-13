@@ -4,6 +4,8 @@ import React, { useState, useEffect } from "react";
 import { LayoutDashboard, Target, ShieldCheck, TrendingUp, Presentation, Moon, Sun, Download, FileText, ArrowRight } from 'lucide-react';
 import TabAOF from '@/components/TabAOF';
 import TabPrepocty from '@/components/TabPrepocty';
+import TabCiele from '@/components/TabCiele';
+import TabFinancnyPlan from '@/components/TabFinancnyPlan';
 import { useAppStore } from '@/store/appStore';
 
 export default function Dashboard() {
@@ -113,9 +115,11 @@ export default function Dashboard() {
         <div className="flex-1 overflow-y-auto p-4 md:p-8 max-w-[1400px] w-full mx-auto custom-scrollbar">
           {activeTab === 'AOF' && <TabAOF />}
           {activeTab === 'Prepocty' && <TabPrepocty />}
+          {activeTab === 'Ciele' && <TabCiele />}
+          {activeTab === 'FinancnyPlan' && <TabFinancnyPlan />}
 
           {/* OSTATNE TABY */}
-          {activeTab !== 'AOF' && activeTab !== 'Prepocty' && (
+          {activeTab !== 'AOF' && activeTab !== 'Prepocty' && activeTab !== 'Ciele' && activeTab !== 'FinancnyPlan' && (
             <div className="flex flex-col items-center justify-center p-20 text-center animate-in fade-in zoom-in duration-500">
               <div className="w-24 h-24 rounded-full bg-[#ECEDED] dark:bg-[#1A1A1A] flex items-center justify-center mb-6 shadow-inner border border-[#D1D1D1] dark:border-[#2A2A2A]">
                 <Target size={40} className="text-[#AB0534]" />
