@@ -1,0 +1,49 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  
+  /* Partners Design Manual Colors */
+  --partners-red: #AB0534;
+  --partners-silver: #989FA7;
+  --partners-white: #FFFFFF;
+  --partners-gray: #4D4D4D;
+  --partners-light-gray: #ECEDED;
+  --partners-dark-blue: #003049;
+  --partners-light-blue: #C1DAE7;
+  --partners-light-yellow: #FFF3B0;
+  --partners-light-green: #CBD9C4;
+}
+
+:root.dark {
+  --background: #111111;
+  --foreground: #ededed;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: "Graphik", Arial, Helvetica, sans-serif;
+  --font-mono: var(--font-geist-mono);
+
+  /* Partners Colors Tailwind Customization */
+  --color-partners-red: var(--partners-red);
+  --color-partners-silver: var(--partners-silver);
+  --color-partners-white: var(--partners-white);
+  --color-partners-gray: var(--partners-gray);
+  --color-partners-light-gray: var(--partners-light-gray);
+  --color-partners-dark-blue: var(--partners-dark-blue);
+  --color-partners-light-blue: var(--partners-light-blue);
+  --color-partners-light-yellow: var(--partners-light-yellow);
+  --color-partners-light-green: var(--partners-light-green);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
+
