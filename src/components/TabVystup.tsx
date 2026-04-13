@@ -45,8 +45,8 @@ export default function TabVystup() {
         <div className="bg-white dark:bg-[#1A1A1A] p-6 rounded-xl border border-[#D1D1D1] dark:border-[#2A2A2A] shadow-sm">
           <h3 className="font-extrabold text-lg uppercase mb-4 tracking-wide text-[#AB0534]">Zhrnutie profilu</h3>
           <ul className="space-y-3 text-sm">
-            <li className="flex justify-between border-b dark:border-[#333] pb-1"><span className="text-[#4D4D4D] dark:text-[#989FA7]">Klient:</span> <span className="font-bold text-[#171717] dark:text-white">{klient.meno || 'Nešpecifikovaný'} ({klient.vek || 0}r)</span></li>
-            {hasPartner && <li className="flex justify-between border-b dark:border-[#333] pb-1"><span className="text-[#4D4D4D] dark:text-[#989FA7]">Partner:</span> <span className="font-bold text-[#171717] dark:text-white">{partner.meno || 'Nešpecifikovaný'} ({partner.vek || 0}r)</span></li>}
+            <li className="flex justify-between border-b dark:border-[#333] pb-1"><span className="text-[#4D4D4D] dark:text-[#989FA7]">Klient:</span> <span className="font-bold text-[#171717] dark:text-white">{klient.meno || 'Nešpecifikovaný'} ({klient.vekPos || 0}r)</span></li>
+            {hasPartner && <li className="flex justify-between border-b dark:border-[#333] pb-1"><span className="text-[#4D4D4D] dark:text-[#989FA7]">Partner:</span> <span className="font-bold text-[#171717] dark:text-white">{partner.meno || 'Nešpecifikovaný'} ({partner.vekPos || 0}r)</span></li>}
             <li className="flex justify-between border-b dark:border-[#333] pb-1"><span className="text-[#4D4D4D] dark:text-[#989FA7]">Počet detí:</span> <span className="font-bold text-[#171717] dark:text-white">{state.deti.length}</span></li>
             <li className="flex justify-between pt-2"><span className="text-[#4D4D4D] dark:text-[#989FA7]">Spoločný príjem:</span> <span className="font-extrabold text-lg text-green-600 dark:text-green-500">{prijmySpolu.toLocaleString('sk-SK')} €</span></li>
           </ul>
