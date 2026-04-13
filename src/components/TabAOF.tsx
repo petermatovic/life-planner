@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import { useAppStore } from '@/store/appStore';
-import { Trash2, Plus, CheckSquare, Square } from 'lucide-react';
+import { Trash2, CheckSquare, Square } from 'lucide-react';
 
 const InputRow = ({ label, value, onChange, placeholder = "" }: any) => (
   <div className="flex justify-between items-center mb-1">
