@@ -32,7 +32,7 @@ export default function TabFinancnyPlan() {
       }
       
       data.push({
-        rok: \`Rok \${rok}\`,
+        rok: `Rok ${rok}`,
         Banka: Math.round(matrac),
         Investicie: Math.round(investovane)
       });
@@ -92,10 +92,10 @@ export default function TabFinancnyPlan() {
                 </linearGradient>
               </defs>
               <XAxis dataKey="rok" stroke="#989FA7" fontSize={12} tickLine={false} axisLine={false} />
-              <YAxis stroke="#989FA7" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => \`\${value / 1000}k\`} />
+              <YAxis stroke="#989FA7" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `${value / 1000}k`} />
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#EAEAEA" />
               <Tooltip 
-                formatter={(value: number) => [\`\${value.toLocaleString('sk-SK')} €\`, '']}
+                formatter={(value: number) => [`${value.toLocaleString('sk-SK')} €`, '']}
                 contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
               />
               <Area type="monotone" dataKey="Banka" stroke="#7A8C99" fillOpacity={1} fill="url(#colorBanka)" />

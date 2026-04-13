@@ -11,7 +11,7 @@ export default function TabVystup() {
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state, null, 2));
     const dlAnchorElem = document.createElement('a');
     dlAnchorElem.setAttribute("href",     dataStr     );
-    dlAnchorElem.setAttribute("download", \`vystup_\${klient.meno || 'klient'}.json\`);
+    dlAnchorElem.setAttribute("download", `vystup_${klient.meno || 'klient'}.json`);
     dlAnchorElem.click();
   };
 
