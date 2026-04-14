@@ -269,7 +269,7 @@ export default function TabAOF() {
                 <div className="mx-1"><select value={aofCiele.zabezpeceniePartnerRentaRoky} onChange={e => setAofCiele({ zabezpeceniePartnerRentaRoky: e.target.value })} className="border w-full px-1 text-center bg-white dark:bg-[#111] py-1"><option value="20-ročná">20-ročná</option><option value="doživotná">doživotná</option></select></div>
               </div>
               <div className="grid grid-cols-3 items-center mt-3 pt-2 border-t border-[#D1D1D1] dark:border-[#333]">
-                <div className="font-bold">Dávka zo sociálnej poisťovne</div>
+                <div className="font-bold">{t('aof.davkaSocialne')}</div>
                 <div className={`mx-1 flex items-center gap-2 border px-2 py-0.5 bg-[#D6D6D6] dark:bg-[#333] ${!aofCiele.sociCheckboxKlient && 'opacity-60'}`}>
                   <input type="checkbox" checked={aofCiele.sociCheckboxKlient} onChange={e => setAofCiele({ sociCheckboxKlient: e.target.checked })} className="cursor-pointer" />
                   <span className="text-[#555] dark:text-[#AAA]">{aofCiele.sociCheckboxKlient && vypocitanaDavkaSofiKlient > 0 ? `${vypocitanaDavkaSofiKlient.toFixed(0)} €` : ''}</span>
@@ -329,10 +329,10 @@ export default function TabAOF() {
 
           {/* Rezerva na materskú dovolenku */}
           <div className="flex items-start gap-4 mb-4 pb-4 border-b border-[#D1D1D1] dark:border-[#333]">
-            <div className="w-1/4 font-extrabold flex justify-between items-center">Rezerva na materskú dovolenku <input type="checkbox" checked={aofCiele.rezervaMDCheckbox} onChange={e => setAofCiele({ rezervaMDCheckbox: e.target.checked })} /></div>
+            <div className="w-1/4 font-extrabold flex justify-between items-center">{t('aof.rezervaMDPlny')} <input type="checkbox" checked={aofCiele.rezervaMDCheckbox} onChange={e => setAofCiele({ rezervaMDCheckbox: e.target.checked })} /></div>
             {aofCiele.rezervaMDCheckbox && (
               <div className="flex-1 flex flex-col gap-1">
-                <div className="grid grid-cols-4 text-center mb-1"><div className="font-bold">Potrebná suma</div><div className="font-bold">Výška renty / mes.</div><div className="font-bold">Doba na MD (roky)</div><div className="font-bold">O koľko rokov</div></div>
+                <div className="grid grid-cols-4 text-center mb-1"><div className="font-bold">{t('aof.potrebnaSuma')}</div><div className="font-bold">{t('aof.vyskaRentyMes')}</div><div className="font-bold">{t('aof.dobaMDRoky')}</div><div className="font-bold">{t('aof.oKolkoRokov')}</div></div>
                 <div className="grid grid-cols-4 gap-2">
                   <input type="text" readOnly value={(aofCiele.rezervaMDRenta && aofCiele.rezervaMDDoba) ? `${(Number(aofCiele.rezervaMDRenta) * Number(aofCiele.rezervaMDDoba) * 12).toFixed(0)} €` : ''} className="border text-center px-1 bg-[#D6D6D6] dark:bg-[#333] cursor-not-allowed text-[#555] dark:text-[#AAA]" />
                   <input type="number" value={aofCiele.rezervaMDRenta} onChange={e => setAofCiele({ rezervaMDRenta: Number(e.target.value) || '' })} className="border text-center px-1 bg-white dark:bg-[#111]" />
