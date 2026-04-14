@@ -40,8 +40,8 @@ export interface AofCieleSetup {
   zabezpeceniePartnerKapital: number | '';
   zabezpecenieKlientRenta: number | '';
   zabezpeceniePartnerRenta: number | '';
-  zabezpecenieKlientRentaRoky: number | '';
-  zabezpeceniePartnerRentaRoky: number | '';
+  zabezpecenieKlientRentaRoky: string;
+  zabezpeceniePartnerRentaRoky: string;
   sociCheckbox: boolean;
   sociSuma: number | '';
   
@@ -133,7 +133,7 @@ export const useAppStore = create<AppState>((set) => ({
     zakladnaRezerva: '',
     zabezpecenieKlientKapital: '', zabezpeceniePartnerKapital: '',
     zabezpecenieKlientRenta: '', zabezpeceniePartnerRenta: '',
-    zabezpecenieKlientRentaRoky: '', zabezpeceniePartnerRentaRoky: '',
+    zabezpecenieKlientRentaRoky: '20-ročná', zabezpeceniePartnerRentaRoky: '20-ročná',
     sociCheckbox: false, sociSuma: '',
     byvanieCheckbox: false, byvanieNazov: 'Refinancovanie', byvanieSumaUveru: '', byvanieSplatnost: '', byvanieUrok: '', byvanieNesplatenyDiel: '',
     rezervaMDCheckbox: false,

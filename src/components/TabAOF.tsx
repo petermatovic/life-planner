@@ -54,6 +54,16 @@ export default function TabAOF() {
   const majetokPasiva = num(cashFlow.uveryZostatok);
   const cistaHodnota = majetokFyzicky + majetokFinancny - majetokPasiva;
 
+  // Zakladne ciele vypocty
+  const vypocitanaRezerva = totalPrijmy * 6;
+  const klientPrijemSpolu = num(klient.cistyMesacne) + num(klient.cistyRocne)/12;
+  const partnerPrijemSpolu = num(partner.cistyMesacne) + num(partner.cistyRocne)/12;
+  const klientVek = num(klient.vekPos);
+  const partnerVek = num(partner.vekPos);
+  const vypocitanyProdukcnyKapitalKlient = klientPrijemSpolu > 0 && klientVek > 0 ? klientPrijemSpolu * 12 * Math.max(0, 64 - klientVek) : 0;
+  const vypocitanyProdukcnyKapitalPartner = partnerPrijemSpolu > 0 && partnerVek > 0 ? partnerPrijemSpolu * 12 * Math.max(0, 64 - partnerVek) : 0;
+  const vypocitanaDavkaSofiKlient = klientPrijemSpolu * 0.40;
+
   // IDEALNE MIERY
   const optSpotreba = totalPrijmy * 0.40;
   const optUvery = totalPrijmy * 0.30;
@@ -274,22 +284,19 @@ export default function TabAOF() {
            <div className="flex flex-col gap-2">
               <div className="flex justify-between items-center bg-[#EAEAEA] dark:bg-[#1A1A1A] p-2 rounded shadow-sm border border-[#D1D1D1] dark:border-[#333]">
                 <span className="font-extrabold w-1/3">{t('aof.rezerva')}</span>
-                <input type="number" 
-                       value={aofCiele.zakladnaRezerva || ''} 
-                       onChange={(e) => setAofCiele({zakladnaRezerva: Number(e.target.value) || ''})} 
-                       className="w-2/3 border px-2 text-center bg-white dark:bg-[#111]" placeholder="23 950 €" />
+                <input type="text" readOnly value={vypocitanaRezerva > 0 ? `${vypocitanaRezerva.toFixed(0)} €` : ''} className="w-2/3 border px-2 text-center bg-transparent cursor-default font-bold text-[#AB0534]" placeholder="23 950 €" />
               </div>
               
               <div className="bg-[#EAEAEA] dark:bg-[#1A1A1A] p-2 rounded shadow-sm border border-[#D1D1D1] dark:border-[#333]">
                 <div className="grid grid-cols-3 font-extrabold mb-1"><div className="col-span-1">{t('aof.zabezpeceniePrijmu')}</div><div className="text-center">{t('aof.klient')}</div><div className="text-center">{t('aof.partner')}</div></div>
-                <div className="grid grid-cols-3 items-center mb-1"><div className="font-bold">{t('aof.produkcnyKapital')}</div><input value={aofCiele.zabezpecenieKlientKapital} onChange={e=>setAofCiele({zabezpecenieKlientKapital: Number(e.target.value)})} className="border mx-1 px-1 text-center" /><input value={aofCiele.zabezpeceniePartnerKapital} onChange={e=>setAofCiele({zabezpeceniePartnerKapital: Number(e.target.value)})} className="border mx-1 px-1 text-center" /></div>
+                <div className="grid grid-cols-3 items-center mb-1"><div className="font-bold">{t('aof.produkcnyKapital')}</div><input type="text" readOnly value={vypocitanyProdukcnyKapitalKlient > 0 ? `${vypocitanyProdukcnyKapitalKlient.toFixed(0)} €` : ''} className="border mx-1 px-1 text-center bg-transparent cursor-default" /><input type="text" readOnly value={vypocitanyProdukcnyKapitalPartner > 0 ? `${vypocitanyProdukcnyKapitalPartner.toFixed(0)} €` : ''} className="border mx-1 px-1 text-center bg-transparent cursor-default" /></div>
                 <div className="grid grid-cols-3 items-center mb-1"><div className="font-bold">{t('aof.renta')}</div><input value={aofCiele.zabezpecenieKlientRenta} onChange={e=>setAofCiele({zabezpecenieKlientRenta: Number(e.target.value)})} className="border mx-1 px-1 text-center" /><input value={aofCiele.zabezpeceniePartnerRenta} onChange={e=>setAofCiele({zabezpeceniePartnerRenta: Number(e.target.value)})} className="border mx-1 px-1 text-center" /></div>
-                <div className="grid grid-cols-3 items-center mb-2"><div className="text-right pr-2">{t('aof.naDobu')}</div><div className="mx-1 relative"><input value={aofCiele.zabezpecenieKlientRentaRoky} onChange={e=>setAofCiele({zabezpecenieKlientRentaRoky: Number(e.target.value)})} className="border w-full px-1 text-center pr-8" /><span className="absolute right-2 top-0">{t('aof.rocna')}</span></div><div className="mx-1 relative"><input value={aofCiele.zabezpeceniePartnerRentaRoky} onChange={e=>setAofCiele({zabezpeceniePartnerRentaRoky: Number(e.target.value)})} className="border w-full px-1 text-center pr-8" /><span className="absolute right-2 top-0">{t('aof.rocna')}</span></div></div>
+                <div className="grid grid-cols-3 items-center mb-2"><div className="text-right pr-2">{t('aof.naDobu')}</div><div className="mx-1"><select value={aofCiele.zabezpecenieKlientRentaRoky} onChange={e=>setAofCiele({zabezpecenieKlientRentaRoky: e.target.value})} className="border w-full px-1 text-center bg-white dark:bg-[#111] py-1"><option value="20-ročná">20-ročná</option><option value="doživotná">doživotná</option></select></div><div className="mx-1"><select value={aofCiele.zabezpeceniePartnerRentaRoky} onChange={e=>setAofCiele({zabezpeceniePartnerRentaRoky: e.target.value})} className="border w-full px-1 text-center bg-white dark:bg-[#111] py-1"><option value="20-ročná">20-ročná</option><option value="doživotná">doživotná</option></select></div></div>
                 
                 <div className="flex items-center gap-2 mt-3 pt-2 border-t border-[#D1D1D1] dark:border-[#333]">
                   <span className="flex-1">{t('aof.davkaSofi')}</span>
                   <input type="checkbox" checked={aofCiele.sociCheckbox} onChange={e=>setAofCiele({sociCheckbox: e.target.checked})} className="mx-2" />
-                  <input value={aofCiele.sociSuma} onChange={e=>setAofCiele({sociSuma: Number(e.target.value)})} className={`border px-1 text-center w-1/3 ${!aofCiele.sociCheckbox && 'opacity-50'}`} disabled={!aofCiele.sociCheckbox} />
+                  <input type="text" readOnly value={aofCiele.sociCheckbox && vypocitanaDavkaSofiKlient > 0 ? `${vypocitanaDavkaSofiKlient.toFixed(0)} €` : ''} className={`border px-1 text-center w-1/3 bg-transparent cursor-default ${!aofCiele.sociCheckbox && 'opacity-50'}`} />
                 </div>
               </div>
            </div>
