@@ -60,8 +60,8 @@ export default function TabAOF() {
   const partnerPrijemSpolu = num(partner.cistyMesacne) + num(partner.cistyRocne)/12;
   const klientVek = num(klient.vekPos);
   const partnerVek = num(partner.vekPos);
-  const vypocitanyProdukcnyKapitalKlient = klientPrijemSpolu > 0 && klientVek > 0 ? klientPrijemSpolu * 12 * Math.max(0, 64 - klientVek) : 0;
-  const vypocitanyProdukcnyKapitalPartner = partnerPrijemSpolu > 0 && partnerVek > 0 ? partnerPrijemSpolu * 12 * Math.max(0, 64 - partnerVek) : 0;
+  const vypocitanyProdukcnyKapitalKlient = klientPrijemSpolu > 0 ? klientPrijemSpolu * 12 * Math.max(0, 64 - klientVek) : 0;
+  const vypocitanyProdukcnyKapitalPartner = partnerPrijemSpolu > 0 ? partnerPrijemSpolu * 12 * Math.max(0, 64 - partnerVek) : 0;
   const vypocitanaDavkaSofiKlient = klientPrijemSpolu * 0.40;
 
   // IDEALNE MIERY
@@ -148,7 +148,7 @@ export default function TabAOF() {
                <div className="space-y-1 overflow-auto max-h-[70px] mb-1">
                 {deti.map((d, i) => (
                   <div key={d.id} className="flex gap-1 items-center">
-                    <input type="text" placeholder={t('aof.meno')} className="w-1/2 p-0.5 px-1 border" />
+                    <input type="text" value={d.meno || ''} onChange={(e) => setDeti(deti.map(x => x.id === d.id ? {...x, meno: e.target.value} : x))} placeholder={t('aof.meno')} className="w-1/2 p-0.5 px-1 border" />
                     <input type="number" value={d.vek || ''} placeholder={t('aof.vek')} onChange={(e:any) => setDeti(deti.map(x => x.id === d.id ? {...x, vek: Number(e.target.value) || ''} : x))} className="w-1/3 p-0.5 px-1 border" />
                     <button onClick={() => setDeti(deti.filter(x => x.id !== d.id))} className="text-[#AB0534]"><Trash2 size={10} /></button>
                   </div>
@@ -284,7 +284,7 @@ export default function TabAOF() {
            <div className="flex flex-col gap-2">
               <div className="flex justify-between items-center bg-[#EAEAEA] dark:bg-[#1A1A1A] p-2 rounded shadow-sm border border-[#D1D1D1] dark:border-[#333]">
                 <span className="font-extrabold w-1/3">{t('aof.rezerva')}</span>
-                <input type="text" readOnly value={vypocitanaRezerva > 0 ? `${vypocitanaRezerva.toFixed(0)} €` : ''} className="w-2/3 border px-2 text-center bg-transparent cursor-default font-bold text-[#AB0534]" placeholder="23 950 €" />
+                <input type="text" readOnly value={vypocitanaRezerva > 0 ? `${vypocitanaRezerva.toFixed(0)} €` : ''} className="w-2/3 border px-2 text-center bg-transparent cursor-default" placeholder="23 950 €" />
               </div>
               
               <div className="bg-[#EAEAEA] dark:bg-[#1A1A1A] p-2 rounded shadow-sm border border-[#D1D1D1] dark:border-[#333]">
