@@ -81,7 +81,12 @@ export const translations: Record<string, any> = {
       vAkomVeku: 'V akom veku',
       predcasnaRentaPartner: 'Predčasná renta partnera',
       ineCiele: 'Iné ciele',
-      hodnota: 'Hodnota'
+      hodnota: 'Hodnota',
+      cielAuto: 'Auto',
+      cielDovolenka: 'Dovolenka',
+      cielVzdelanie: 'Vzdelanie',
+      cielRekonstrukcia: 'Rekonštrukcia',
+      cielIne: 'Iné'
     }
   },
   EN: {
@@ -166,7 +171,12 @@ export const translations: Record<string, any> = {
       vAkomVeku: 'At what age',
       predcasnaRentaPartner: 'Early Annuity Partner',
       ineCiele: 'Other Goals',
-      hodnota: 'Value'
+      hodnota: 'Value',
+      cielAuto: 'Car',
+      cielDovolenka: 'Vacation',
+      cielVzdelanie: 'Education',
+      cielRekonstrukcia: 'Renovation',
+      cielIne: 'Other'
     }
   },
   BG: {
@@ -251,7 +261,12 @@ export const translations: Record<string, any> = {
       vAkomVeku: 'Възраст',
       predcasnaRentaPartner: 'Предсрочна рента (партньор)',
       ineCiele: 'Други цели',
-      hodnota: 'Стойност'
+      hodnota: 'Стойност',
+      cielAuto: 'Кола',
+      cielDovolenka: 'Отпуск',
+      cielVzdelanie: 'Образование',
+      cielRekonstrukcia: 'Реновация',
+      cielIne: 'Друго'
     }
   }
 };

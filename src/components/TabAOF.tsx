@@ -332,9 +332,9 @@ export default function TabAOF() {
             <div className="w-1/4 font-extrabold flex justify-between items-center">Rezerva na materskú dovolenku <input type="checkbox" checked={aofCiele.rezervaMDCheckbox} onChange={e => setAofCiele({ rezervaMDCheckbox: e.target.checked })} /></div>
             {aofCiele.rezervaMDCheckbox && (
               <div className="flex-1 flex flex-col gap-1">
-                <div className="grid grid-cols-4 text-center mb-1"><div className="font-bold">Potrebná suma</div><div className="font-bold">Výška renty</div><div className="font-bold">Doba na MD</div><div className="font-bold">O koľko rokov</div></div>
+                <div className="grid grid-cols-4 text-center mb-1"><div className="font-bold">Potrebná suma</div><div className="font-bold">Výška renty / mes.</div><div className="font-bold">Doba na MD (roky)</div><div className="font-bold">O koľko rokov</div></div>
                 <div className="grid grid-cols-4 gap-2">
-                  <input type="text" readOnly value={(aofCiele.rezervaMDRenta && aofCiele.rezervaMDDoba) ? `${(Number(aofCiele.rezervaMDRenta) * Number(aofCiele.rezervaMDDoba)).toFixed(0)} €` : ''} className="border text-center px-1 bg-[#D6D6D6] dark:bg-[#333] cursor-not-allowed text-[#555] dark:text-[#AAA]" />
+                  <input type="text" readOnly value={(aofCiele.rezervaMDRenta && aofCiele.rezervaMDDoba) ? `${(Number(aofCiele.rezervaMDRenta) * Number(aofCiele.rezervaMDDoba) * 12).toFixed(0)} €` : ''} className="border text-center px-1 bg-[#D6D6D6] dark:bg-[#333] cursor-not-allowed text-[#555] dark:text-[#AAA]" />
                   <input type="number" value={aofCiele.rezervaMDRenta} onChange={e => setAofCiele({ rezervaMDRenta: Number(e.target.value) || '' })} className="border text-center px-1 bg-white dark:bg-[#111]" />
                   <input type="number" value={aofCiele.rezervaMDDoba} onChange={e => setAofCiele({ rezervaMDDoba: Number(e.target.value) || '' })} className="border text-center px-1 bg-white dark:bg-[#111]" />
                   <input type="number" value={aofCiele.rezervaMDRoky} onChange={e => setAofCiele({ rezervaMDRoky: Number(e.target.value) || '' })} className="border text-center px-1 bg-white dark:bg-[#111]" />
@@ -378,8 +378,14 @@ export default function TabAOF() {
 
           {aofCiele.ineCieleExpand && aofCiele.ineCiele.map(c => (
             <div key={c.id} className="flex items-center gap-4 mb-1">
-              <div className="w-1/4 flex justify-between items-center gap-2">
-                <input type="text" value={c.nazov} onChange={e => setAofCiele({ ineCiele: aofCiele.ineCiele.map(x => x.id === c.id ? { ...x, nazov: e.target.value } : x) })} className="flex-1 border px-1 bg-white dark:bg-[#111]" />
+              <div className="w-1/4 flex justify-between items-center gap-1">
+                <select value={c.nazov} onChange={e => setAofCiele({ ineCiele: aofCiele.ineCiele.map(x => x.id === c.id ? { ...x, nazov: e.target.value } : x) })} className="flex-1 border px-1 bg-white dark:bg-[#111] text-[11px]">
+                  <option value="Auto">🚗 {t('aof.cielAuto')}</option>
+                  <option value="Dovolenka">✈️ {t('aof.cielDovolenka')}</option>
+                  <option value="Vzdelanie">🎓 {t('aof.cielVzdelanie')}</option>
+                  <option value="Rekonstructia">🏠 {t('aof.cielRekonstrukcia')}</option>
+                  <option value="Ine">{t('aof.cielIne')}</option>
+                </select>
                 <input type="checkbox" checked={c.checked} onChange={e => setAofCiele({ ineCiele: aofCiele.ineCiele.map(x => x.id === c.id ? { ...x, checked: e.target.checked } : x) })} />
               </div>
               <div className={`flex-1 grid grid-cols-3 gap-2 transition-opacity ${!c.checked && 'opacity-50'}`}>
