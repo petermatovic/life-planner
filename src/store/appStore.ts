@@ -42,7 +42,8 @@ export interface AofCieleSetup {
   zabezpeceniePartnerRenta: number | '';
   zabezpecenieKlientRentaRoky: string;
   zabezpeceniePartnerRentaRoky: string;
-  sociCheckbox: boolean;
+  sociCheckboxKlient: boolean;
+  sociCheckboxPartner: boolean;
   sociSuma: number | '';
   
   byvanieCheckbox: boolean;
@@ -53,6 +54,10 @@ export interface AofCieleSetup {
   byvanieNesplatenyDiel: number | '';
   
   rezervaMDCheckbox: boolean;
+  rezervaMDRenta: number | '';
+  rezervaMDDoba: number | '';
+  rezervaMDRoky: number | '';
+  ineCieleExpand: boolean;
   
   predcasnaRentaKlientCheckbox: boolean;
   predcasnaRentaKlientVyska: number | '';
@@ -134,9 +139,9 @@ export const useAppStore = create<AppState>((set) => ({
     zabezpecenieKlientKapital: '', zabezpeceniePartnerKapital: '',
     zabezpecenieKlientRenta: 1500, zabezpeceniePartnerRenta: 1200,
     zabezpecenieKlientRentaRoky: '20-ročná', zabezpeceniePartnerRentaRoky: '20-ročná',
-    sociCheckbox: false, sociSuma: '',
+    sociCheckboxKlient: false, sociCheckboxPartner: false, sociSuma: '',
     byvanieCheckbox: false, byvanieNazov: 'Refinancovanie', byvanieSumaUveru: 80000, byvanieSplatnost: 20, byvanieUrok: 3.5, byvanieNesplatenyDiel: 80000,
-    rezervaMDCheckbox: false,
+    rezervaMDCheckbox: false, rezervaMDRenta: '', rezervaMDDoba: '', rezervaMDRoky: '', ineCieleExpand: false,
     predcasnaRentaKlientCheckbox: false, predcasnaRentaKlientVyska: '', predcasnaRentaKlientVek: '',
     predcasnaRentaPartnerCheckbox: false, predcasnaRentaPartnerVyska: '', predcasnaRentaPartnerVek: '',
     ineCiele: []

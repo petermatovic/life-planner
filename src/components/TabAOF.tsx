@@ -63,7 +63,7 @@ export default function TabAOF() {
   const vypocitanyProdukcnyKapitalKlient = klientPrijemSpolu > 0 ? klientPrijemSpolu * 12 * Math.max(0, 64 - klientVek) : 0;
   const vypocitanyProdukcnyKapitalPartner = partnerPrijemSpolu > 0 ? partnerPrijemSpolu * 12 * Math.max(0, 64 - partnerVek) : 0;
   const vypocitanaDavkaSofiKlient = klientPrijemSpolu * 0.40;
-
+  const vypocitanaDavkaSofiPartner = partnerPrijemSpolu * 0.40;
   // IDEALNE MIERY
   const optSpotreba = totalPrijmy * 0.40;
   const optUvery = totalPrijmy * 0.30;
@@ -286,99 +286,6 @@ export default function TabAOF() {
                 <span className="font-extrabold w-1/3">{t('aof.rezerva')}</span>
                 <input type="text" readOnly value={vypocitanaRezerva > 0 ? `${vypocitanaRezerva.toFixed(0)} €` : ''} className="w-2/3 border px-2 text-center bg-[#D6D6D6] dark:bg-[#333] cursor-not-allowed text-[#555] dark:text-[#AAA]" placeholder="23 950 €" />
               </div>
-              
-              <div className="bg-[#EAEAEA] dark:bg-[#1A1A1A] p-2 rounded shadow-sm border border-[#D1D1D1] dark:border-[#333]">
-                <div className="grid grid-cols-3 font-extrabold mb-1"><div className="col-span-1">{t('aof.zabezpeceniePrijmu')}</div><div className="text-center">{t('aof.klient')}</div><div className="text-center">{t('aof.partner')}</div></div>
-                <div className="grid grid-cols-3 items-center mb-1"><div className="font-bold">{t('aof.produkcnyKapital')}</div><input type="text" readOnly value={vypocitanyProdukcnyKapitalKlient > 0 ? `${vypocitanyProdukcnyKapitalKlient.toFixed(0)} €` : ''} className="border mx-1 px-1 text-center bg-[#D6D6D6] dark:bg-[#333] cursor-not-allowed text-[#555] dark:text-[#AAA]" /><input type="text" readOnly value={vypocitanyProdukcnyKapitalPartner > 0 ? `${vypocitanyProdukcnyKapitalPartner.toFixed(0)} €` : ''} className="border mx-1 px-1 text-center bg-[#D6D6D6] dark:bg-[#333] cursor-not-allowed text-[#555] dark:text-[#AAA]" /></div>
-                <div className="grid grid-cols-3 items-center mb-1"><div className="font-bold">{t('aof.renta')}</div><input value={aofCiele.zabezpecenieKlientRenta} onChange={e=>setAofCiele({zabezpecenieKlientRenta: Number(e.target.value)})} className="border mx-1 px-1 text-center bg-white dark:bg-[#111]" /><input value={aofCiele.zabezpeceniePartnerRenta} onChange={e=>setAofCiele({zabezpeceniePartnerRenta: Number(e.target.value)})} className="border mx-1 px-1 text-center bg-white dark:bg-[#111]" /></div>
-                <div className="grid grid-cols-3 items-center mb-2"><div className="text-right pr-2">{t('aof.naDobu')}</div><div className="mx-1"><select value={aofCiele.zabezpecenieKlientRentaRoky} onChange={e=>setAofCiele({zabezpecenieKlientRentaRoky: e.target.value})} className="border w-full px-1 text-center bg-white dark:bg-[#111] py-1"><option value="20-ročná">20-ročná</option><option value="doživotná">doživotná</option></select></div><div className="mx-1"><select value={aofCiele.zabezpeceniePartnerRentaRoky} onChange={e=>setAofCiele({zabezpeceniePartnerRentaRoky: e.target.value})} className="border w-full px-1 text-center bg-white dark:bg-[#111] py-1"><option value="20-ročná">20-ročná</option><option value="doživotná">doživotná</option></select></div></div>
-                
-                <div className="flex items-center gap-2 mt-3 pt-2 border-t border-[#D1D1D1] dark:border-[#333] bg-white dark:bg-[#111]">
-                  <span className="flex-1">{t('aof.davkaSofi')}</span>
-                  <input type="checkbox" checked={aofCiele.sociCheckbox} onChange={e=>setAofCiele({sociCheckbox: e.target.checked})} className="mx-2" />
-                  <input type="text" readOnly value={aofCiele.sociCheckbox && vypocitanaDavkaSofiKlient > 0 ? `${vypocitanaDavkaSofiKlient.toFixed(0)} €` : ''} className={`border px-1 text-center w-1/3 bg-[#D6D6D6] dark:bg-[#333] cursor-not-allowed text-[#555] dark:text-[#AAA] ${!aofCiele.sociCheckbox && 'opacity-50'}`} />
-                </div>
-              </div>
-           </div>
-
-           {/* DETI (PRAVA STRANA) */}
-           <div className="bg-[#EAEAEA] dark:bg-[#1A1A1A] p-2 rounded shadow-sm border border-[#D1D1D1] dark:border-[#333] h-min">
-              <div className="grid grid-cols-4 font-extrabold mb-2 pb-1 border-b border-[#D1D1D1] dark:border-[#333] bg-white dark:bg-[#111]">
-                 <div>{t('aof.deti')}</div><div className="text-center">{t('aof.suma')}</div><div className="text-center">{t('aof.doVeku')}</div><div className="text-center">{t('aof.oKolkoRokov')}</div>
-              </div>
-              <div className="space-y-1">
-                 {deti.map(d => (
-                   <div className="grid grid-cols-4 items-center gap-1" key={d.id}>
-                     <input value={d.meno || ''} readOnly className="border px-1 bg-[#D6D6D6] dark:bg-[#333] cursor-not-allowed text-[#555] dark:text-[#AAA]" placeholder={t('aof.meno')} />
-                     <input type="number" value={d.cielSuma || ''} onChange={e=>setDeti(deti.map(x=>x.id===d.id ? {...x, cielSuma: Number(e.target.value)} : x))} className="border px-1 text-center bg-white dark:bg-[#111]" />
-                     <input type="number" value={d.cielDoVeku || ''} onChange={e=>setDeti(deti.map(x=>x.id===d.id ? {...x, cielDoVeku: Number(e.target.value)} : x))} className="border px-1 text-center bg-white dark:bg-[#111]" />
-                     <div className="border px-1 text-center bg-[#FAFAFA] dark:bg-[#222]">{(d.cielDoVeku && d.vek) ? Number(d.cielDoVeku) - Number(d.vek) : ''}</div>
-                   </div>
-                 ))}
-                 {deti.length === 0 && <div className="text-center text-[#989FA7] py-2">{t('aof.ziadneDeti')}</div>}
-              </div>
-           </div>
-        </div>
-
-        {/* HEADER 2 */}
-        <div className="bg-[#808080] dark:bg-[#4D4D4D] text-white text-center font-bold py-1 mt-4 uppercase tracking-wider">{t('aof.cieleKlienta')}</div>
-
-        <div className="bg-[#EAEAEA] dark:bg-[#1A1A1A] p-4 rounded shadow-sm border border-[#D1D1D1] dark:border-[#333]">
-           {/* Byvanie */}
-           <div className="flex items-start gap-4 mb-4 pb-4 border-b border-[#D1D1D1] dark:border-[#333] bg-white dark:bg-[#111]">
-             <div className="w-1/4 font-extrabold flex flex-col gap-2">{t('aof.byvanie')} <div className="text-right w-full"><input type="checkbox" checked={aofCiele.byvanieCheckbox} onChange={e=>setAofCiele({byvanieCheckbox: e.target.checked})} /></div><input type="text" value={aofCiele.byvanieNazov} onChange={e=>setAofCiele({byvanieNazov: e.target.value})} className="border font-normal px-1 w-full bg-white dark:bg-[#111]" /></div>
-             <div className={`flex-1 flex flex-col gap-1 transition-opacity ${!aofCiele.byvanieCheckbox && 'opacity-50'}`}>
-                <div className="grid grid-cols-3 text-center mb-1"><div className="font-bold">{t('aof.sumaUveru')}</div><div className="font-bold">{t('aof.splatnost')}</div><div className="font-bold">{t('aof.urok')}</div></div>
-                <div className="grid grid-cols-3 gap-2">
-                   <input type="number" value={aofCiele.byvanieSumaUveru} onChange={e=>setAofCiele({byvanieSumaUveru: Number(e.target.value)})} className="border text-center px-1 bg-white dark:bg-[#111]" />
-                   <input type="number" value={aofCiele.byvanieSplatnost} onChange={e=>setAofCiele({byvanieSplatnost: Number(e.target.value)})} className="border text-center px-1 bg-white dark:bg-[#111]" />
-                   <div className="relative"><input type="number" step="0.1" value={aofCiele.byvanieUrok} onChange={e=>setAofCiele({byvanieUrok: Number(e.target.value)})} className="border text-center px-1 w-full bg-white dark:bg-[#111]" /><span className="absolute right-2 top-0">%</span></div>
-                </div>
-                <div className="grid grid-cols-3 gap-2 mt-2">
-                   <div className="col-span-2 flex items-center gap-2"><span className="w-1/2 text-right">{t('aof.splatkaUveru')}</span> <span className="border text-center px-1 bg-white dark:bg-[#111] flex-1 min-h-[22px] font-bold text-[#AB0534]">{byvanieSplatka > 0 ? `${byvanieSplatka.toFixed(0)} €` : ''}</span></div>
-                </div>
-             </div>
-             <div className={`w-1/4 flex flex-col gap-1 text-center transition-opacity ${!aofCiele.byvanieCheckbox && 'opacity-50'}`}>
-                <div className="font-bold">{t('aof.nesplatenyUver')}</div>
-                <input type="number" value={aofCiele.byvanieNesplatenyDiel} onChange={e=>setAofCiele({byvanieNesplatenyDiel: Number(e.target.value)})} className="border text-center px-1 bg-white dark:bg-[#111]" />
-             </div>
-           </div>
-
-           {/* Rezerva MD */}
-           <div className="flex items-center gap-4 mb-4">
-             <div className="w-1/4 font-extrabold flex justify-between items-center">{t('aof.rezervaMD')} <input type="checkbox" checked={aofCiele.rezervaMDCheckbox} onChange={e=>setAofCiele({rezervaMDCheckbox: e.target.checked})} /></div>
-           </div>
-
-           {/* Renty */}
-           <div className="flex items-center gap-4 mb-2">
-             <div className="w-1/4 font-extrabold flex justify-between items-center">{t('aof.predcasnaRenta')} <input type="checkbox" checked={aofCiele.predcasnaRentaKlientCheckbox} onChange={e=>setAofCiele({predcasnaRentaKlientCheckbox: e.target.checked})} /></div>
-             <div className={`flex-1 grid grid-cols-3 gap-2 transition-opacity ${!aofCiele.predcasnaRentaKlientCheckbox && 'opacity-50'}`}>
-                <div className="flex flex-col text-center"><span className="font-bold">{t('aof.vyskaRenty')}</span><input type="number" value={aofCiele.predcasnaRentaKlientVyska} onChange={e=>setAofCiele({predcasnaRentaKlientVyska: Number(e.target.value)})} className="border text-center px-1 bg-white dark:bg-[#111]" /></div>
-                <div className="flex flex-col text-center"><span className="font-bold">{t('aof.vAkomVeku')}</span><input type="number" value={aofCiele.predcasnaRentaKlientVek} onChange={e=>setAofCiele({predcasnaRentaKlientVek: Number(e.target.value)})} className="border text-center px-1 bg-white dark:bg-[#111]" /></div>
-             </div>
-           </div>
-           
-           <div className="flex items-center gap-4 mb-4 pb-4 border-b border-[#D1D1D1] dark:border-[#333] bg-white dark:bg-[#111]">
-             <div className="w-1/4 font-extrabold flex justify-between items-center">{t('aof.predcasnaRentaPartner')} <input type="checkbox" checked={aofCiele.predcasnaRentaPartnerCheckbox} onChange={e=>setAofCiele({predcasnaRentaPartnerCheckbox: e.target.checked})} /></div>
-             <div className={`flex-1 grid grid-cols-3 gap-2 transition-opacity ${!aofCiele.predcasnaRentaPartnerCheckbox && 'opacity-50'}`}>
-                <div className="flex flex-col text-center"><span className="font-bold mb-1 opacity-0">.</span><input type="number" value={aofCiele.predcasnaRentaPartnerVyska} onChange={e=>setAofCiele({predcasnaRentaPartnerVyska: Number(e.target.value)})} className="border text-center px-1 bg-white dark:bg-[#111]" /></div>
-                <div className="flex flex-col text-center"><span className="font-bold mb-1 opacity-0">.</span><input type="number" value={aofCiele.predcasnaRentaPartnerVek} onChange={e=>setAofCiele({predcasnaRentaPartnerVek: Number(e.target.value)})} className="border text-center px-1 bg-white dark:bg-[#111]" /></div>
-             </div>
-           </div>
-
-           {/* Ine */}
-           <div className="flex items-center gap-4 mb-2 relative">
-             <div className="w-1/4 font-extrabold flex justify-between items-center">{t('aof.ineCiele')} <button onClick={()=>setAofCiele({ineCiele: [...aofCiele.ineCiele, {id: Date.now(), nazov: 'Auto', hodnota: '', horizont: '', checked: false}]})} className="text-[10px] bg-white dark:bg-[#333] px-1 border rounded">{t('aof.pridat')} +</button></div>
-             <div className="flex-1 grid grid-cols-3 gap-2">
-                <div className="text-center font-bold">{t('aof.hodnota')}</div>
-                <div className="text-center font-bold">{t('aof.oKolkoRokov')}</div>
-             </div>
-           </div>
-           
-           {aofCiele.ineCiele.map(c => (
-              <div key={c.id} className="flex items-center gap-4 mb-1">
-                 <div className="w-1/4 flex justify-between items-center gap-2">
-                    <input type="text" value={c.nazov} onChange={e=>setAofCiele({ineCiele: aofCiele.ineCiele.map(x=>x.id===c.id?{...x,nazov:e.target.value}:x)})} className="flex-1 border px-1 bg-white dark:bg-[#111]" />
                     <input type="checkbox" checked={c.checked} onChange={e=>setAofCiele({ineCiele: aofCiele.ineCiele.map(x=>x.id===c.id?{...x,checked:e.target.checked}:x)})} />
                  </div>
                  <div className={`flex-1 grid grid-cols-3 gap-2 transition-opacity ${!c.checked && 'opacity-50'}`}>
