@@ -68,6 +68,11 @@ export interface AofCieleSetup {
   predcasnaRentaPartnerVek: number | '';
   
   ineCiele: InyCiel[];
+  
+  // Priority table
+  goalPriorities: Record<string, number>; // goalId -> priority order (1-N, 0 = not selected)
+  urokInvestovanie: number;  // % p.a. for monthly payment calculation
+  urokVyplata: number;       // % p.a. for drawdown / loan
 }
 
 interface AppState {
@@ -144,7 +149,10 @@ export const useAppStore = create<AppState>((set) => ({
     rezervaMDCheckbox: false, rezervaMDRenta: '', rezervaMDDoba: '', rezervaMDRoky: '', ineCieleExpand: false,
     predcasnaRentaKlientCheckbox: false, predcasnaRentaKlientVyska: '', predcasnaRentaKlientVek: '',
     predcasnaRentaPartnerCheckbox: false, predcasnaRentaPartnerVyska: '', predcasnaRentaPartnerVek: '',
-    ineCiele: []
+    ineCiele: [],
+    goalPriorities: {},
+    urokInvestovanie: 5.0,
+    urokVyplata: 4.5,
   },
   jazyk: 'SK',
   setKlient: (data) => set((state) => ({ klient: { ...state.klient, ...data } })),
