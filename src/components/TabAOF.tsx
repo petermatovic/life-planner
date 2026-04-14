@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 import React from 'react';
 import { useAppStore } from '@/store/appStore';
 import { useTranslation } from '@/hooks/useTranslation';
@@ -50,7 +50,7 @@ export default function TabAOF() {
   const majetokPasiva = num(cashFlow.uveryZostatok);
   const cistaHodnota = majetokFyzicky + majetokFinancny - majetokPasiva;
 
-  // ZĂˇkladnĂ© ciele vĂ˝poÄŤty
+  // Základné ciele výpočty
   const vypocitanaRezerva = totalPrijmy * 6;
   const klientPrijemSpolu = num(klient.cistyMesacne) + num(klient.cistyRocne) / 12;
   const partnerPrijemSpolu = num(partner.cistyMesacne) + num(partner.cistyRocne) / 12;
@@ -79,8 +79,8 @@ export default function TabAOF() {
   const byvanieSplatka = calcPmt(aofCiele.byvanieSumaUveru, aofCiele.byvanieSplatnost, aofCiele.byvanieUrok);
 
   const chartData = [
-    { name: t('aof.optimal'), Spotreba: optSpotreba, 'Ăšvery': optUvery, Tvorba: optMajetok, Rezerva: optRezerva },
-    { name: t('aof.sucasne'), Spotreba: sucSpotreba, 'Ăšvery': sucUvery, Tvorba: sucMajetok, Rezerva: sucRezerva },
+    { name: t('aof.optimal'), Spotreba: optSpotreba, 'Úvery': optUvery, Tvorba: optMajetok, Rezerva: optRezerva },
+    { name: t('aof.sucasne'), Spotreba: sucSpotreba, 'Úvery': sucUvery, Tvorba: sucMajetok, Rezerva: sucRezerva },
   ];
 
   return (
@@ -145,13 +145,13 @@ export default function TabAOF() {
           <div className="bg-[#FAFAFA] dark:bg-[#1A1A1A] rounded p-2 border border-[#ECEDED] dark:border-[#2A2A2A] shadow-sm flex-1 flex flex-col">
             <div className="flex justify-between items-center mb-1">
               <h2 className="font-extrabold text-[10px] uppercase tracking-wide">{t('aof.majetok')}</h2>
-              <button className="text-[9px] font-bold" onClick={() => setMajetok([...majetok, { id: Date.now(), nazov: 'Byt', typ: 'FyzickĂ˝', hodnota: '' }])}>{t('aof.pridat')}</button>
+              <button className="text-[9px] font-bold" onClick={() => setMajetok([...majetok, { id: Date.now(), nazov: 'Byt', typ: 'Fyzický', hodnota: '' }])}>{t('aof.pridat')}</button>
             </div>
             <div className="space-y-1 overflow-auto max-h-[80px]">
               {majetok.map(m => (
                 <div key={m.id} className="flex gap-1 items-center">
                   <select value={m.nazov} onChange={(e) => setMajetok(majetok.map(x => x.id === m.id ? { ...x, nazov: e.target.value } : x))} className="w-1/2 text-[10px] border px-1 bg-white dark:bg-[#111]">
-                    <option>Byt</option><option>Dom</option><option>Auto</option><option>InĂ©</option>
+                    <option>Byt</option><option>Dom</option><option>Auto</option><option>Iné</option>
                   </select>
                   <input type="number" value={m.hodnota} placeholder={t('aof.aktualnaHodnota')} onChange={(e) => setMajetok(majetok.map(x => x.id === m.id ? { ...x, hodnota: Number(e.target.value) || '' } : x))} className="w-1/3 text-[10px] border px-1 text-right bg-white dark:bg-[#111]" />
                   <button onClick={() => setMajetok(majetok.filter(x => x.id !== m.id))} className="text-[#AB0534]"><Trash2 size={10} /></button>
@@ -192,14 +192,14 @@ export default function TabAOF() {
         <div className="flex flex-col gap-4">
           <div className="bg-[#EAEAEA] dark:bg-[#1A1A1A] rounded p-4 border border-[#D1D1D1] dark:border-[#2A2A2A] shadow-sm text-xs font-bold">
             <h2 className="font-extrabold text-sm uppercase tracking-wide border-b border-[#D1D1D1] dark:border-[#4D4D4D] pb-1 mb-2">{t('aof.mesacnyCashflowTitle')}</h2>
-            <div className="flex justify-between py-1"><span>{t('aof.prijmy')}</span> <span className="bg-white dark:bg-[#333] px-2 border">{totalPrijmy.toFixed(0)} â‚¬</span></div>
-            <div className="flex justify-between py-1"><span>{t('aof.vydavky')}</span> <span className="bg-white dark:bg-[#333] px-2 border">{totalVydavky.toFixed(0)} â‚¬</span></div>
-            <div className="flex justify-between py-1"><span>{t('aof.rozdiel')}</span> <span className="bg-white dark:bg-[#333] px-2 border">{rozdiel.toFixed(0)} â‚¬</span></div>
+            <div className="flex justify-between py-1"><span>{t('aof.prijmy')}</span> <span className="bg-white dark:bg-[#333] px-2 border">{totalPrijmy.toFixed(0)} €</span></div>
+            <div className="flex justify-between py-1"><span>{t('aof.vydavky')}</span> <span className="bg-white dark:bg-[#333] px-2 border">{totalVydavky.toFixed(0)} €</span></div>
+            <div className="flex justify-between py-1"><span>{t('aof.rozdiel')}</span> <span className="bg-white dark:bg-[#333] px-2 border">{rozdiel.toFixed(0)} €</span></div>
             <h2 className="font-extrabold text-sm uppercase tracking-wide border-b border-[#D1D1D1] dark:border-[#4D4D4D] pb-1 mt-4 mb-2">{t('aof.majetokTitle')}</h2>
-            <div className="flex justify-between py-1"><span>{t('aof.fyzicky')}</span> <span className="bg-white dark:bg-[#333] px-2 border">{majetokFyzicky.toFixed(0)} â‚¬</span></div>
-            <div className="flex justify-between py-1"><span>{t('aof.financny')}</span> <span className="bg-white dark:bg-[#333] px-2 border">{majetokFinancny.toFixed(0)} â‚¬</span></div>
-            <div className="flex justify-between py-1"><span>{t('aof.pasiva')}</span> <span className="bg-white dark:bg-[#333] px-2 border">{majetokPasiva.toFixed(0)} â‚¬</span></div>
-            <div className="flex justify-between py-2 mt-2 border-t border-[#D1D1D1] dark:border-[#4D4D4D] text-sm font-extrabold"><span>{t('aof.cistaHodnota')}</span> <span className="bg-white dark:bg-[#333] px-2 border">{cistaHodnota.toFixed(0)} â‚¬</span></div>
+            <div className="flex justify-between py-1"><span>{t('aof.fyzicky')}</span> <span className="bg-white dark:bg-[#333] px-2 border">{majetokFyzicky.toFixed(0)} €</span></div>
+            <div className="flex justify-between py-1"><span>{t('aof.financny')}</span> <span className="bg-white dark:bg-[#333] px-2 border">{majetokFinancny.toFixed(0)} €</span></div>
+            <div className="flex justify-between py-1"><span>{t('aof.pasiva')}</span> <span className="bg-white dark:bg-[#333] px-2 border">{majetokPasiva.toFixed(0)} €</span></div>
+            <div className="flex justify-between py-2 mt-2 border-t border-[#D1D1D1] dark:border-[#4D4D4D] text-sm font-extrabold"><span>{t('aof.cistaHodnota')}</span> <span className="bg-white dark:bg-[#333] px-2 border">{cistaHodnota.toFixed(0)} €</span></div>
           </div>
 
           <div className="bg-[#EAEAEA] dark:bg-[#1A1A1A] rounded p-4 border border-[#D1D1D1] dark:border-[#2A2A2A] shadow-sm text-xs relative flex flex-col xl:flex-row gap-6">
@@ -207,10 +207,10 @@ export default function TabAOF() {
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={chartData} margin={{ top: 20, right: 0, left: -20, bottom: 0 }}>
                   <XAxis dataKey="name" tick={{ fontSize: 10, fill: '#989FA7' }} axisLine={false} tickLine={false} />
-                  <YAxis tickFormatter={(val) => `${val} â‚¬`} tick={{ fontSize: 10, fill: '#989FA7' }} axisLine={false} tickLine={false} />
-                  <Tooltip cursor={{ fill: 'transparent' }} contentStyle={{ backgroundColor: '#111', border: '1px solid #333', borderRadius: '4px', color: '#fff' }} formatter={(value: any) => `${Number(value).toFixed(0)} â‚¬`} />
+                  <YAxis tickFormatter={(val) => `${val} €`} tick={{ fontSize: 10, fill: '#989FA7' }} axisLine={false} tickLine={false} />
+                  <Tooltip cursor={{ fill: 'transparent' }} contentStyle={{ backgroundColor: '#111', border: '1px solid #333', borderRadius: '4px', color: '#fff' }} formatter={(value: any) => `${Number(value).toFixed(0)} €`} />
                   <Bar dataKey="Spotreba" stackId="a" fill="#1E5083" />
-                  <Bar dataKey="Ăšvery" stackId="a" fill="#E06138" />
+                  <Bar dataKey="Úvery" stackId="a" fill="#E06138" />
                   <Bar dataKey="Tvorba" stackId="a" fill="#166E36" />
                   <Bar dataKey="Rezerva" stackId="a" fill="#009EDC"><LabelList dataKey="name" position="insideTop" fill="#fff" fontSize={0} /></Bar>
                 </BarChart>
@@ -228,9 +228,9 @@ export default function TabAOF() {
                 ].map(row => (
                   <div key={row.pct} className="grid grid-cols-4 items-center bg-white dark:bg-[#333] border p-1 rounded font-bold">
                     <div className="flex items-center gap-1"><span className="border text-[9px] px-0.5 bg-white dark:bg-[#111]" style={{ borderColor: row.color }}>{row.pct}</span> {row.label}</div>
-                    <div className="text-right px-1">{row.opt.toFixed(0)} â‚¬</div>
-                    <div className="text-right px-1">{row.suc.toFixed(0)} â‚¬</div>
-                    <div className="text-right px-1 text-[#AB0534]">{(row.opt - row.suc).toFixed(0)} â‚¬</div>
+                    <div className="text-right px-1">{row.opt.toFixed(0)} €</div>
+                    <div className="text-right px-1">{row.suc.toFixed(0)} €</div>
+                    <div className="text-right px-1 text-[#AB0534]">{(row.opt - row.suc).toFixed(0)} €</div>
                   </div>
                 ))}
               </div>
@@ -244,19 +244,19 @@ export default function TabAOF() {
         <div className="bg-[#808080] dark:bg-[#4D4D4D] text-white text-center font-bold py-1 uppercase tracking-wider">{t('aof.zakladneCiele')}</div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* ZĂKLADNĂ‰ CIELE - Ä˝AVĂť STÄąPEC */}
+          {/* ZÁKLADNÉ CIELE - ĽAVÝ STĹPEC */}
           <div className="flex flex-col gap-2">
             <div className="flex justify-between items-center bg-[#EAEAEA] dark:bg-[#1A1A1A] p-2 rounded shadow-sm border border-[#D1D1D1] dark:border-[#333]">
               <span className="font-extrabold w-1/3">{t('aof.rezerva')}</span>
-              <input type="text" readOnly value={vypocitanaRezerva > 0 ? `${vypocitanaRezerva.toFixed(0)} â‚¬` : ''} className="w-2/3 border px-2 text-center bg-[#D6D6D6] dark:bg-[#333] cursor-not-allowed text-[#555] dark:text-[#AAA]" placeholder="23 950 â‚¬" />
+              <input type="text" readOnly value={vypocitanaRezerva > 0 ? `${vypocitanaRezerva.toFixed(0)} €` : ''} className="w-2/3 border px-2 text-center bg-[#D6D6D6] dark:bg-[#333] cursor-not-allowed text-[#555] dark:text-[#AAA]" placeholder="23 950 €" />
             </div>
 
             <div className="bg-[#EAEAEA] dark:bg-[#1A1A1A] p-2 rounded shadow-sm border border-[#D1D1D1] dark:border-[#333]">
               <div className="grid grid-cols-3 font-extrabold mb-1"><div className="col-span-1">{t('aof.zabezpeceniePrijmu')}</div><div className="text-center">{t('aof.klient')}</div><div className="text-center">{t('aof.partner')}</div></div>
               <div className="grid grid-cols-3 items-center mb-1">
                 <div className="font-bold">{t('aof.produkcnyKapital')}</div>
-                <input type="text" readOnly value={vypocitanyProdukcnyKapitalKlient > 0 ? `${vypocitanyProdukcnyKapitalKlient.toFixed(0)} â‚¬` : ''} className="border mx-1 px-1 text-center bg-[#D6D6D6] dark:bg-[#333] cursor-not-allowed text-[#555] dark:text-[#AAA]" />
-                <input type="text" readOnly value={vypocitanyProdukcnyKapitalPartner > 0 ? `${vypocitanyProdukcnyKapitalPartner.toFixed(0)} â‚¬` : ''} className="border mx-1 px-1 text-center bg-[#D6D6D6] dark:bg-[#333] cursor-not-allowed text-[#555] dark:text-[#AAA]" />
+                <input type="text" readOnly value={vypocitanyProdukcnyKapitalKlient > 0 ? `${vypocitanyProdukcnyKapitalKlient.toFixed(0)} €` : ''} className="border mx-1 px-1 text-center bg-[#D6D6D6] dark:bg-[#333] cursor-not-allowed text-[#555] dark:text-[#AAA]" />
+                <input type="text" readOnly value={vypocitanyProdukcnyKapitalPartner > 0 ? `${vypocitanyProdukcnyKapitalPartner.toFixed(0)} €` : ''} className="border mx-1 px-1 text-center bg-[#D6D6D6] dark:bg-[#333] cursor-not-allowed text-[#555] dark:text-[#AAA]" />
               </div>
               <div className="grid grid-cols-3 items-center mb-1">
                 <div className="font-bold">{t('aof.renta')}</div>
@@ -265,24 +265,24 @@ export default function TabAOF() {
               </div>
               <div className="grid grid-cols-3 items-center mb-2">
                 <div className="text-right pr-2">{t('aof.naDobu')}</div>
-                <div className="mx-1"><select value={aofCiele.zabezpecenieKlientRentaRoky} onChange={e => setAofCiele({ zabezpecenieKlientRentaRoky: e.target.value })} className="border w-full px-1 text-center bg-white dark:bg-[#111] py-1"><option value="20-roÄŤnĂˇ">20-roÄŤnĂˇ</option><option value="doĹľivotnĂˇ">doĹľivotnĂˇ</option></select></div>
-                <div className="mx-1"><select value={aofCiele.zabezpeceniePartnerRentaRoky} onChange={e => setAofCiele({ zabezpeceniePartnerRentaRoky: e.target.value })} className="border w-full px-1 text-center bg-white dark:bg-[#111] py-1"><option value="20-roÄŤnĂˇ">20-roÄŤnĂˇ</option><option value="doĹľivotnĂˇ">doĹľivotnĂˇ</option></select></div>
+                <div className="mx-1"><select value={aofCiele.zabezpecenieKlientRentaRoky} onChange={e => setAofCiele({ zabezpecenieKlientRentaRoky: e.target.value })} className="border w-full px-1 text-center bg-white dark:bg-[#111] py-1"><option value="20-ročná">20-ročná</option><option value="doživotná">doživotná</option></select></div>
+                <div className="mx-1"><select value={aofCiele.zabezpeceniePartnerRentaRoky} onChange={e => setAofCiele({ zabezpeceniePartnerRentaRoky: e.target.value })} className="border w-full px-1 text-center bg-white dark:bg-[#111] py-1"><option value="20-ročná">20-ročná</option><option value="doživotná">doživotná</option></select></div>
               </div>
               <div className="grid grid-cols-3 items-center mt-3 pt-2 border-t border-[#D1D1D1] dark:border-[#333]">
-                <div className="font-bold">DĂˇvka zo sociĂˇlnej poisĹĄovne</div>
+                <div className="font-bold">Dávka zo sociálnej poisťovne</div>
                 <div className={`mx-1 flex items-center gap-2 border px-2 py-0.5 bg-[#D6D6D6] dark:bg-[#333] ${!aofCiele.sociCheckboxKlient && 'opacity-60'}`}>
                   <input type="checkbox" checked={aofCiele.sociCheckboxKlient} onChange={e => setAofCiele({ sociCheckboxKlient: e.target.checked })} className="cursor-pointer" />
-                  <span className="text-[#555] dark:text-[#AAA]">{aofCiele.sociCheckboxKlient && vypocitanaDavkaSofiKlient > 0 ? `${vypocitanaDavkaSofiKlient.toFixed(0)} â‚¬` : ''}</span>
+                  <span className="text-[#555] dark:text-[#AAA]">{aofCiele.sociCheckboxKlient && vypocitanaDavkaSofiKlient > 0 ? `${vypocitanaDavkaSofiKlient.toFixed(0)} €` : ''}</span>
                 </div>
                 <div className={`mx-1 flex items-center gap-2 border px-2 py-0.5 bg-[#D6D6D6] dark:bg-[#333] ${!aofCiele.sociCheckboxPartner && 'opacity-60'}`}>
                   <input type="checkbox" checked={aofCiele.sociCheckboxPartner} onChange={e => setAofCiele({ sociCheckboxPartner: e.target.checked })} className="cursor-pointer" />
-                  <span className="text-[#555] dark:text-[#AAA]">{aofCiele.sociCheckboxPartner && vypocitanaDavkaSofiPartner > 0 ? `${vypocitanaDavkaSofiPartner.toFixed(0)} â‚¬` : ''}</span>
+                  <span className="text-[#555] dark:text-[#AAA]">{aofCiele.sociCheckboxPartner && vypocitanaDavkaSofiPartner > 0 ? `${vypocitanaDavkaSofiPartner.toFixed(0)} €` : ''}</span>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* DETI CIELE - PRAVĂť STÄąPEC */}
+          {/* DETI CIELE - PRAVÝ STĹPEC */}
           <div className="bg-[#EAEAEA] dark:bg-[#1A1A1A] p-2 rounded shadow-sm border border-[#D1D1D1] dark:border-[#333] h-min">
             <div className="grid grid-cols-4 font-extrabold mb-2 pb-1 border-b border-[#D1D1D1] dark:border-[#333]">
               <div>{t('aof.deti')}</div><div className="text-center">{t('aof.suma')}</div><div className="text-center">{t('aof.doVeku')}</div><div className="text-center">{t('aof.oKolkoRokov')}</div>
@@ -303,9 +303,8 @@ export default function TabAOF() {
 
         <div className="bg-[#808080] dark:bg-[#4D4D4D] text-white text-center font-bold py-1 mt-4 uppercase tracking-wider">{t('aof.cieleKlienta')}</div>
 
-        {/* GOALS INPUT SECTION */}
         <div className="bg-[#EAEAEA] dark:bg-[#1A1A1A] p-4 rounded shadow-sm border border-[#D1D1D1] dark:border-[#333]">
-          {/* BĂ˝vanie */}
+          {/* Bývanie */}
           <div className="flex items-start gap-4 mb-4 pb-4 border-b border-[#D1D1D1] dark:border-[#333]">
             <div className="w-1/4 font-extrabold flex flex-col gap-2">
               <div className="flex justify-between">{t('aof.byvanie')} <input type="checkbox" checked={aofCiele.byvanieCheckbox} onChange={e => setAofCiele({ byvanieCheckbox: e.target.checked })} /></div>
@@ -319,7 +318,7 @@ export default function TabAOF() {
                 <div className="relative"><input type="number" step="0.1" value={aofCiele.byvanieUrok} onChange={e => setAofCiele({ byvanieUrok: Number(e.target.value) })} className="border text-center px-1 w-full bg-white dark:bg-[#111]" /><span className="absolute right-2 top-0">%</span></div>
               </div>
               <div className="grid grid-cols-3 gap-2 mt-2">
-                <div className="col-span-2 flex items-center gap-2"><span className="w-1/2 text-right">{t('aof.splatkaUveru')}</span> <span className="border text-center px-1 bg-[#D6D6D6] dark:bg-[#333] text-[#555] dark:text-[#AAA] flex-1 min-h-[22px] font-bold">{byvanieSplatka > 0 ? `${byvanieSplatka.toFixed(0)} â‚¬` : ''}</span></div>
+                <div className="col-span-2 flex items-center gap-2"><span className="w-1/2 text-right">{t('aof.splatkaUveru')}</span> <span className="border text-center px-1 bg-[#D6D6D6] dark:bg-[#333] text-[#555] dark:text-[#AAA] flex-1 min-h-[22px] font-bold">{byvanieSplatka > 0 ? `${byvanieSplatka.toFixed(0)} €` : ''}</span></div>
               </div>
             </div>
             <div className={`w-1/4 flex flex-col gap-1 text-center transition-opacity ${!aofCiele.byvanieCheckbox && 'opacity-50 pointer-events-none'}`}>
@@ -328,14 +327,14 @@ export default function TabAOF() {
             </div>
           </div>
 
-          {/* Rezerva na materskĂş dovolenku */}
+          {/* Rezerva na materskú dovolenku */}
           <div className="flex items-start gap-4 mb-4 pb-4 border-b border-[#D1D1D1] dark:border-[#333]">
-            <div className="w-1/4 font-extrabold flex justify-between items-center">Rezerva na materskĂş dovolenku <input type="checkbox" checked={aofCiele.rezervaMDCheckbox} onChange={e => setAofCiele({ rezervaMDCheckbox: e.target.checked })} /></div>
+            <div className="w-1/4 font-extrabold flex justify-between items-center">Rezerva na materskú dovolenku <input type="checkbox" checked={aofCiele.rezervaMDCheckbox} onChange={e => setAofCiele({ rezervaMDCheckbox: e.target.checked })} /></div>
             {aofCiele.rezervaMDCheckbox && (
               <div className="flex-1 flex flex-col gap-1">
-                <div className="grid grid-cols-4 text-center mb-1"><div className="font-bold">PotrebnĂˇ suma</div><div className="font-bold">VĂ˝Ĺˇka renty / mes.</div><div className="font-bold">Doba na MD (roky)</div><div className="font-bold">O koÄľko rokov</div></div>
+                <div className="grid grid-cols-4 text-center mb-1"><div className="font-bold">Potrebná suma</div><div className="font-bold">Výška renty / mes.</div><div className="font-bold">Doba na MD (roky)</div><div className="font-bold">O koľko rokov</div></div>
                 <div className="grid grid-cols-4 gap-2">
-                  <input type="text" readOnly value={(aofCiele.rezervaMDRenta && aofCiele.rezervaMDDoba) ? `${(Number(aofCiele.rezervaMDRenta) * Number(aofCiele.rezervaMDDoba) * 12).toFixed(0)} â‚¬` : ''} className="border text-center px-1 bg-[#D6D6D6] dark:bg-[#333] cursor-not-allowed text-[#555] dark:text-[#AAA]" />
+                  <input type="text" readOnly value={(aofCiele.rezervaMDRenta && aofCiele.rezervaMDDoba) ? `${(Number(aofCiele.rezervaMDRenta) * Number(aofCiele.rezervaMDDoba) * 12).toFixed(0)} €` : ''} className="border text-center px-1 bg-[#D6D6D6] dark:bg-[#333] cursor-not-allowed text-[#555] dark:text-[#AAA]" />
                   <input type="number" value={aofCiele.rezervaMDRenta} onChange={e => setAofCiele({ rezervaMDRenta: Number(e.target.value) || '' })} className="border text-center px-1 bg-white dark:bg-[#111]" />
                   <input type="number" value={aofCiele.rezervaMDDoba} onChange={e => setAofCiele({ rezervaMDDoba: Number(e.target.value) || '' })} className="border text-center px-1 bg-white dark:bg-[#111]" />
                   <input type="number" value={aofCiele.rezervaMDRoky} onChange={e => setAofCiele({ rezervaMDRoky: Number(e.target.value) || '' })} className="border text-center px-1 bg-white dark:bg-[#111]" />
@@ -344,7 +343,7 @@ export default function TabAOF() {
             )}
           </div>
 
-          {/* PredÄŤasnĂˇ renta klient */}
+          {/* Predčasná renta klient */}
           <div className="flex items-center gap-4 mb-2">
             <div className="w-1/4 font-extrabold flex justify-between items-center">{t('aof.predcasnaRenta')} <input type="checkbox" checked={aofCiele.predcasnaRentaKlientCheckbox} onChange={e => setAofCiele({ predcasnaRentaKlientCheckbox: e.target.checked })} /></div>
             <div className={`flex-1 grid grid-cols-3 gap-2 transition-opacity ${!aofCiele.predcasnaRentaKlientCheckbox && 'opacity-50 pointer-events-none'}`}>
@@ -353,7 +352,7 @@ export default function TabAOF() {
             </div>
           </div>
 
-          {/* PredÄŤasnĂˇ renta partner */}
+          {/* Predčasná renta partner */}
           <div className="flex items-center gap-4 mb-4 pb-4 border-b border-[#D1D1D1] dark:border-[#333]">
             <div className="w-1/4 font-extrabold flex justify-between items-center">{t('aof.predcasnaRentaPartner')} <input type="checkbox" checked={aofCiele.predcasnaRentaPartnerCheckbox} onChange={e => setAofCiele({ predcasnaRentaPartnerCheckbox: e.target.checked })} /></div>
             <div className={`flex-1 grid grid-cols-3 gap-2 transition-opacity ${!aofCiele.predcasnaRentaPartnerCheckbox && 'opacity-50 pointer-events-none'}`}>
@@ -362,7 +361,7 @@ export default function TabAOF() {
             </div>
           </div>
 
-          {/* InĂ© ciele */}
+          {/* Iné ciele */}
           <div className="flex items-center gap-4 mb-2">
             <div className="w-1/4 font-extrabold flex justify-between items-center">
               {t('aof.ineCiele')}
@@ -380,10 +379,10 @@ export default function TabAOF() {
             <div key={c.id} className="flex items-center gap-4 mb-1">
               <div className="w-1/4 flex justify-between items-center gap-1">
                 <select value={c.nazov} onChange={e => setAofCiele({ ineCiele: aofCiele.ineCiele.map(x => x.id === c.id ? { ...x, nazov: e.target.value } : x) })} className="flex-1 border px-1 bg-white dark:bg-[#111] text-[11px]">
-                  <option value="Auto">đźš— {t('aof.cielAuto')}</option>
-                  <option value="Dovolenka">âśď¸Ź {t('aof.cielDovolenka')}</option>
-                  <option value="Vzdelanie">đźŽ“ {t('aof.cielVzdelanie')}</option>
-                  <option value="Rekonstructia">đźŹ  {t('aof.cielRekonstrukcia')}</option>
+                  <option value="Auto">🚗 {t('aof.cielAuto')}</option>
+                  <option value="Dovolenka">✈️ {t('aof.cielDovolenka')}</option>
+                  <option value="Vzdelanie">🎓 {t('aof.cielVzdelanie')}</option>
+                  <option value="Rekonstructia">🏠 {t('aof.cielRekonstrukcia')}</option>
                   <option value="Ine">{t('aof.cielIne')}</option>
                 </select>
                 <input type="checkbox" checked={c.checked} onChange={e => setAofCiele({ ineCiele: aofCiele.ineCiele.map(x => x.id === c.id ? { ...x, checked: e.target.checked } : x) })} />
@@ -396,7 +395,6 @@ export default function TabAOF() {
             </div>
           ))}
         </div>
-
       </div>
     </div>
   );
