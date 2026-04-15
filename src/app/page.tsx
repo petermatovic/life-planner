@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from "react";
-import { LayoutDashboard, Target, ShieldCheck, TrendingUp, Presentation, Download, FileText, ArrowRight, Trash2, RefreshCw } from 'lucide-react';
+import { LayoutDashboard, Target, ShieldCheck, TrendingUp, Presentation, Download, Upload, FileText, ArrowRight, Trash2, RefreshCw } from 'lucide-react';
 import TabAOF from '@/components/TabAOF';
 import TabPrepocty from '@/components/TabPrepocty';
 import TabCiele from '@/components/TabCiele';
@@ -36,8 +36,40 @@ export default function Dashboard() {
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data, null, 2));
     const dlAnchorElem = document.createElement('a');
     dlAnchorElem.setAttribute("href",     dataStr     );
-    dlAnchorElem.setAttribute("download", `ulozene_${klient.meno || 'klient'}.json`);
+    dlAnchorElem.setAttribute("download", `fp_${klient.meno || 'klient'}_${new Date().toISOString().slice(0, 10)}.json`);
     dlAnchorElem.click();
+  };
+
+  const handleImportJSON = () => {
+    const inp = document.createElement('input');
+    inp.type = 'file';
+    inp.accept = '.json';
+    inp.onchange = async (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (!file) return;
+      try {
+        const text = await file.text();
+        const data = JSON.parse(text);
+        if (!data.klient || !data.cashFlow) {
+          alert(t('vystup.importError'));
+          return;
+        }
+        const currentLang = state.jazyk;
+        state.setKlient(data.klient);
+        if (data.partner) state.setPartner(data.partner);
+        if (data.hasPartner !== undefined) state.setHasPartner(data.hasPartner);
+        if (data.hasDeti !== undefined) state.setHasDeti(data.hasDeti);
+        if (data.deti) state.setDeti(data.deti);
+        if (data.majetok) state.setMajetok(data.majetok);
+        state.setCashFlow(data.cashFlow);
+        if (data.aofCiele) state.setAofCiele(data.aofCiele);
+        state.setJazyk(data.jazyk || currentLang);
+        alert(`${t('vystup.importSuccess')} (${data.klient.meno})`);
+      } catch {
+        alert(t('vystup.importError'));
+      }
+    };
+    inp.click();
   };
 
   useEffect(() => {
@@ -109,6 +141,9 @@ export default function Dashboard() {
           </div>
           <button onClick={handleExportJSON} className="flex items-center justify-center gap-2 w-full py-2 bg-black dark:bg-white text-white dark:text-black font-bold text-xs rounded shadow hover:opacity-90 transition">
              <Download size={14} /> {t('sidebar.ulozitJson')}
+          </button>
+          <button onClick={handleImportJSON} className="flex items-center justify-center gap-2 w-full py-2 mt-1.5 bg-[#EAEAEA] dark:bg-[#2A2A2A] text-[#171717] dark:text-white font-bold text-xs rounded border border-[#D1D1D1] dark:border-[#4D4D4D] hover:bg-[#D1D1D1] dark:hover:bg-[#333] transition">
+             <Upload size={14} /> {t('vystup.importJson')}
           </button>
           <div className="text-[9px] text-center text-[#989FA7] dark:text-[#4D4D4D] font-bold mt-3">Jadro aktualizované (Zustand) • Live math</div>
         </div>

@@ -167,6 +167,18 @@ export const translations: Record<string, any> = {
       rezervaMD: 'Rezerva na materskú dovolenku',
       byvanie: 'Bývanie',
       dieta: 'Dieťa',
+    },
+    vystup: {
+      title: 'Záverečný výstup',
+      subtitle: 'Kompletný prehľad finančného plánu',
+      profilRodiny: 'Profil rodiny',
+      prioritneCiele: 'Prioritné ciele finančného plánu',
+      importJson: 'Importovať JSON',
+      exportJson: 'Exportovať JSON',
+      print: 'Tlačiť / PDF',
+      importSuccess: 'Dáta úspešne načítané.',
+      importError: 'Neplatný súbor – chýbajú povinné polia.',
+      footer: 'Tento dokument je pripravený na prezentáciu. Kliknite na tlačidlo Tlačiť / PDF pre export.'
     }
   },
   EN: {
@@ -337,6 +349,18 @@ export const translations: Record<string, any> = {
       rezervaMD: 'Maternity leave reserve',
       byvanie: 'Housing',
       dieta: 'Child',
+    },
+    vystup: {
+      title: 'Final Summary',
+      subtitle: 'Complete financial plan overview',
+      profilRodiny: 'Family Profile',
+      prioritneCiele: 'Priority Financial Goals',
+      importJson: 'Import JSON',
+      exportJson: 'Export JSON',
+      print: 'Print / PDF',
+      importSuccess: 'Data loaded successfully.',
+      importError: 'Invalid file – missing required fields.',
+      footer: 'This document is ready for presentation. Click Print / PDF to export.'
     }
   }, BG: {
     sidebar: {
@@ -506,6 +530,18 @@ export const translations: Record<string, any> = {
       rezervaMD: 'Резерв за майчинство',
       byvanie: 'Жилище',
       dieta: 'Дете',
+    },
+    vystup: {
+      title: 'Обобщение',
+      subtitle: 'Пълен преглед на финансовия план',
+      profilRodiny: 'Профил на семейството',
+      prioritneCiele: 'Приоритетни финансови цели',
+      importJson: 'Импорт JSON',
+      exportJson: 'Експорт JSON',
+      print: 'Печат / PDF',
+      importSuccess: 'Данните са заредени успешно.',
+      importError: 'Невалиден файл – липсват задължителни полета.',
+      footer: 'Този документ е готов за презентация. Натиснете Печат / PDF.'
     }
   }
 };
