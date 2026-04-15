@@ -1,4 +1,4 @@
-﻿import { create } from 'zustand';
+import { create } from 'zustand';
 
 export interface Osoba {
   meno: string;
@@ -97,13 +97,13 @@ const VZOROVA_RODINA = {
     zakladnaRezerva: '', zabezpecenieKlientKapital: '', zabezpeceniePartnerKapital: '',
     zabezpecenieKlientRenta: 1500, zabezpeceniePartnerRenta: 1200,
     zabezpecenieKlientRentaRoky: '20r', zabezpeceniePartnerRentaRoky: '20r',
-    sociCheckboxKlient: false, sociCheckboxPartner: false, sociSuma: '',
+    sociCheckboxKlient: true, sociCheckboxPartner: true, sociSuma: '',
     byvanieCheckbox: true, byvanieNazov: 'Refinancovanie', byvanieSumaUveru: 80000, byvanieSplatnost: 20, byvanieUrok: 3.5, byvanieNesplatenyDiel: 80000,
-    rezervaMDCheckbox: true, rezervaMDRenta: 750, rezervaMDDoba: 2, rezervaMDRoky: 2, ineCieleExpand: false,
-    predcasnaRentaKlientCheckbox: true, predcasnaRentaKlientVyska: 500, predcasnaRentaKlientVek: 60,
-    predcasnaRentaPartnerCheckbox: true, predcasnaRentaPartnerVyska: 300, predcasnaRentaPartnerVek: 61,
+    rezervaMDCheckbox: true, rezervaMDRenta: 500, rezervaMDDoba: 3, rezervaMDRoky: 2, ineCieleExpand: false,
+    predcasnaRentaKlientCheckbox: true, predcasnaRentaKlientVyska: 1500, predcasnaRentaKlientVek: 60,
+    predcasnaRentaPartnerCheckbox: true, predcasnaRentaPartnerVyska: 1200, predcasnaRentaPartnerVek: 60,
     ineCiele: [
-      { id: 101, nazov: 'Auto', hodnota: 5000, horizont: 3, checked: true },
+      { id: 101, nazov: 'Auto', hodnota: 20000, horizont: 5, checked: true },
     ] as InyCiel[],
     goalPriorities: {},
     urokInvestovanie: 8,
