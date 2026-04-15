@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { uid } from '@/utils/helpers';
 
 export interface Osoba {
   meno: string;
@@ -33,6 +34,11 @@ export interface InyCiel {
   hodnota: number | '';
   horizont: number | '';
   checked: boolean;
+}
+
+export interface GoalRate {
+  urokInvest?: number | '';
+  urokVyplata?: number | '';
 }
 
 export interface AofCieleSetup {
@@ -71,6 +77,7 @@ export interface AofCieleSetup {
   ineCiele: InyCiel[];
 
   goalPriorities: Record<string, number>;
+  goalRates: Record<string, GoalRate>;
   urokInvestovanie: number;
   urokVyplata: number;
 }
@@ -112,6 +119,7 @@ const VZOROVA_RODINA = {
     // obr.2: Iné ciele – Auto 20000 / 5 rokov
     ineCiele: [{ id: 101, nazov: 'Auto', hodnota: 20000, horizont: 5, checked: true }] as InyCiel[],
     goalPriorities: {},
+    goalRates: {} as Record<string, GoalRate>,
     urokInvestovanie: 8,
     urokVyplata: 4.5,
   } as AofCieleSetup,
@@ -145,6 +153,7 @@ const PRAZDNY_PLAN = {
     predcasnaRentaPartnerCheckbox: false, predcasnaRentaPartnerVyska: '' as number | '', predcasnaRentaPartnerVek: '' as number | '',
     ineCiele: [] as InyCiel[],
     goalPriorities: {},
+    goalRates: {} as Record<string, GoalRate>,
     urokInvestovanie: 8,
     urokVyplata: 4.5,
   } as AofCieleSetup,
@@ -183,6 +192,7 @@ interface AppState {
   setMajetok: (majetok: Majetok[]) => void;
   setCashFlow: (data: Partial<AppState['cashFlow']>) => void;
   setAofCiele: (data: Partial<AofCieleSetup>) => void;
+  addInyCiel: () => void;
   setJazyk: (lang: string) => void;
   loadVzoroveData: () => void;
   resetNovyPlan: () => void;
@@ -202,6 +212,16 @@ export const useAppStore = create<AppState>()(
       setMajetok: (majetok) => set({ majetok }),
       setCashFlow: (data) => set((state) => ({ cashFlow: { ...state.cashFlow, ...data } })),
       setAofCiele: (data) => set((state) => ({ aofCiele: { ...state.aofCiele, ...data } })),
+
+      // Atomic add — reads latest state inside set() to avoid stale closure duplicates
+      addInyCiel: () => set((state) => ({
+        aofCiele: {
+          ...state.aofCiele,
+          ineCiele: [...state.aofCiele.ineCiele, { id: uid(), nazov: 'Auto', hodnota: '' as number | '', horizont: '' as number | '', checked: true }],
+          ineCieleExpand: true,
+        },
+      })),
+
       setJazyk: (lang) => set({ jazyk: lang }),
 
       loadVzoroveData: () => set((state) => ({
@@ -218,7 +238,7 @@ export const useAppStore = create<AppState>()(
       name: 'life-planner-storage',
       partialize: (state) => {
         // Exclude functions from persistence
-        const { setKlient, setPartner, setHasPartner, setHasDeti, setDeti, setMajetok, setCashFlow, setAofCiele, setJazyk, loadVzoroveData, resetNovyPlan, ...data } = state;
+        const { setKlient, setPartner, setHasPartner, setHasDeti, setDeti, setMajetok, setCashFlow, setAofCiele, addInyCiel, setJazyk, loadVzoroveData, resetNovyPlan, ...data } = state;
         return data;
       },
     }

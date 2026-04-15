@@ -5,14 +5,33 @@ import { useTranslation } from '@/hooks/useTranslation';
 import { Trash2 } from 'lucide-react';
 import { num, calcPMT_fv, calcPV, calcPMT_loan } from '@/utils/helpers';
 
+/* ─── Goal type flags: which rates apply to each goal type ─────────────────── */
+type GoalRateMode = 'none' | 'invest' | 'both' | 'loan';
+const GOAL_RATE_MODE: Record<string, GoalRateMode> = {
+  zabKlient: 'none',         // Zabezpečenie príjmu – poistná suma, bez investovania
+  zabPartner: 'none',
+  rezerva: 'invest',         // Rezerva – len invest úrok
+  rentaKlient20: 'both',     // Renta klient – invest + výplata
+  rentaPartner20: 'both',
+  predRentaKlient: 'both',   // Predčasná renta – invest + výplata
+  predRentaPartner: 'both',
+  rezervaMD: 'none',         // MD – krátkodobá, bez úroku
+  byvanie: 'loan',           // Bývanie – sadzba úveru
+};
+// dite_* → 'none', ciel_* → 'invest' (handled in code below)
+function getGoalRateMode(goalId: string): GoalRateMode {
+  if (GOAL_RATE_MODE[goalId]) return GOAL_RATE_MODE[goalId];
+  if (goalId.startsWith('dite_')) return 'none';
+  if (goalId.startsWith('ciel_')) return 'invest';
+  return 'invest';
+}
+
 export default function TabCiele() {
   const { t } = useTranslation();
   const {
     klient, partner, hasPartner, deti,
     aofCiele, setAofCiele,
   } = useAppStore();
-
-  // num, calcPMT_fv, calcPV, calcPMT_loan imported from @/utils/helpers
 
   // ── Výpočetné pomôcky ──────────────────────────────────────────────────────
   const klientVek = num(klient.vekPos);
@@ -33,58 +52,40 @@ export default function TabCiele() {
     nazov: string;
     horizont: number | string;
     potrebnaSuma: number | string;
-    mesacnaPlatba?: number;
+    mesacnaPlatba?: number;   // override for loan-type goals
   };
 
   const allGoals: GoalDef[] = [
     {
       id: 'zabKlient',
       nazov: `${t('ciele.zabezpeceniePrijmu')} – ${klient.meno || t('aof.klient')}`,
-      horizont: Math.max(0, 64 - klientVek) || '',
-      potrebnaSuma: prodKapKlient || '',
+      horizont: '-',
+      potrebnaSuma: '-',
     },
     ...(hasPartner ? [{
       id: 'zabPartner',
       nazov: `${t('ciele.zabezpeceniePrijmu')} – ${partner.meno || t('aof.partner')}`,
-      horizont: Math.max(0, 64 - partnerVek) || '',
-      potrebnaSuma: prodKapPartner || '',
-    }] : []),
-    {
-      id: 'rezerva',
-      nazov: t('ciele.rezerva'),
-      horizont: '',
-      potrebnaSuma: rezerva || '',
-    },
-    {
-      id: 'rentaKlient20',
-      nazov: `${t('ciele.renta')} ${klient.meno || t('aof.klient')} – ${aofCiele.zabezpecenieKlientRentaRoky}`,
-      horizont: Math.max(0, 64 - klientVek) || '',
-      potrebnaSuma: prodKapKlient || '',
-    },
-    ...(hasPartner ? [{
-      id: 'rentaPartner20',
-      nazov: `${t('ciele.renta')} ${partner.meno || t('aof.partner')} – ${aofCiele.zabezpeceniePartnerRentaRoky}`,
-      horizont: Math.max(0, 64 - partnerVek) || '',
-      potrebnaSuma: prodKapPartner || '',
-    }] : []),
-    ...(aofCiele.predcasnaRentaKlientCheckbox ? [{
-      id: 'predRentaKlient',
-      nazov: `${t('ciele.predcasnaRenta')} – ${klient.meno || t('aof.klient')}`,
-      horizont: num(aofCiele.predcasnaRentaKlientVek) > 0
-        ? Math.max(0, num(aofCiele.predcasnaRentaKlientVek) - klientVek)
-        : '' as '',
-      potrebnaSuma: num(aofCiele.predcasnaRentaKlientVyska) > 0
-        ? num(aofCiele.predcasnaRentaKlientVyska) * 12 * 20
-        : '' as '',
+      horizont: '-',
+      potrebnaSuma: '-',
     }] : []),
     ...(aofCiele.predcasnaRentaPartnerCheckbox ? [{
       id: 'predRentaPartner',
-      nazov: `${t('ciele.predcasnaRenta')} – ${partner.meno || t('aof.partner')}`,
+      nazov: `${t('ciele.predcasnaRenta')} ${partner.meno || t('aof.partner')}`,
       horizont: num(aofCiele.predcasnaRentaPartnerVek) > 0
         ? Math.max(0, num(aofCiele.predcasnaRentaPartnerVek) - partnerVek)
         : '' as '',
       potrebnaSuma: num(aofCiele.predcasnaRentaPartnerVyska) > 0
         ? num(aofCiele.predcasnaRentaPartnerVyska) * 12 * 20
+        : '' as '',
+    }] : []),
+    ...(aofCiele.predcasnaRentaKlientCheckbox ? [{
+      id: 'predRentaKlient',
+      nazov: `${t('ciele.predcasnaRenta')} ${klient.meno || t('aof.klient')}`,
+      horizont: num(aofCiele.predcasnaRentaKlientVek) > 0
+        ? Math.max(0, num(aofCiele.predcasnaRentaKlientVek) - klientVek)
+        : '' as '',
+      potrebnaSuma: num(aofCiele.predcasnaRentaKlientVyska) > 0
+        ? num(aofCiele.predcasnaRentaKlientVyska) * 12 * 20
         : '' as '',
     }] : []),
     ...(aofCiele.rezervaMDCheckbox ? [{
@@ -95,19 +96,37 @@ export default function TabCiele() {
         ? num(aofCiele.rezervaMDRenta) * num(aofCiele.rezervaMDDoba) * 12
         : '' as '',
     }] : []),
-    ...(aofCiele.byvanieCheckbox ? [{
-      id: 'byvanie',
-      nazov: aofCiele.byvanieNazov || t('ciele.byvanie'),
-      horizont: aofCiele.byvanieSplatnost || '' as '',
-      potrebnaSuma: aofCiele.byvanieNesplatenyDiel || '' as '',
-      mesacnaPlatba: byvanieSplatka,
-    }] : []),
     ...deti.filter(d => d.cielSuma).map(d => ({
       id: `dite_${d.id}`,
       nazov: d.meno || t('ciele.dieta'),
       horizont: (d.cielDoVeku && d.vek) ? Number(d.cielDoVeku) - Number(d.vek) : '' as '',
       potrebnaSuma: d.cielSuma || '' as '',
     })),
+    {
+      id: 'rentaKlient20',
+      nazov: `${t('ciele.renta')} ${klient.meno || t('aof.klient')}-${aofCiele.zabezpecenieKlientRentaRoky}`,
+      horizont: Math.max(0, 64 - klientVek) || '',
+      potrebnaSuma: prodKapKlient || '',
+    },
+    ...(hasPartner ? [{
+      id: 'rentaPartner20',
+      nazov: `${t('ciele.renta')} ${partner.meno || t('aof.partner')}-${aofCiele.zabezpeceniePartnerRentaRoky}`,
+      horizont: Math.max(0, 64 - partnerVek) || '',
+      potrebnaSuma: prodKapPartner || '',
+    }] : []),
+    {
+      id: 'rezerva',
+      nazov: t('ciele.rezerva'),
+      horizont: 5,
+      potrebnaSuma: rezerva || '',
+    },
+    ...(aofCiele.byvanieCheckbox ? [{
+      id: 'byvanie',
+      nazov: aofCiele.byvanieNazov || t('ciele.byvanie'),
+      horizont: '-' as string,
+      potrebnaSuma: aofCiele.byvanieNesplatenyDiel || '' as '',
+      mesacnaPlatba: byvanieSplatka,
+    }] : []),
     ...aofCiele.ineCiele.filter(c => c.checked).map(c => ({
       id: `ciel_${c.id}`,
       nazov: c.nazov,
@@ -117,6 +136,9 @@ export default function TabCiele() {
   ];
 
   const priorities = aofCiele.goalPriorities;
+  const goalRates = aofCiele.goalRates || {};
+  const rInvDefault = aofCiele.urokInvestovanie;
+  const rVypDefault = aofCiele.urokVyplata;
 
   const togglePriority = (goalId: string) => {
     const current = priorities[goalId] || 0;
@@ -133,18 +155,47 @@ export default function TabCiele() {
     }
   };
 
+  const setGoalRate = (goalId: string, field: 'urokInvest' | 'urokVyplata', value: number | '') => {
+    setAofCiele({
+      goalRates: {
+        ...goalRates,
+        [goalId]: { ...goalRates[goalId], [field]: value },
+      },
+    });
+  };
+
+  const getGoalInvestRate = (goalId: string): number => {
+    const mode = getGoalRateMode(goalId);
+    if (mode === 'none') return 0;
+    const custom = goalRates[goalId]?.urokInvest;
+    if (custom !== undefined && custom !== '') return Number(custom);
+    return rInvDefault;
+  };
+
+  const getGoalVyplataRate = (goalId: string): number => {
+    const mode = getGoalRateMode(goalId);
+    if (mode !== 'both') return 0;
+    const custom = goalRates[goalId]?.urokVyplata;
+    if (custom !== undefined && custom !== '') return Number(custom);
+    return rVypDefault;
+  };
+
   const selectedGoals = allGoals
     .filter(g => (priorities[g.id] || 0) > 0)
     .sort((a, b) => (priorities[a.id] || 0) - (priorities[b.id] || 0));
 
-  const rInv = aofCiele.urokInvestovanie;
-  const rVyp = aofCiele.urokVyplata;
-
   const totalMesacnaUlozka = selectedGoals.reduce((sum, g) => {
-    const pmt = g.mesacnaPlatba !== undefined
-      ? g.mesacnaPlatba
-      : calcPMT_fv(num(g.potrebnaSuma), num(g.horizont), rInv);
-    return sum + pmt;
+    const mode = getGoalRateMode(g.id);
+    if (g.mesacnaPlatba !== undefined) return sum + g.mesacnaPlatba;
+    if (g.potrebnaSuma === '-' || num(g.potrebnaSuma) <= 0) return sum;
+    const rInv = getGoalInvestRate(g.id);
+    const horizont = num(g.horizont);
+    if (mode === 'none' || horizont <= 0) {
+      // Simple division for no-rate goals
+      const n = horizont > 0 ? horizont * 12 : 1;
+      return sum + num(g.potrebnaSuma) / n;
+    }
+    return sum + calcPMT_fv(num(g.potrebnaSuma), horizont, rInv);
   }, 0);
 
   return (
@@ -163,21 +214,6 @@ export default function TabCiele() {
         <div className="bg-black dark:bg-white text-white dark:text-black px-6 py-3 rounded-lg font-bold shadow-lg flex flex-col items-end">
           <span className="text-[10px] uppercase tracking-widest opacity-80">{t('ciele.nutneInvestovat')}</span>
           <span className="text-xl">{Math.round(totalMesacnaUlozka).toLocaleString('sk-SK')} €</span>
-        </div>
-      </div>
-
-      {/* ÚROKOVÉ SADZBY */}
-      <div className="flex items-center gap-6 bg-[#EAEAEA] dark:bg-[#1A1A1A] border border-[#D1D1D1] dark:border-[#333] rounded px-4 py-2 text-xs">
-        <span className="font-bold text-[#555] dark:text-[#AAA]">{t('ciele.urokoveSadzby')}</span>
-        <div className="flex items-center gap-2">
-          <span className="font-bold">{t('ciele.investovanie')}</span>
-          <input type="number" step="0.1" value={rInv || ""} onChange={e => setAofCiele({ urokInvestovanie: e.target.value === "" ? 0 : parseFloat(e.target.value) || 0 })} className="w-16 border text-center bg-white dark:bg-[#111] px-1 py-0.5 rounded" />
-          <span>% p.a.</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="font-bold">{t('ciele.vyplataSplatka')}</span>
-          <input type="number" step="0.1" value={rVyp || ""} onChange={e => setAofCiele({ urokVyplata: e.target.value === "" ? 0 : parseFloat(e.target.value) || 0 })} className="w-16 border text-center bg-white dark:bg-[#111] px-1 py-0.5 rounded" />
-          <span>% p.a.</span>
         </div>
       </div>
 
@@ -215,19 +251,20 @@ export default function TabCiele() {
           <table className="w-full text-xs border-collapse">
             <thead>
               <tr className="bg-[#5C5C5C] dark:bg-[#333] text-white text-[11px]">
-                <th className="px-2 py-2 text-left w-7">#</th>
-                <th className="px-2 py-2 text-left">{t('ciele.ciel')}</th>
-                <th className="px-2 py-2 text-center">{t('ciele.casovyHorizont')}</th>
-                <th className="px-2 py-2 text-center">{t('ciele.potrebnaSuma')}</th>
-                <th className="px-2 py-2 text-center bg-[#3a3a3a] dark:bg-[#222]">
-                  {t('ciele.urokInvest')}
+                <th className="px-2 py-2 text-left w-7" rowSpan={2}>#</th>
+                <th className="px-2 py-2 text-left" rowSpan={2}>{t('ciele.ciel')}</th>
+                <th className="px-2 py-2 text-center" rowSpan={2}>{t('ciele.casovyHorizont')}</th>
+                <th className="px-2 py-2 text-center" rowSpan={2}>{t('ciele.potrebnaSuma')}</th>
+                <th className="px-2 py-2 text-center border-l border-white/20" colSpan={2}>
+                  {t('ciele.urokLabel') || 'Úrok'}
                 </th>
-                <th className="px-2 py-2 text-center bg-[#3a3a3a] dark:bg-[#222]">
-                  {t('ciele.urokVyplata')}
-                </th>
-                <th className="px-2 py-2 text-center">{t('ciele.jednorazovyVklad')}</th>
-                <th className="px-2 py-2 text-center">{t('ciele.mesacnaPlatba')}</th>
-                <th className="w-6" />
+                <th className="px-2 py-2 text-center border-l border-white/20" rowSpan={2}>{t('ciele.jednorazovyVklad')}</th>
+                <th className="px-2 py-2 text-center" rowSpan={2}>{t('ciele.mesacnaPlatba')}</th>
+                <th className="w-6" rowSpan={2} />
+              </tr>
+              <tr className="bg-[#4a4a4a] dark:bg-[#2a2a2a] text-white text-[10px]">
+                <th className="px-2 py-1 text-center border-l border-white/20">{t('ciele.urokInvest')}</th>
+                <th className="px-2 py-1 text-center">{t('ciele.urokVyplata')}</th>
               </tr>
             </thead>
             <tbody>
@@ -239,14 +276,29 @@ export default function TabCiele() {
                 </tr>
               )}
               {selectedGoals.map((g, i) => {
-                const pSuma = num(g.potrebnaSuma);
-                const horizont = num(g.horizont);
-                const mesacna = g.mesacnaPlatba !== undefined
-                  ? g.mesacnaPlatba
-                  : calcPMT_fv(pSuma, horizont, rInv);
-                const jednorazovy = pSuma > 0
+                const mode = getGoalRateMode(g.id);
+                const pSuma = g.potrebnaSuma === '-' ? 0 : num(g.potrebnaSuma);
+                const horizont = g.horizont === '-' ? 0 : num(g.horizont);
+                const rInv = getGoalInvestRate(g.id);
+                const rVyp = getGoalVyplataRate(g.id);
+
+                let mesacna = 0;
+                if (g.mesacnaPlatba !== undefined) {
+                  mesacna = g.mesacnaPlatba;
+                } else if (pSuma > 0) {
+                  if (mode === 'none') {
+                    mesacna = horizont > 0 ? pSuma / (horizont * 12) : pSuma;
+                  } else {
+                    mesacna = horizont > 0 ? calcPMT_fv(pSuma, horizont, rInv) : 0;
+                  }
+                }
+
+                const jednorazovy = pSuma > 0 && horizont > 0 && mode !== 'none'
                   ? calcPV(pSuma, horizont, rInv)
                   : 0;
+
+                const customInvest = goalRates[g.id]?.urokInvest;
+                const customVyplata = goalRates[g.id]?.urokVyplata;
 
                 return (
                   <tr
@@ -255,10 +307,40 @@ export default function TabCiele() {
                   >
                     <td className="px-2 py-2 text-center font-extrabold text-[#AB0534] text-sm">{priorities[g.id]}</td>
                     <td className="px-2 py-2 font-bold">{g.nazov}</td>
-                    <td className="px-2 py-2 text-center">{horizont > 0 ? horizont : '–'}</td>
-                    <td className="px-2 py-2 text-center font-bold">{pSuma > 0 ? `${Math.round(pSuma).toLocaleString('sk-SK')} €` : '–'}</td>
-                    <td className="px-2 py-2 text-center text-[#555] dark:text-[#AAA]">{rInv} %</td>
-                    <td className="px-2 py-2 text-center text-[#555] dark:text-[#AAA]">{rVyp} %</td>
+                    <td className="px-2 py-2 text-center">{g.horizont === '-' ? '-' : (horizont > 0 ? horizont : '–')}</td>
+                    <td className="px-2 py-2 text-center font-bold">{g.potrebnaSuma === '-' ? '-' : (pSuma > 0 ? `${Math.round(pSuma).toLocaleString('sk-SK')} €` : '–')}</td>
+
+                    {/* Úrok investovanie */}
+                    <td className="px-1 py-1 text-center">
+                      {mode === 'none' ? (
+                        <span className="text-[#999]">-</span>
+                      ) : mode === 'loan' ? (
+                        <span className="text-[#555] font-bold">{num(aofCiele.byvanieUrok)}%</span>
+                      ) : (
+                        <select
+                          value={customInvest !== undefined && customInvest !== '' ? String(customInvest) : String(rInvDefault)}
+                          onChange={e => {
+                            const v = parseFloat(e.target.value);
+                            setGoalRate(g.id, 'urokInvest', isNaN(v) ? '' : v);
+                          }}
+                          className="w-full text-center text-[10px] border bg-white dark:bg-[#111] px-0.5 py-0.5 rounded"
+                        >
+                          {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12].map(r => (
+                            <option key={r} value={r}>{r}%</option>
+                          ))}
+                        </select>
+                      )}
+                    </td>
+
+                    {/* Úrok výplata/splátka */}
+                    <td className="px-1 py-1 text-center">
+                      {mode === 'both' ? (
+                        <span className="font-bold text-[#555]">{rVyp}%</span>
+                      ) : (
+                        <span className="text-[#999]">-</span>
+                      )}
+                    </td>
+
                     <td className="px-2 py-2 text-center font-bold text-[#1E5083]">
                       {jednorazovy > 0 ? `${Math.round(jednorazovy).toLocaleString('sk-SK')} €` : '–'}
                     </td>
@@ -281,6 +363,9 @@ export default function TabCiele() {
                   <td className="px-2 py-2 text-center text-[#1E5083]">
                     {(() => {
                       const total = selectedGoals.reduce((sum, g) => {
+                        const mode = getGoalRateMode(g.id);
+                        if (mode === 'none' || g.potrebnaSuma === '-') return sum;
+                        const rInv = getGoalInvestRate(g.id);
                         return sum + calcPV(num(g.potrebnaSuma), num(g.horizont), rInv);
                       }, 0);
                       return total > 0 ? `${Math.round(total).toLocaleString('sk-SK')} €` : '';

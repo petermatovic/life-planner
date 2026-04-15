@@ -28,7 +28,7 @@ export default function TabAOF() {
   const {
     klient, partner, hasPartner, deti, hasDeti, majetok, cashFlow,
     setKlient, setPartner, setHasPartner, setDeti, setHasDeti, setMajetok, setCashFlow,
-    aofCiele, setAofCiele
+    aofCiele, setAofCiele, addInyCiel
   } = useAppStore();
 
   // num, parseInput, uid, calcPMT_loan imported from @/utils/helpers
@@ -366,7 +366,7 @@ export default function TabAOF() {
             <div className="w-1/4 font-extrabold flex justify-between items-center">
               {t('aof.ineCiele')}
               <div className="flex items-center gap-2">
-                <button onClick={() => setAofCiele({ ineCiele: [...aofCiele.ineCiele, { id: uid(), nazov: 'Auto', hodnota: '', horizont: '', checked: true }], ineCieleExpand: true })} className="text-[10px] bg-white dark:bg-[#333] px-1 border rounded">{t('aof.pridat')} +</button>
+                <button onClick={addInyCiel} className="text-[10px] bg-white dark:bg-[#333] px-1 border rounded">{t('aof.pridat')} +</button>
                 <input type="checkbox" checked={aofCiele.ineCieleExpand} onChange={e => setAofCiele({ ineCieleExpand: e.target.checked })} />
               </div>
             </div>

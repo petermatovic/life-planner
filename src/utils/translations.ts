@@ -167,6 +167,7 @@ export const translations: Record<string, any> = {
       rezervaMD: 'Rezerva na materskú dovolenku',
       byvanie: 'Bývanie',
       dieta: 'Dieťa',
+      urokLabel: 'Úrok',
     },
     vystup: {
       title: 'Záverečný výstup',
@@ -178,7 +179,18 @@ export const translations: Record<string, any> = {
       print: 'Tlačiť / PDF',
       importSuccess: 'Dáta úspešne načítané.',
       importError: 'Neplatný súbor – chýbajú povinné polia.',
-      footer: 'Tento dokument je pripravený na prezentáciu. Kliknite na tlačidlo Tlačiť / PDF pre export.'
+      footer: 'Tento dokument je pripravený na prezentáciu. Kliknite na tlačidlo Tlačiť / PDF pre export.',
+      financnyTrh: 'Finančný trh',
+      nove: 'Nové',
+      uveroveZatazenie: 'Úverové zaťaženie',
+      tvorbaMajetku: 'Tvorba majetku',
+      rezervaLabel: 'Rezerva',
+      platba: 'Platba',
+      vysledna: 'Výsledná suma',
+      vyskaRenty: 'Výška renty',
+      dobaVyplaty: 'Doba výplaty',
+      pozadovana: 'Požadovaná suma',
+      naplnenie: 'Naplnenie cieľa'
     }
   },
   EN: {
@@ -349,6 +361,7 @@ export const translations: Record<string, any> = {
       rezervaMD: 'Maternity leave reserve',
       byvanie: 'Housing',
       dieta: 'Child',
+      urokLabel: 'Interest',
     },
     vystup: {
       title: 'Final Summary',
@@ -360,7 +373,18 @@ export const translations: Record<string, any> = {
       print: 'Print / PDF',
       importSuccess: 'Data loaded successfully.',
       importError: 'Invalid file – missing required fields.',
-      footer: 'This document is ready for presentation. Click Print / PDF to export.'
+      footer: 'This document is ready for presentation. Click Print / PDF to export.',
+      financnyTrh: 'Financial market',
+      nove: 'New',
+      uveroveZatazenie: 'Loan burden',
+      tvorbaMajetku: 'Wealth building',
+      rezervaLabel: 'Reserve',
+      platba: 'Payment',
+      vysledna: 'Result amount',
+      vyskaRenty: 'Annuity amount',
+      dobaVyplaty: 'Payout period',
+      pozadovana: 'Required amount',
+      naplnenie: 'Goal fulfillment'
     }
   }, BG: {
     sidebar: {
@@ -530,6 +554,7 @@ export const translations: Record<string, any> = {
       rezervaMD: 'Резерв за майчинство',
       byvanie: 'Жилище',
       dieta: 'Дете',
+      urokLabel: 'Лихва',
     },
     vystup: {
       title: 'Обобщение',
@@ -541,7 +566,18 @@ export const translations: Record<string, any> = {
       print: 'Печат / PDF',
       importSuccess: 'Данните са заредени успешно.',
       importError: 'Невалиден файл – липсват задължителни полета.',
-      footer: 'Този документ е готов за презентация. Натиснете Печат / PDF.'
+      footer: 'Този документ е готов за презентация. Натиснете Печат / PDF.',
+      financnyTrh: 'Финансов пазар',
+      nove: 'Ново',
+      uveroveZatazenie: 'Кредитно натоварване',
+      tvorbaMajetku: 'Създаване на богатство',
+      rezervaLabel: 'Резерв',
+      platba: 'Плащане',
+      vysledna: 'Резултатна сума',
+      vyskaRenty: 'Размер на рентата',
+      dobaVyplaty: 'Период на изплащане',
+      pozadovana: 'Необходима сума',
+      naplnenie: 'Изпълнение'
     }
   }
 };
