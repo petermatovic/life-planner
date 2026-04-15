@@ -143,7 +143,7 @@ export const useAppStore = create<AppState>((set) => ({
     zakladnaRezerva: '',
     zabezpecenieKlientKapital: '', zabezpeceniePartnerKapital: '',
     zabezpecenieKlientRenta: 1500, zabezpeceniePartnerRenta: 1200,
-    zabezpecenieKlientRentaRoky: '20-ročná', zabezpeceniePartnerRentaRoky: '20-ročná',
+    zabezpecenieKlientRentaRoky: '20r', zabezpeceniePartnerRentaRoky: '20r',
     sociCheckboxKlient: false, sociCheckboxPartner: false, sociSuma: '',
     byvanieCheckbox: false, byvanieNazov: 'Refinancovanie', byvanieSumaUveru: 80000, byvanieSplatnost: 20, byvanieUrok: 3.5, byvanieNesplatenyDiel: 80000,
     rezervaMDCheckbox: false, rezervaMDRenta: '', rezervaMDDoba: '', rezervaMDRoky: '', ineCieleExpand: false,
