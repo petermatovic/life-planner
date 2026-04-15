@@ -76,32 +76,40 @@ export interface AofCieleSetup {
 
 // ── Vzorové dáta (Rodina Jozef) ──────────────────────────────────────────────
 const VZOROVA_RODINA = {
-  klient:  { meno: 'Jozef', vekPos: 35, hruby: 2600, cistyMesacne: 2000, cistyRocne: 4900, pasivnyMesacne: '' as number | '', pasivnyRocne: '' as number | '', fajciar: false },
-  partner: { meno: 'Mária', vekPos: 33, hruby: 1900, cistyMesacne: 1500, cistyRocne: 1000, pasivnyMesacne: '' as number | '', pasivnyRocne: '' as number | '', fajciar: false },
+  // obr.1: Jozef 35, hrubý 2500, čistý mes.2000 roč.2000, pasívny mes.200 roč.500
+  klient: { meno: 'Jozef', vekPos: 35, hruby: 2500, cistyMesacne: 2000, cistyRocne: 2000, pasivnyMesacne: 200, pasivnyRocne: 500, fajciar: false },
+  // obr.1: Jana 32, hrubý 2000, čistý mes.1500 roč.1000
+  partner: { meno: 'Jana', vekPos: 32, hruby: 2000, cistyMesacne: 1500, cistyRocne: 1000, pasivnyMesacne: '' as number | '', pasivnyRocne: '' as number | '', fajciar: false },
   hasPartner: true,
-  deti: [] as Dieta[],          // žiadne deti v screenshote
-  hasDeti: false,
-  majetok: [] as Majetok[],    // prázdny majetok
+  // obr.1+2: deti Janko vek5, suma 20000, do veku 20 (o koľko rokov = 15)
+  deti: [{ id: 1, meno: 'Janko', vek: 5, cielSuma: 20000, cielDoVeku: 20 }] as Dieta[],
+  hasDeti: true,
+  // obr.1: Majetok – Byt 200 000 €
+  majetok: [{ id: 1, nazov: 'Byt', typ: 'Fyzický', hodnota: 200000 }] as Majetok[],
   cashFlow: {
-    spotrebaMesacne: 1200, spotrebaRocne: 1500,
-    uverySplatka: 464,    uveryZostatok: 80000,
-    sporeniaSplatka: 150, sporeniaZostatok: 8500,
-    investicieSplatka: 200, investicieZostatok: 12400,
-    poistZivotSplatka: 60,  poistZivotZostatok: 0,
-    poistNezivotMesacne: 15, poistNezivotRocne: 180,
-    zostatokUcet: 5000,
+    spotrebaMesacne: 1200, spotrebaRocne: 2000,       // obr.1: 1200 / 2000
+    uverySplatka: 400,    uveryZostatok: 80000,        // obr.1: 400 / 80000
+    sporeniaSplatka: 100, sporeniaZostatok: 2000,      // obr.1: 100 / 2000
+    investicieSplatka: 50, investicieZostatok: 1000,   // obr.1: 50 / 1000
+    poistZivotSplatka: 25, poistZivotZostatok: 1000,   // obr.1: 25 / 1000
+    poistNezivotMesacne: '' as number | '', poistNezivotRocne: 700,  // obr.1: prázdna / 700
+    zostatokUcet: 5000,                                // obr.1: 5000
   },
   aofCiele: {
     zakladnaRezerva: '', zabezpecenieKlientKapital: '', zabezpeceniePartnerKapital: '',
-    zabezpecenieKlientRenta: 1500, zabezpeceniePartnerRenta: 1200,
+    zabezpecenieKlientRenta: 1500, zabezpeceniePartnerRenta: 1200,      // obr.2: 1500/1200
     zabezpecenieKlientRentaRoky: '20r', zabezpeceniePartnerRentaRoky: '20r',
-    sociCheckboxKlient: false, sociCheckboxPartner: false, sociSuma: '',  // □□ v screenshote
+    sociCheckboxKlient: true, sociCheckboxPartner: true, sociSuma: '',   // obr.2: ✓867/✓633
+    // obr.2: Refinancovanie 80000 / 20r / 2.5% → splátka 424€
     byvanieCheckbox: true, byvanieNazov: 'Refinancovanie',
-    byvanieSumaUveru: 80000, byvanieSplatnost: 30, byvanieUrok: 2.5, byvanieNesplatenyDiel: 80000,
+    byvanieSumaUveru: 80000, byvanieSplatnost: 20, byvanieUrok: 2.5, byvanieNesplatenyDiel: 80000,
+    // obr.2: MD unchecked □
     rezervaMDCheckbox: false, rezervaMDRenta: '' as number | '', rezervaMDDoba: '' as number | '', rezervaMDRoky: '' as number | '', ineCieleExpand: false,
+    // obr.2: Predčasná renta □ oba, prázdne polia
     predcasnaRentaKlientCheckbox: false, predcasnaRentaKlientVyska: '' as number | '', predcasnaRentaKlientVek: '' as number | '',
     predcasnaRentaPartnerCheckbox: false, predcasnaRentaPartnerVyska: '' as number | '', predcasnaRentaPartnerVek: '' as number | '',
-    ineCiele: [] as InyCiel[],  // žiadne iné ciele
+    // obr.2: Iné ciele – Auto 20000 / 5 rokov
+    ineCiele: [{ id: 101, nazov: 'Auto', hodnota: 20000, horizont: 5, checked: true }] as InyCiel[],
     goalPriorities: {},
     urokInvestovanie: 8,
     urokVyplata: 4.5,
