@@ -98,7 +98,7 @@ const VZOROVA_RODINA = {
     zabezpecenieKlientRenta: 1500, zabezpeceniePartnerRenta: 1200,
     zabezpecenieKlientRentaRoky: '20r', zabezpeceniePartnerRentaRoky: '20r',
     sociCheckboxKlient: true, sociCheckboxPartner: true, sociSuma: '',
-    byvanieCheckbox: true, byvanieNazov: 'Refinancovanie', byvanieSumaUveru: 80000, byvanieSplatnost: 20, byvanieUrok: 3.5, byvanieNesplatenyDiel: 80000,
+    byvanieCheckbox: true, byvanieNazov: 'Refinancovanie', byvanieSumaUveru: 80000, byvanieSplatnost: 30, byvanieUrok: 2.5, byvanieNesplatenyDiel: 80000,
     rezervaMDCheckbox: true, rezervaMDRenta: 500, rezervaMDDoba: 3, rezervaMDRoky: 2, ineCieleExpand: false,
     predcasnaRentaKlientCheckbox: true, predcasnaRentaKlientVyska: 1500, predcasnaRentaKlientVek: 60,
     predcasnaRentaPartnerCheckbox: true, predcasnaRentaPartnerVyska: 1200, predcasnaRentaPartnerVek: 60,
