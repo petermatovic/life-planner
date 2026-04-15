@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from "react";
-import { LayoutDashboard, Target, ShieldCheck, TrendingUp, Presentation, Download, FileText, ArrowRight } from 'lucide-react';
+import { LayoutDashboard, Target, ShieldCheck, TrendingUp, Presentation, Download, FileText, ArrowRight, Trash2, RefreshCw } from 'lucide-react';
 import TabAOF from '@/components/TabAOF';
 import TabPrepocty from '@/components/TabPrepocty';
 import TabCiele from '@/components/TabCiele';
@@ -17,7 +17,19 @@ export default function Dashboard() {
 
   // Load global state for header info
   const state = useAppStore();
-  const { klient } = state;
+  const { klient, loadVzoroveData, resetNovyPlan } = state;
+
+  const handleNovyPlan = () => {
+    if (window.confirm('Vymazať všetky údaje a začať nový plán?')) {
+      resetNovyPlan();
+    }
+  };
+
+  const handleVzoroveData = () => {
+    if (window.confirm('Načítať vzorové dáta (Rodina Jozef)?')) {
+      loadVzoroveData();
+    }
+  };
 
   const handleExportJSON = () => {
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state, null, 2));
@@ -123,9 +135,17 @@ export default function Dashboard() {
         {/* TOP BAR */}
         <div className="h-16 border-b border-[#D1D1D1] dark:border-[#2A2A2A] bg-white dark:bg-[#1A1A1A] hidden md:flex items-center justify-between px-8 shadow-sm shrink-0 transition-colors duration-300 print:hidden">
            <h2 className="text-sm font-bold text-[#4D4D4D] dark:text-[#989FA7]">{t('sidebar.modelText')} <span className="text-lg text-[#171717] dark:text-[#ededed] ml-2">{t('sidebar.rodina')} <span className="text-[#AB0534]">{klient.meno || t('sidebar.vzorova')}</span></span></h2>
-           <button onClick={() => window.print()} className="flex items-center gap-2 bg-[#EAEAEA] dark:bg-[#2A2A2A] hover:bg-[#D1D1D1] dark:hover:bg-[#333] transition px-4 py-2 rounded text-sm font-bold border border-[#D1D1D1] dark:border-[#4D4D4D] text-[#171717] dark:text-white">
-             <FileText size={16} /> {t('sidebar.exportPdf')}
-           </button>
+           <div className="flex items-center gap-2">
+             <button onClick={handleVzoroveData} className="flex items-center gap-2 bg-[#EAEAEA] dark:bg-[#2A2A2A] hover:bg-[#D1D1D1] dark:hover:bg-[#333] transition px-3 py-2 rounded text-xs font-bold border border-[#D1D1D1] dark:border-[#4D4D4D] text-[#4D4D4D] dark:text-white" title="Načítať vzorové dáta">
+               <RefreshCw size={14} /> {t('sidebar.vzorova')}
+             </button>
+             <button onClick={handleNovyPlan} className="flex items-center gap-2 bg-[#EAEAEA] dark:bg-[#2A2A2A] hover:bg-[#AB0534] hover:text-white hover:border-[#AB0534] transition px-3 py-2 rounded text-xs font-bold border border-[#D1D1D1] dark:border-[#4D4D4D] text-[#4D4D4D] dark:text-white" title="Vymazať všetky polia a začať nový plán">
+               <Trash2 size={14} /> {t('sidebar.novyPlan')}
+             </button>
+             <button onClick={() => window.print()} className="flex items-center gap-2 bg-[#EAEAEA] dark:bg-[#2A2A2A] hover:bg-[#D1D1D1] dark:hover:bg-[#333] transition px-4 py-2 rounded text-sm font-bold border border-[#D1D1D1] dark:border-[#4D4D4D] text-[#171717] dark:text-white">
+               <FileText size={16} /> {t('sidebar.exportPdf')}
+             </button>
+           </div>
         </div>
 
         {/* View Router */}

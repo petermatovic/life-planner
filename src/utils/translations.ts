@@ -1,4 +1,4 @@
-export const translations: Record<string, any> = {
+﻿export const translations: Record<string, any> = {
   SK: {
     sidebar: {
       aof: 'AOF',
@@ -12,6 +12,7 @@ export const translations: Record<string, any> = {
       rodina: 'Rodina',
       vzorova: 'Vzorová',
       exportPdf: 'Export do PDF',
+      novyPlan: 'Nov\u00fd pl\u00e1n'
     },
     aof: {
       klient: 'KLIENT:',
@@ -156,6 +157,7 @@ export const translations: Record<string, any> = {
       rodina: 'Family',
       vzorova: 'Sample',
       exportPdf: 'Export to PDF',
+      novyPlan: 'New Plan'
     },
     aof: {
       klient: 'CLIENT:',
