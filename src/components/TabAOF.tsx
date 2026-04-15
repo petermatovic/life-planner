@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 import React from 'react';
 import { useAppStore } from '@/store/appStore';
 import { useTranslation } from '@/hooks/useTranslation';
@@ -387,8 +387,15 @@ export default function TabAOF() {
                   <option value="Auto">🚗 {t('aof.cielAuto')}</option>
                   <option value="Dovolenka">✈️ {t('aof.cielDovolenka')}</option>
                   <option value="Vzdelanie">🎓 {t('aof.cielVzdelanie')}</option>
-                  <option value="Rekonstructia">🏠 {t('aof.cielRekonstrukcia')}</option>
-                  <option value="Ine">{t('aof.cielIne')}</option>
+                  <option value="Rekonstrukcia">🏠 {t('aof.cielRekonstrukcia')}</option>
+                  <option value="Svadba">💍 {t('aof.cielSvadba')}</option>
+                  <option value="Elektronika">💻 {t('aof.cielElektronika')}</option>
+                  <option value="Zariadenie">🛋️ {t('aof.cielZariadenie')}</option>
+                  <option value="Zahrada">🌿 {t('aof.cielZahrada')}</option>
+                  <option value="Podnikanie">💼 {t('aof.cielPodnikanie')}</option>
+                  <option value="Zdravie">❤️ {t('aof.cielZdrAvie')}</option>
+                  <option value="Dochodok">🏦 {t('aof.cielDochodok')}</option>
+                  <option value="Ine">📌 {t('aof.cielIne')}</option>
                 </select>
                 <input type="checkbox" checked={c.checked} onChange={e => setAofCiele({ ineCiele: aofCiele.ineCiele.map(x => x.id === c.id ? { ...x, checked: e.target.checked } : x) })} />
               </div>
