@@ -91,7 +91,17 @@ export const translations: Record<string, any> = {
       cielDovolenka: 'Dovolenka',
       cielVzdelanie: 'Vzdelanie',
       cielRekonstrukcia: 'Rekonštrukcia',
-      cielIne: 'Iné'
+      cielIne: 'Iné',
+      renta20: '20-ročná',
+      rentaDozivotna: 'doživotna',
+      byvanieNova: 'Nová hypotéka',
+      byvanieRefinanc: 'Refinancovanie',
+      byvanieKupa: 'Kúpa nehnuteĺnosti',
+      byvanieIne: 'Iné',
+      majetokByt: 'Byt',
+      majetokDom: 'Dom',
+      majetokAuto: 'Auto',
+      majetokIne: 'Iné'
     }
   },
   EN: {
@@ -186,7 +196,17 @@ export const translations: Record<string, any> = {
       cielDovolenka: 'Vacation',
       cielVzdelanie: 'Education',
       cielRekonstrukcia: 'Renovation',
-      cielIne: 'Other'
+      cielIne: 'Other',
+      renta20: '20-year',
+      rentaDozivotna: 'Lifetime',
+      byvanieNova: 'New Mortgage',
+      byvanieRefinanc: 'Refinancing',
+      byvanieKupa: 'Property Purchase',
+      byvanieIne: 'Other',
+      majetokByt: 'Apartment',
+      majetokDom: 'House',
+      majetokAuto: 'Car',
+      majetokIne: 'Other'
     }
   },
   BG: {
@@ -281,7 +301,17 @@ export const translations: Record<string, any> = {
       cielDovolenka: 'Отпуск',
       cielVzdelanie: 'Образование',
       cielRekonstrukcia: 'Реновация',
-      cielIne: 'Друго'
+      cielIne: 'Друго',
+      renta20: '20-годишна',
+      rentaDozivotna: 'Доживотна',
+      byvanieNova: 'Нова ипотека',
+      byvanieRefinanc: 'Рефинансиране',
+      byvanieKupa: 'Покупка на имот',
+      byvanieIne: 'Друго',
+      majetokByt: 'Апартамент',
+      majetokDom: 'Къща',
+      majetokAuto: 'Кола',
+      majetokIne: 'Друго'
     }
   }
 };

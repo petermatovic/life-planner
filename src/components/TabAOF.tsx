@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import React from 'react';
 import { useAppStore } from '@/store/appStore';
 import { useTranslation } from '@/hooks/useTranslation';
@@ -151,7 +151,7 @@ export default function TabAOF() {
               {majetok.map(m => (
                 <div key={m.id} className="flex gap-1 items-center">
                   <select value={m.nazov} onChange={(e) => setMajetok(majetok.map(x => x.id === m.id ? { ...x, nazov: e.target.value } : x))} className="w-1/2 text-[10px] border px-1 bg-white dark:bg-[#111]">
-                    <option>Byt</option><option>Dom</option><option>Auto</option><option>Iné</option>
+                    <option value="Byt">{t('aof.majetokByt')}</option><option value="Dom">{t('aof.majetokDom')}</option><option value="Auto">{t('aof.majetokAuto')}</option><option value="Ine">{t('aof.majetokIne')}</option>
                   </select>
                   <input type="number" value={m.hodnota} placeholder={t('aof.aktualnaHodnota')} onChange={(e) => setMajetok(majetok.map(x => x.id === m.id ? { ...x, hodnota: Number(e.target.value) || '' } : x))} className="w-1/3 text-[10px] border px-1 text-right bg-white dark:bg-[#111]" />
                   <button onClick={() => setMajetok(majetok.filter(x => x.id !== m.id))} className="text-[#AB0534]"><Trash2 size={10} /></button>
@@ -265,8 +265,8 @@ export default function TabAOF() {
               </div>
               <div className="grid grid-cols-3 items-center mb-2">
                 <div className="text-right pr-2">{t('aof.naDobu')}</div>
-                <div className="mx-1"><select value={aofCiele.zabezpecenieKlientRentaRoky} onChange={e => setAofCiele({ zabezpecenieKlientRentaRoky: e.target.value })} className="border w-full px-1 text-center bg-white dark:bg-[#111] py-1"><option value="20-ročná">20-ročná</option><option value="doživotná">doživotná</option></select></div>
-                <div className="mx-1"><select value={aofCiele.zabezpeceniePartnerRentaRoky} onChange={e => setAofCiele({ zabezpeceniePartnerRentaRoky: e.target.value })} className="border w-full px-1 text-center bg-white dark:bg-[#111] py-1"><option value="20-ročná">20-ročná</option><option value="doživotná">doživotná</option></select></div>
+                <div className="mx-1"><select value={aofCiele.zabezpecenieKlientRentaRoky} onChange={e => setAofCiele({ zabezpecenieKlientRentaRoky: e.target.value })} className="border w-full px-1 text-center bg-white dark:bg-[#111] py-1"><option value="20r">{t('aof.renta20')}</option><option value="dozivotna">{t('aof.rentaDozivotna')}</option></select></div>
+                <div className="mx-1"><select value={aofCiele.zabezpeceniePartnerRentaRoky} onChange={e => setAofCiele({ zabezpeceniePartnerRentaRoky: e.target.value })} className="border w-full px-1 text-center bg-white dark:bg-[#111] py-1"><option value="20r">{t('aof.renta20')}</option><option value="dozivotna">{t('aof.rentaDozivotna')}</option></select></div>
               </div>
               <div className="grid grid-cols-3 items-center mt-3 pt-2 border-t border-[#D1D1D1] dark:border-[#333]">
                 <div className="font-bold">{t('aof.davkaSocialne')}</div>
@@ -308,7 +308,12 @@ export default function TabAOF() {
           <div className="flex items-start gap-4 mb-4 pb-4 border-b border-[#D1D1D1] dark:border-[#333]">
             <div className="w-1/4 font-extrabold flex flex-col gap-2">
               <div className="flex justify-between">{t('aof.byvanie')} <input type="checkbox" checked={aofCiele.byvanieCheckbox} onChange={e => setAofCiele({ byvanieCheckbox: e.target.checked })} /></div>
-              <input type="text" value={aofCiele.byvanieNazov} onChange={e => setAofCiele({ byvanieNazov: e.target.value })} className="border font-normal px-1 w-full bg-white dark:bg-[#111]" />
+              <select value={aofCiele.byvanieNazov} onChange={e => setAofCiele({ byvanieNazov: e.target.value })} className="border font-normal px-1 w-full bg-white dark:bg-[#111] py-1">
+                <option value="Nova hypoteka">{t('aof.byvanieNova')}</option>
+                <option value="Refinancovanie">{t('aof.byvanieRefinanc')}</option>
+                <option value="Kupa nehnutelnosti">{t('aof.byvanieKupa')}</option>
+                <option value="Ine">{t('aof.byvanieIne')}</option>
+              </select>
             </div>
             <div className={`flex-1 flex flex-col gap-1 transition-opacity ${!aofCiele.byvanieCheckbox && 'opacity-50 pointer-events-none'}`}>
               <div className="grid grid-cols-3 text-center mb-1"><div className="font-bold">{t('aof.sumaUveru')}</div><div className="font-bold">{t('aof.splatnost')}</div><div className="font-bold">{t('aof.urok')}</div></div>
