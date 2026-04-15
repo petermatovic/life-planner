@@ -1,4 +1,4 @@
-import { create } from 'zustand';
+﻿import { create } from 'zustand';
 
 export interface Osoba {
   meno: string;
@@ -106,7 +106,7 @@ const VZOROVA_RODINA = {
       { id: 101, nazov: 'Auto', hodnota: 5000, horizont: 3, checked: true },
     ] as InyCiel[],
     goalPriorities: {},
-    urokInvestovanie: 5.0,
+    urokInvestovanie: 8,
     urokVyplata: 4.5,
   } as AofCieleSetup,
 };
@@ -139,7 +139,7 @@ const PRAZDNY_PLAN = {
     predcasnaRentaPartnerCheckbox: false, predcasnaRentaPartnerVyska: '' as number | '', predcasnaRentaPartnerVek: '' as number | '',
     ineCiele: [] as InyCiel[],
     goalPriorities: {},
-    urokInvestovanie: 5.0,
+    urokInvestovanie: 8,
     urokVyplata: 4.5,
   } as AofCieleSetup,
 };

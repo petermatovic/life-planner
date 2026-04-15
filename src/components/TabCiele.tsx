@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import React from 'react';
 import { useAppStore } from '@/store/appStore';
 import { Trash2 } from 'lucide-react';
@@ -187,12 +187,12 @@ export default function TabCiele() {
         <span className="font-bold text-[#555] dark:text-[#AAA]">Úrokové sadzby:</span>
         <div className="flex items-center gap-2">
           <span className="font-bold">Investovanie</span>
-          <input type="number" step="0.1" value={rInv} onChange={e => setAofCiele({ urokInvestovanie: Number(e.target.value) || 0 })} className="w-16 border text-center bg-white dark:bg-[#111] px-1 py-0.5 rounded" />
+          <input type="number" step="0.1" value={rInv || ""} onChange={e => setAofCiele({ urokInvestovanie: e.target.value === "" ? 0 : parseFloat(e.target.value) || 0 })} className="w-16 border text-center bg-white dark:bg-[#111] px-1 py-0.5 rounded" />
           <span>% p.a.</span>
         </div>
         <div className="flex items-center gap-2">
           <span className="font-bold">Výplata / splátka</span>
-          <input type="number" step="0.1" value={rVyp} onChange={e => setAofCiele({ urokVyplata: Number(e.target.value) || 0 })} className="w-16 border text-center bg-white dark:bg-[#111] px-1 py-0.5 rounded" />
+          <input type="number" step="0.1" value={rVyp || ""} onChange={e => setAofCiele({ urokVyplata: e.target.value === "" ? 0 : parseFloat(e.target.value) || 0 })} className="w-16 border text-center bg-white dark:bg-[#111] px-1 py-0.5 rounded" />
           <span>% p.a.</span>
         </div>
       </div>

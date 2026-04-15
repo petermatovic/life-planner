@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import React from 'react';
 import { useAppStore } from '@/store/appStore';
 import { useTranslation } from '@/hooks/useTranslation';
@@ -153,7 +153,7 @@ export default function TabAOF() {
                   <select value={m.nazov} onChange={(e) => setMajetok(majetok.map(x => x.id === m.id ? { ...x, nazov: e.target.value } : x))} className="w-1/2 text-[10px] border px-1 bg-white dark:bg-[#111]">
                     <option value="Byt">{t('aof.majetokByt')}</option><option value="Dom">{t('aof.majetokDom')}</option><option value="Auto">{t('aof.majetokAuto')}</option><option value="Ine">{t('aof.majetokIne')}</option>
                   </select>
-                  <input type="number" value={m.hodnota} placeholder={t('aof.aktualnaHodnota')} onChange={(e) => setMajetok(majetok.map(x => x.id === m.id ? { ...x, hodnota: Number(e.target.value) || '' } : x))} className="w-1/3 text-[10px] border px-1 text-right bg-white dark:bg-[#111]" />
+                  <input type="number" value={(m.hodnota) || ""} placeholder={t('aof.aktualnaHodnota')} onChange={(e) => setMajetok(majetok.map(x => x.id === m.id ? { ...x, hodnota: Number(e.target.value) || '' } : x))} className="w-1/3 text-[10px] border px-1 text-right bg-white dark:bg-[#111]" />
                   <button onClick={() => setMajetok(majetok.filter(x => x.id !== m.id))} className="text-[#AB0534]"><Trash2 size={10} /></button>
                 </div>
               ))}
@@ -172,19 +172,19 @@ export default function TabAOF() {
           <div className="flex justify-between items-center mb-2"><div className="w-[30%] font-bold">{t('aof.spotreba')}</div><input value={cashFlow.spotrebaMesacne} onChange={(e) => setCashFlow({ spotrebaMesacne: Number(e.target.value) || '' })} className="w-[30%] px-1 border text-right bg-white dark:bg-[#111]" /><input value={cashFlow.spotrebaRocne} onChange={(e) => setCashFlow({ spotrebaRocne: Number(e.target.value) || '' })} className="w-[30%] px-1 border text-right bg-white dark:bg-[#111]" /></div>
 
           <div className="flex justify-between font-bold text-[10px] text-center mb-1 pr-[10px] mt-3"><div className="w-[30%]">{t('aof.financneVydavky')}</div><div className="w-[30%]">{t('aof.mesacnaSplatka')}</div><div className="w-[30%]">{t('aof.zostatok')}</div></div>
-          <div className="flex justify-between items-center mb-1"><div className="w-[30%]">{t('aof.uvery')}</div><input type="number" value={cashFlow.uverySplatka} onChange={e => setCashFlow({ uverySplatka: Number(e.target.value) })} className="w-[30%] px-1 border text-right bg-white dark:bg-[#111]" /><input type="number" value={cashFlow.uveryZostatok} onChange={e => setCashFlow({ uveryZostatok: Number(e.target.value) })} className="w-[30%] px-1 border text-right bg-white dark:bg-[#111]" /></div>
+          <div className="flex justify-between items-center mb-1"><div className="w-[30%]">{t('aof.uvery')}</div><input type="number" value={(cashFlow.uverySplatka) || ""} onChange={e => setCashFlow({ uverySplatka: Number(e.target.value) })} className="w-[30%] px-1 border text-right bg-white dark:bg-[#111]" /><input type="number" value={(cashFlow.uveryZostatok) || ""} onChange={e => setCashFlow({ uveryZostatok: Number(e.target.value) })} className="w-[30%] px-1 border text-right bg-white dark:bg-[#111]" /></div>
 
           <div className="flex justify-between font-bold text-[10px] text-center mb-1 pr-[10px] mt-2"><div className="w-[30%]"></div><div className="w-[30%]">{t('aof.mesacnaSplatka')}</div><div className="w-[30%]">{t('aof.aktualnaHodnota')}</div></div>
-          <div className="flex justify-between items-center mb-1"><div className="w-[30%]">{t('aof.sporenia')}</div><input type="number" value={cashFlow.sporeniaSplatka} onChange={e => setCashFlow({ sporeniaSplatka: Number(e.target.value) })} className="w-[30%] px-1 border text-right bg-white dark:bg-[#111]" /><input type="number" value={cashFlow.sporeniaZostatok} onChange={e => setCashFlow({ sporeniaZostatok: Number(e.target.value) })} className="w-[30%] px-1 border text-right bg-white dark:bg-[#111]" /></div>
-          <div className="flex justify-between items-center mb-1"><div className="w-[30%]">{t('aof.investicie')}</div><input type="number" value={cashFlow.investicieSplatka} onChange={e => setCashFlow({ investicieSplatka: Number(e.target.value) })} className="w-[30%] px-1 border text-right bg-white dark:bg-[#111]" /><input type="number" value={cashFlow.investicieZostatok} onChange={e => setCashFlow({ investicieZostatok: Number(e.target.value) })} className="w-[30%] px-1 border text-right bg-white dark:bg-[#111]" /></div>
-          <div className="flex justify-between items-center mb-2"><div className="w-[30%]">{t('aof.poistenieZivot')}</div><input type="number" value={cashFlow.poistZivotSplatka} onChange={e => setCashFlow({ poistZivotSplatka: Number(e.target.value) })} className="w-[30%] px-1 border text-right bg-white dark:bg-[#111]" /><input type="number" value={cashFlow.poistZivotZostatok} onChange={e => setCashFlow({ poistZivotZostatok: Number(e.target.value) })} className="w-[30%] px-1 border text-right bg-white dark:bg-[#111]" /></div>
+          <div className="flex justify-between items-center mb-1"><div className="w-[30%]">{t('aof.sporenia')}</div><input type="number" value={(cashFlow.sporeniaSplatka) || ""} onChange={e => setCashFlow({ sporeniaSplatka: Number(e.target.value) })} className="w-[30%] px-1 border text-right bg-white dark:bg-[#111]" /><input type="number" value={(cashFlow.sporeniaZostatok) || ""} onChange={e => setCashFlow({ sporeniaZostatok: Number(e.target.value) })} className="w-[30%] px-1 border text-right bg-white dark:bg-[#111]" /></div>
+          <div className="flex justify-between items-center mb-1"><div className="w-[30%]">{t('aof.investicie')}</div><input type="number" value={(cashFlow.investicieSplatka) || ""} onChange={e => setCashFlow({ investicieSplatka: Number(e.target.value) })} className="w-[30%] px-1 border text-right bg-white dark:bg-[#111]" /><input type="number" value={(cashFlow.investicieZostatok) || ""} onChange={e => setCashFlow({ investicieZostatok: Number(e.target.value) })} className="w-[30%] px-1 border text-right bg-white dark:bg-[#111]" /></div>
+          <div className="flex justify-between items-center mb-2"><div className="w-[30%]">{t('aof.poistenieZivot')}</div><input type="number" value={(cashFlow.poistZivotSplatka) || ""} onChange={e => setCashFlow({ poistZivotSplatka: Number(e.target.value) })} className="w-[30%] px-1 border text-right bg-white dark:bg-[#111]" /><input type="number" value={(cashFlow.poistZivotZostatok) || ""} onChange={e => setCashFlow({ poistZivotZostatok: Number(e.target.value) })} className="w-[30%] px-1 border text-right bg-white dark:bg-[#111]" /></div>
 
           <div className="flex justify-between font-bold text-[10px] text-center mb-1 pr-[10px] mt-2"><div className="w-[30%]"></div><div className="w-[30%]">{t('aof.mesacne')}</div><div className="w-[30%]">{t('aof.rocne')}</div></div>
           <div className="flex justify-between items-center mb-3"><div className="w-[30%]">{t('aof.poistenieNezivot')}</div><input value={cashFlow.poistNezivotMesacne} onChange={(e) => setCashFlow({ poistNezivotMesacne: Number(e.target.value) || '' })} className="w-[30%] px-1 border text-right bg-white dark:bg-[#111]" /><input value={cashFlow.poistNezivotRocne} onChange={(e) => setCashFlow({ poistNezivotRocne: Number(e.target.value) || '' })} className="w-[30%] px-1 border text-right bg-white dark:bg-[#111]" /></div>
 
           <div className="flex justify-between items-center font-bold pb-2 pt-2 border-t border-[#D1D1D1] dark:border-[#4D4D4D]">
             <div className="w-[30%]">{t('aof.zostatokUcet')}</div>
-            <div className="w-[50%] flex justify-end"><input type="number" value={cashFlow.zostatokUcet} onChange={(e) => setCashFlow({ zostatokUcet: Number(e.target.value) })} className="w-[60%] px-2 border text-right bg-white dark:bg-[#111]" /></div>
+            <div className="w-[50%] flex justify-end"><input type="number" value={(cashFlow.zostatokUcet) || ""} onChange={(e) => setCashFlow({ zostatokUcet: Number(e.target.value) })} className="w-[60%] px-2 border text-right bg-white dark:bg-[#111]" /></div>
           </div>
         </div>
 
@@ -318,9 +318,9 @@ export default function TabAOF() {
             <div className={`flex-1 flex flex-col gap-1 transition-opacity ${!aofCiele.byvanieCheckbox && 'opacity-50 pointer-events-none'}`}>
               <div className="grid grid-cols-3 text-center mb-1"><div className="font-bold">{t('aof.sumaUveru')}</div><div className="font-bold">{t('aof.splatnost')}</div><div className="font-bold">{t('aof.urok')}</div></div>
               <div className="grid grid-cols-3 gap-2">
-                <input type="number" value={aofCiele.byvanieSumaUveru} onChange={e => setAofCiele({ byvanieSumaUveru: Number(e.target.value) })} className="border text-center px-1 bg-white dark:bg-[#111]" />
-                <input type="number" value={aofCiele.byvanieSplatnost} onChange={e => setAofCiele({ byvanieSplatnost: Number(e.target.value) })} className="border text-center px-1 bg-white dark:bg-[#111]" />
-                <div className="relative"><input type="number" step="0.1" value={aofCiele.byvanieUrok} onChange={e => setAofCiele({ byvanieUrok: Number(e.target.value) })} className="border text-center px-1 w-full bg-white dark:bg-[#111]" /><span className="absolute right-2 top-0">%</span></div>
+                <input type="number" value={(aofCiele.byvanieSumaUveru) || ""} onChange={e => setAofCiele({ byvanieSumaUveru: Number(e.target.value) })} className="border text-center px-1 bg-white dark:bg-[#111]" />
+                <input type="number" value={(aofCiele.byvanieSplatnost) || ""} onChange={e => setAofCiele({ byvanieSplatnost: Number(e.target.value) })} className="border text-center px-1 bg-white dark:bg-[#111]" />
+                <div className="relative"><input type="number" step="0.1" value={(aofCiele.byvanieUrok) || ""} onChange={e => setAofCiele({ byvanieUrok: Number(e.target.value) })} className="border text-center px-1 w-full bg-white dark:bg-[#111]" /><span className="absolute right-2 top-0">%</span></div>
               </div>
               <div className="grid grid-cols-3 gap-2 mt-2">
                 <div className="col-span-2 flex items-center gap-2"><span className="w-1/2 text-right">{t('aof.splatkaUveru')}</span> <span className="border text-center px-1 bg-[#D6D6D6] dark:bg-[#333] text-[#555] dark:text-[#AAA] flex-1 min-h-[22px] font-bold">{byvanieSplatka > 0 ? `${byvanieSplatka.toFixed(0)} €` : ''}</span></div>
@@ -328,7 +328,7 @@ export default function TabAOF() {
             </div>
             <div className={`w-1/4 flex flex-col gap-1 text-center transition-opacity ${!aofCiele.byvanieCheckbox && 'opacity-50 pointer-events-none'}`}>
               <div className="font-bold">{t('aof.nesplatenyUver')}</div>
-              <input type="number" value={aofCiele.byvanieNesplatenyDiel} onChange={e => setAofCiele({ byvanieNesplatenyDiel: Number(e.target.value) })} className="border text-center px-1 bg-white dark:bg-[#111]" />
+              <input type="number" value={(aofCiele.byvanieNesplatenyDiel) || ""} onChange={e => setAofCiele({ byvanieNesplatenyDiel: Number(e.target.value) })} className="border text-center px-1 bg-white dark:bg-[#111]" />
             </div>
           </div>
 
@@ -340,9 +340,9 @@ export default function TabAOF() {
                 <div className="grid grid-cols-4 text-center mb-1"><div className="font-bold">{t('aof.potrebnaSuma')}</div><div className="font-bold">{t('aof.vyskaRentyMes')}</div><div className="font-bold">{t('aof.dobaMDRoky')}</div><div className="font-bold">{t('aof.oKolkoRokov')}</div></div>
                 <div className="grid grid-cols-4 gap-2">
                   <input type="text" readOnly value={(aofCiele.rezervaMDRenta && aofCiele.rezervaMDDoba) ? `${(Number(aofCiele.rezervaMDRenta) * Number(aofCiele.rezervaMDDoba) * 12).toFixed(0)} €` : ''} className="border text-center px-1 bg-[#D6D6D6] dark:bg-[#333] cursor-not-allowed text-[#555] dark:text-[#AAA]" />
-                  <input type="number" value={aofCiele.rezervaMDRenta} onChange={e => setAofCiele({ rezervaMDRenta: Number(e.target.value) || '' })} className="border text-center px-1 bg-white dark:bg-[#111]" />
-                  <input type="number" value={aofCiele.rezervaMDDoba} onChange={e => setAofCiele({ rezervaMDDoba: Number(e.target.value) || '' })} className="border text-center px-1 bg-white dark:bg-[#111]" />
-                  <input type="number" value={aofCiele.rezervaMDRoky} onChange={e => setAofCiele({ rezervaMDRoky: Number(e.target.value) || '' })} className="border text-center px-1 bg-white dark:bg-[#111]" />
+                  <input type="number" value={(aofCiele.rezervaMDRenta) || ""} onChange={e => setAofCiele({ rezervaMDRenta: Number(e.target.value) || '' })} className="border text-center px-1 bg-white dark:bg-[#111]" />
+                  <input type="number" value={(aofCiele.rezervaMDDoba) || ""} onChange={e => setAofCiele({ rezervaMDDoba: Number(e.target.value) || '' })} className="border text-center px-1 bg-white dark:bg-[#111]" />
+                  <input type="number" value={(aofCiele.rezervaMDRoky) || ""} onChange={e => setAofCiele({ rezervaMDRoky: Number(e.target.value) || '' })} className="border text-center px-1 bg-white dark:bg-[#111]" />
                 </div>
               </div>
             )}
@@ -352,8 +352,8 @@ export default function TabAOF() {
           <div className="flex items-center gap-4 mb-2">
             <div className="w-1/4 font-extrabold flex justify-between items-center">{t('aof.predcasnaRenta')} <input type="checkbox" checked={aofCiele.predcasnaRentaKlientCheckbox} onChange={e => setAofCiele({ predcasnaRentaKlientCheckbox: e.target.checked })} /></div>
             <div className={`flex-1 grid grid-cols-3 gap-2 transition-opacity ${!aofCiele.predcasnaRentaKlientCheckbox && 'opacity-50 pointer-events-none'}`}>
-              <div className="flex flex-col text-center"><span className="font-bold">{t('aof.vyskaRenty')}</span><input type="number" value={aofCiele.predcasnaRentaKlientVyska} onChange={e => setAofCiele({ predcasnaRentaKlientVyska: Number(e.target.value) })} className="border text-center px-1 bg-white dark:bg-[#111]" /></div>
-              <div className="flex flex-col text-center"><span className="font-bold">{t('aof.vAkomVeku')}</span><input type="number" value={aofCiele.predcasnaRentaKlientVek} onChange={e => setAofCiele({ predcasnaRentaKlientVek: Number(e.target.value) })} className="border text-center px-1 bg-white dark:bg-[#111]" /></div>
+              <div className="flex flex-col text-center"><span className="font-bold">{t('aof.vyskaRenty')}</span><input type="number" value={(aofCiele.predcasnaRentaKlientVyska) || ""} onChange={e => setAofCiele({ predcasnaRentaKlientVyska: Number(e.target.value) })} className="border text-center px-1 bg-white dark:bg-[#111]" /></div>
+              <div className="flex flex-col text-center"><span className="font-bold">{t('aof.vAkomVeku')}</span><input type="number" value={(aofCiele.predcasnaRentaKlientVek) || ""} onChange={e => setAofCiele({ predcasnaRentaKlientVek: Number(e.target.value) })} className="border text-center px-1 bg-white dark:bg-[#111]" /></div>
             </div>
           </div>
 
@@ -361,8 +361,8 @@ export default function TabAOF() {
           <div className="flex items-center gap-4 mb-4 pb-4 border-b border-[#D1D1D1] dark:border-[#333]">
             <div className="w-1/4 font-extrabold flex justify-between items-center">{t('aof.predcasnaRentaPartner')} <input type="checkbox" checked={aofCiele.predcasnaRentaPartnerCheckbox} onChange={e => setAofCiele({ predcasnaRentaPartnerCheckbox: e.target.checked })} /></div>
             <div className={`flex-1 grid grid-cols-3 gap-2 transition-opacity ${!aofCiele.predcasnaRentaPartnerCheckbox && 'opacity-50 pointer-events-none'}`}>
-              <div className="flex flex-col text-center"><span className="font-bold mb-1 opacity-0">.</span><input type="number" value={aofCiele.predcasnaRentaPartnerVyska} onChange={e => setAofCiele({ predcasnaRentaPartnerVyska: Number(e.target.value) })} className="border text-center px-1 bg-white dark:bg-[#111]" /></div>
-              <div className="flex flex-col text-center"><span className="font-bold mb-1 opacity-0">.</span><input type="number" value={aofCiele.predcasnaRentaPartnerVek} onChange={e => setAofCiele({ predcasnaRentaPartnerVek: Number(e.target.value) })} className="border text-center px-1 bg-white dark:bg-[#111]" /></div>
+              <div className="flex flex-col text-center"><span className="font-bold mb-1 opacity-0">.</span><input type="number" value={(aofCiele.predcasnaRentaPartnerVyska) || ""} onChange={e => setAofCiele({ predcasnaRentaPartnerVyska: Number(e.target.value) })} className="border text-center px-1 bg-white dark:bg-[#111]" /></div>
+              <div className="flex flex-col text-center"><span className="font-bold mb-1 opacity-0">.</span><input type="number" value={(aofCiele.predcasnaRentaPartnerVek) || ""} onChange={e => setAofCiele({ predcasnaRentaPartnerVek: Number(e.target.value) })} className="border text-center px-1 bg-white dark:bg-[#111]" /></div>
             </div>
           </div>
 
@@ -400,8 +400,8 @@ export default function TabAOF() {
                 <input type="checkbox" checked={c.checked} onChange={e => setAofCiele({ ineCiele: aofCiele.ineCiele.map(x => x.id === c.id ? { ...x, checked: e.target.checked } : x) })} />
               </div>
               <div className={`flex-1 grid grid-cols-3 gap-2 transition-opacity ${!c.checked && 'opacity-50'}`}>
-                <input type="number" value={c.hodnota} onChange={e => setAofCiele({ ineCiele: aofCiele.ineCiele.map(x => x.id === c.id ? { ...x, hodnota: Number(e.target.value) } : x) })} className="border text-center px-1 bg-white dark:bg-[#111]" />
-                <input type="number" value={c.horizont} onChange={e => setAofCiele({ ineCiele: aofCiele.ineCiele.map(x => x.id === c.id ? { ...x, horizont: Number(e.target.value) } : x) })} className="border text-center px-1 bg-white dark:bg-[#111]" />
+                <input type="number" value={(c.hodnota) || ""} onChange={e => setAofCiele({ ineCiele: aofCiele.ineCiele.map(x => x.id === c.id ? { ...x, hodnota: Number(e.target.value) } : x) })} className="border text-center px-1 bg-white dark:bg-[#111]" />
+                <input type="number" value={(c.horizont) || ""} onChange={e => setAofCiele({ ineCiele: aofCiele.ineCiele.map(x => x.id === c.id ? { ...x, horizont: Number(e.target.value) } : x) })} className="border text-center px-1 bg-white dark:bg-[#111]" />
                 <button onClick={() => setAofCiele({ ineCiele: aofCiele.ineCiele.filter(x => x.id !== c.id) })} className="text-[#AB0534] w-min px-4"><Trash2 size={12} /></button>
               </div>
             </div>
