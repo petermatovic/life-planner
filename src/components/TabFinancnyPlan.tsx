@@ -1,14 +1,15 @@
 'use client';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useAppStore } from '@/store/appStore';
 import { useTranslation } from '@/hooks/useTranslation';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import { num, calcPMT_fv, calcFV as sharedCalcFV, calcPMT_loan } from '@/utils/helpers';
 
 export default function TabFinancnyPlan() {
   const { t } = useTranslation();
   const { klient, partner, hasPartner, deti, cashFlow, aofCiele } = useAppStore();
 
-  const num = (v: any) => Number(v) || 0;
+  const num_ = num; // alias for clarity
 
   // ── Cash Flow ─────────────────────────────────────────────────────────────
   const prijmy = num(klient.cistyMesacne) + num(klient.cistyRocne) / 12
@@ -21,27 +22,11 @@ export default function TabFinancnyPlan() {
     + num(cashFlow.investicieSplatka) + num(cashFlow.poistZivotSplatka)
     + num(cashFlow.poistNezivotMesacne) + num(cashFlow.poistNezivotRocne) / 12;
 
-  const kDisp = Math.max(0, prijmy - vydavky);        // K dispozícii mesačne
-  const kDispJednor = num(cashFlow.zostatokUcet);     // K dispozícii jednorázovo
+  const kDisp = Math.max(0, prijmy - vydavky);
+  const kDispJednor = num(cashFlow.zostatokUcet);
 
   // ── Výpočtové pomôcky ─────────────────────────────────────────────────────
-  const rInv = aofCiele.urokInvestovanie / 100 / 12;  // mesačný úrok
-
-  // PMT → koľko treba mesačne investovať na dosiahnutie FV
-  const calcPMT = (fv: number, roky: number) => {
-    if (!fv || !roky) return 0;
-    const n = roky * 12;
-    if (rInv === 0) return fv / n;
-    return fv * rInv / (Math.pow(1 + rInv, n) - 1);
-  };
-
-  // FV → budúca hodnota mesačnej platby
-  const calcFV = (pmt: number, roky: number) => {
-    if (!pmt || !roky) return 0;
-    const n = roky * 12;
-    if (rInv === 0) return pmt * n;
-    return pmt * (Math.pow(1 + rInv, n) - 1) / rInv;
-  };
+  const rInvPa = aofCiele.urokInvestovanie; // ročný % pre helpers
 
   const klientVek = num(klient.vekPos);
   const partnerVek = num(partner.vekPos);
@@ -64,9 +49,9 @@ export default function TabFinancnyPlan() {
 
     const addGoal = (id: string, nazov: string, horizont: number, fvIdeal: number, pmtMieraSeed = 0) => {
       if (horizont <= 0 || fvIdeal <= 0) return;
-      const pmtIdeal = calcPMT(fvIdeal, horizont);
+      const pmtIdeal = calcPMT_fv(fvIdeal, horizont, rInvPa);
       const pmtMiera = pmtMieraSeed > 0 ? pmtMieraSeed : pmtIdeal;
-      const fvMiera = calcFV(pmtMiera, horizont);
+      const fvMiera = sharedCalcFV(pmtMiera, horizont, rInvPa);
       goals.push({ id, nazov, horizont, fvIdeal, pmtIdeal, pmtMiera, fvMiera });
     };
 
@@ -120,14 +105,12 @@ export default function TabFinancnyPlan() {
     });
 
     // Bývanie
-    if (aofCiele.byvanieCheckbox && num(aofCiele.byvanieNesplatenyDiel) && num(aofCiele.byvanieSplatnost)) {
-      const r = num(aofCiele.byvanieUrok) / 100 / 12;
-      const n = num(aofCiele.byvanieSplatnost) * 12;
-      const pmt = r > 0 ? num(aofCiele.byvanieSumaUveru) * r / (1 - Math.pow(1 + r, -n)) : num(aofCiele.byvanieSumaUveru) / n;
+    if (aofCiele.byvanieCheckbox && num(aofCiele.byvanieNesplatenyDiel) && num(aofCiele.byvanieSplatnost) > 0) {
+      const pmt = calcPMT_loan(num(aofCiele.byvanieSumaUveru), num(aofCiele.byvanieSplatnost), num(aofCiele.byvanieUrok));
       const fv = num(aofCiele.byvanieNesplatenyDiel);
       const horizont = num(aofCiele.byvanieSplatnost);
-      const pmtIdeal = calcPMT(fv, horizont);
-      const fvMiera = calcFV(pmt, horizont);
+      const pmtIdeal = calcPMT_fv(fv, horizont, rInvPa);
+      const fvMiera = sharedCalcFV(pmt, horizont, rInvPa);
       goals.push({ id: 'byvanie', nazov: aofCiele.byvanieNazov || t('fp.byvanie'), horizont, fvIdeal: fv, pmtIdeal, pmtMiera: pmt, fvMiera });
     }
 
@@ -139,7 +122,8 @@ export default function TabFinancnyPlan() {
     return goals;
   };
 
-  const goals = buildGoals();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const goals = useMemo(() => buildGoals(), [klient, partner, hasPartner, deti, cashFlow, aofCiele, rInvPa]);
 
   const totalPmtIdeal = goals.reduce((s, g) => s + g.pmtIdeal, 0);
   const totalPmtMiera = goals.reduce((s, g) => s + g.pmtMiera, 0);

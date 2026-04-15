@@ -1,9 +1,10 @@
-﻿'use client';
+'use client';
 import React from 'react';
 import { useAppStore } from '@/store/appStore';
 import { useTranslation } from '@/hooks/useTranslation';
 import { Trash2, CheckSquare, Square } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LabelList } from 'recharts';
+import { num, parseInput, uid, calcPMT_loan } from '@/utils/helpers';
 
 const InputRow = ({ label, value, onChange, placeholder = "" }: any) => (
   <div className="flex justify-between items-center mb-1">
@@ -30,7 +31,7 @@ export default function TabAOF() {
     aofCiele, setAofCiele
   } = useAppStore();
 
-  const num = (v: any) => Number(v) || 0;
+  // num, parseInput, uid, calcPMT_loan imported from @/utils/helpers
 
   const prijemMesacne = num(klient.cistyMesacne) + num(klient.pasivnyMesacne) + (hasPartner ? num(partner.cistyMesacne) + num(partner.pasivnyMesacne) : 0);
   const prijemRocne = num(klient.cistyRocne) + num(klient.pasivnyRocne) + (hasPartner ? num(partner.cistyRocne) + num(partner.pasivnyRocne) : 0);
@@ -70,13 +71,7 @@ export default function TabAOF() {
   const sucMajetok = sporenia + investicie + poistZivot;
   const sucRezerva = rozdiel;
 
-  const calcPmt = (suma: number | '', rocky: number | '', urok: number | '') => {
-    if (!suma || !rocky || !urok) return 0;
-    const r = (Number(urok) / 100) / 12;
-    const n = Number(rocky) * 12;
-    return (Number(suma) * r) / (1 - Math.pow(1 + r, -n));
-  };
-  const byvanieSplatka = calcPmt(aofCiele.byvanieSumaUveru, aofCiele.byvanieSplatnost, aofCiele.byvanieUrok);
+  const byvanieSplatka = calcPMT_loan(num(aofCiele.byvanieSumaUveru), num(aofCiele.byvanieSplatnost), num(aofCiele.byvanieUrok));
 
   const chartData = [
     { name: t('aof.optimal'), Spotreba: optSpotreba, 'Úvery': optUvery, Tvorba: optMajetok, Rezerva: optRezerva },
@@ -138,14 +133,14 @@ export default function TabAOF() {
                   </div>
                 ))}
               </div>
-              <button onClick={() => setDeti([...deti, { id: Date.now(), vek: '' }])} className="w-full text-center border-dashed border py-0.5 text-[#989FA7] bg-white dark:bg-[#111]">{t('aof.pridat')}</button>
+              <button onClick={() => setDeti([...deti, { id: uid(), vek: '' }])} className="w-full text-center border-dashed border py-0.5 text-[#989FA7] bg-white dark:bg-[#111]">{t('aof.pridat')}</button>
             </div>
           </div>
 
           <div className="bg-[#FAFAFA] dark:bg-[#1A1A1A] rounded p-2 border border-[#ECEDED] dark:border-[#2A2A2A] shadow-sm flex-1 flex flex-col">
             <div className="flex justify-between items-center mb-1">
               <h2 className="font-extrabold text-[10px] uppercase tracking-wide">{t('aof.majetok')}</h2>
-              <button className="text-[9px] font-bold" onClick={() => setMajetok([...majetok, { id: Date.now(), nazov: 'Byt', typ: 'Fyzický', hodnota: '' }])}>{t('aof.pridat')}</button>
+              <button className="text-[9px] font-bold" onClick={() => setMajetok([...majetok, { id: uid(), nazov: 'Byt', typ: 'Fyzický', hodnota: '' }])}>{t('aof.pridat')}</button>
             </div>
             <div className="space-y-1 overflow-auto max-h-[80px]">
               {majetok.map(m => (
@@ -169,7 +164,7 @@ export default function TabAOF() {
         <div className="bg-[#EAEAEA] dark:bg-[#1A1A1A] rounded p-4 border border-[#D1D1D1] dark:border-[#2A2A2A] shadow-sm text-xs">
           <h2 className="font-extrabold text-sm uppercase tracking-wide border-b border-[#D1D1D1] dark:border-[#4D4D4D] pb-1 mb-2">{t('aof.cashflow')}</h2>
           <div className="flex justify-between font-bold text-[10px] text-center mb-1 pr-[10px]"><div className="w-[30%]"></div><div className="w-[30%]">{t('aof.mesacne')}</div><div className="w-[30%]">{t('aof.rocne')}</div></div>
-          <div className="flex justify-between items-center mb-2"><div className="w-[30%] font-bold">{t('aof.spotreba')}</div><input value={cashFlow.spotrebaMesacne} onChange={(e) => setCashFlow({ spotrebaMesacne: Number(e.target.value) || '' })} className="w-[30%] px-1 border text-right bg-white dark:bg-[#111]" /><input value={cashFlow.spotrebaRocne} onChange={(e) => setCashFlow({ spotrebaRocne: Number(e.target.value) || '' })} className="w-[30%] px-1 border text-right bg-white dark:bg-[#111]" /></div>
+          <div className="flex justify-between items-center mb-2"><div className="w-[30%] font-bold">{t('aof.spotreba')}</div><input type="number" value={cashFlow.spotrebaMesacne || ''} onChange={(e) => setCashFlow({ spotrebaMesacne: parseInput(e.target.value) })} className="w-[30%] px-1 border text-right bg-white dark:bg-[#111]" /><input type="number" value={cashFlow.spotrebaRocne || ''} onChange={(e) => setCashFlow({ spotrebaRocne: parseInput(e.target.value) })} className="w-[30%] px-1 border text-right bg-white dark:bg-[#111]" /></div>
 
           <div className="flex justify-between font-bold text-[10px] text-center mb-1 pr-[10px] mt-3"><div className="w-[30%]">{t('aof.financneVydavky')}</div><div className="w-[30%]">{t('aof.mesacnaSplatka')}</div><div className="w-[30%]">{t('aof.zostatok')}</div></div>
           <div className="flex justify-between items-center mb-1"><div className="w-[30%]">{t('aof.uvery')}</div><input type="number" value={(cashFlow.uverySplatka) || ""} onChange={e => setCashFlow({ uverySplatka: Number(e.target.value) })} className="w-[30%] px-1 border text-right bg-white dark:bg-[#111]" /><input type="number" value={(cashFlow.uveryZostatok) || ""} onChange={e => setCashFlow({ uveryZostatok: Number(e.target.value) })} className="w-[30%] px-1 border text-right bg-white dark:bg-[#111]" /></div>
@@ -180,7 +175,7 @@ export default function TabAOF() {
           <div className="flex justify-between items-center mb-2"><div className="w-[30%]">{t('aof.poistenieZivot')}</div><input type="number" value={(cashFlow.poistZivotSplatka) || ""} onChange={e => setCashFlow({ poistZivotSplatka: Number(e.target.value) })} className="w-[30%] px-1 border text-right bg-white dark:bg-[#111]" /><input type="number" value={(cashFlow.poistZivotZostatok) || ""} onChange={e => setCashFlow({ poistZivotZostatok: Number(e.target.value) })} className="w-[30%] px-1 border text-right bg-white dark:bg-[#111]" /></div>
 
           <div className="flex justify-between font-bold text-[10px] text-center mb-1 pr-[10px] mt-2"><div className="w-[30%]"></div><div className="w-[30%]">{t('aof.mesacne')}</div><div className="w-[30%]">{t('aof.rocne')}</div></div>
-          <div className="flex justify-between items-center mb-3"><div className="w-[30%]">{t('aof.poistenieNezivot')}</div><input value={cashFlow.poistNezivotMesacne} onChange={(e) => setCashFlow({ poistNezivotMesacne: Number(e.target.value) || '' })} className="w-[30%] px-1 border text-right bg-white dark:bg-[#111]" /><input value={cashFlow.poistNezivotRocne} onChange={(e) => setCashFlow({ poistNezivotRocne: Number(e.target.value) || '' })} className="w-[30%] px-1 border text-right bg-white dark:bg-[#111]" /></div>
+          <div className="flex justify-between items-center mb-3"><div className="w-[30%]">{t('aof.poistenieNezivot')}</div><input type="number" value={cashFlow.poistNezivotMesacne || ''} onChange={(e) => setCashFlow({ poistNezivotMesacne: parseInput(e.target.value) })} className="w-[30%] px-1 border text-right bg-white dark:bg-[#111]" /><input type="number" value={cashFlow.poistNezivotRocne || ''} onChange={(e) => setCashFlow({ poistNezivotRocne: parseInput(e.target.value) })} className="w-[30%] px-1 border text-right bg-white dark:bg-[#111]" /></div>
 
           <div className="flex justify-between items-center font-bold pb-2 pt-2 border-t border-[#D1D1D1] dark:border-[#4D4D4D]">
             <div className="w-[30%]">{t('aof.zostatokUcet')}</div>
@@ -371,7 +366,7 @@ export default function TabAOF() {
             <div className="w-1/4 font-extrabold flex justify-between items-center">
               {t('aof.ineCiele')}
               <div className="flex items-center gap-2">
-                <button onClick={() => setAofCiele({ ineCiele: [...aofCiele.ineCiele, { id: Date.now(), nazov: 'Auto', hodnota: '', horizont: '', checked: true }], ineCieleExpand: true })} className="text-[10px] bg-white dark:bg-[#333] px-1 border rounded">{t('aof.pridat')} +</button>
+                <button onClick={() => setAofCiele({ ineCiele: [...aofCiele.ineCiele, { id: uid(), nazov: 'Auto', hodnota: '', horizont: '', checked: true }], ineCieleExpand: true })} className="text-[10px] bg-white dark:bg-[#333] px-1 border rounded">{t('aof.pridat')} +</button>
                 <input type="checkbox" checked={aofCiele.ineCieleExpand} onChange={e => setAofCiele({ ineCieleExpand: e.target.checked })} />
               </div>
             </div>

@@ -1,15 +1,18 @@
-﻿'use client';
+'use client';
 import React from 'react';
 import { useAppStore } from '@/store/appStore';
+import { useTranslation } from '@/hooks/useTranslation';
 import { Trash2 } from 'lucide-react';
+import { num, calcPMT_fv, calcPV, calcPMT_loan } from '@/utils/helpers';
 
 export default function TabCiele() {
+  const { t } = useTranslation();
   const {
     klient, partner, hasPartner, deti,
     aofCiele, setAofCiele,
   } = useAppStore();
 
-  const num = (v: any) => Number(v) || 0;
+  // num, calcPMT_fv, calcPV, calcPMT_loan imported from @/utils/helpers
 
   // ── Výpočetné pomôcky ──────────────────────────────────────────────────────
   const klientVek = num(klient.vekPos);
@@ -22,26 +25,7 @@ export default function TabCiele() {
   const prodKapPartner = partnerPrijem > 0 ? partnerPrijem * 12 * Math.max(0, 64 - partnerVek) : 0;
   const rezerva = totalMesacne * 6;
 
-  const calcPmt = (fv: number, rPa: number, roky: number) => {
-    if (!fv || !roky) return 0;
-    const r = rPa / 100 / 12;
-    const n = roky * 12;
-    if (r === 0) return fv / n;
-    return fv * r / (Math.pow(1 + r, n) - 1);
-  };
-
-  const calcPV = (fv: number, rPa: number, roky: number) => {
-    if (!fv) return fv;
-    if (!roky || rPa === 0) return fv;
-    return fv / Math.pow(1 + rPa / 100, roky);
-  };
-
-  const byvanieSplatka = (() => {
-    if (!aofCiele.byvanieSumaUveru || !aofCiele.byvanieSplatnost || !aofCiele.byvanieUrok) return 0;
-    const r = (num(aofCiele.byvanieUrok) / 100) / 12;
-    const n = num(aofCiele.byvanieSplatnost) * 12;
-    return (num(aofCiele.byvanieSumaUveru) * r) / (1 - Math.pow(1 + r, -n));
-  })();
+  const byvanieSplatka = calcPMT_loan(num(aofCiele.byvanieSumaUveru), num(aofCiele.byvanieSplatnost), num(aofCiele.byvanieUrok));
 
   // ── Katalóg všetkých cieľov ────────────────────────────────────────────────
   type GoalDef = {
@@ -55,37 +39,37 @@ export default function TabCiele() {
   const allGoals: GoalDef[] = [
     {
       id: 'zabKlient',
-      nazov: `Zabezpečenie príjmu – ${klient.meno || 'Klient'}`,
+      nazov: `${t('ciele.zabezpeceniePrijmu')} – ${klient.meno || t('aof.klient')}`,
       horizont: Math.max(0, 64 - klientVek) || '',
       potrebnaSuma: prodKapKlient || '',
     },
     ...(hasPartner ? [{
       id: 'zabPartner',
-      nazov: `Zabezpečenie príjmu – ${partner.meno || 'Partner'}`,
+      nazov: `${t('ciele.zabezpeceniePrijmu')} – ${partner.meno || t('aof.partner')}`,
       horizont: Math.max(0, 64 - partnerVek) || '',
       potrebnaSuma: prodKapPartner || '',
     }] : []),
     {
       id: 'rezerva',
-      nazov: 'Rezerva',
+      nazov: t('ciele.rezerva'),
       horizont: '',
       potrebnaSuma: rezerva || '',
     },
     {
       id: 'rentaKlient20',
-      nazov: `Renta ${klient.meno || 'Klient'} – ${aofCiele.zabezpecenieKlientRentaRoky}`,
+      nazov: `${t('ciele.renta')} ${klient.meno || t('aof.klient')} – ${aofCiele.zabezpecenieKlientRentaRoky}`,
       horizont: Math.max(0, 64 - klientVek) || '',
       potrebnaSuma: prodKapKlient || '',
     },
     ...(hasPartner ? [{
       id: 'rentaPartner20',
-      nazov: `Renta ${partner.meno || 'Partner'} – ${aofCiele.zabezpeceniePartnerRentaRoky}`,
+      nazov: `${t('ciele.renta')} ${partner.meno || t('aof.partner')} – ${aofCiele.zabezpeceniePartnerRentaRoky}`,
       horizont: Math.max(0, 64 - partnerVek) || '',
       potrebnaSuma: prodKapPartner || '',
     }] : []),
     ...(aofCiele.predcasnaRentaKlientCheckbox ? [{
       id: 'predRentaKlient',
-      nazov: `Predčasná renta – ${klient.meno || 'Klient'}`,
+      nazov: `${t('ciele.predcasnaRenta')} – ${klient.meno || t('aof.klient')}`,
       horizont: num(aofCiele.predcasnaRentaKlientVek) > 0
         ? Math.max(0, num(aofCiele.predcasnaRentaKlientVek) - klientVek)
         : '' as '',
@@ -95,7 +79,7 @@ export default function TabCiele() {
     }] : []),
     ...(aofCiele.predcasnaRentaPartnerCheckbox ? [{
       id: 'predRentaPartner',
-      nazov: `Predčasná renta – ${partner.meno || 'Partner'}`,
+      nazov: `${t('ciele.predcasnaRenta')} – ${partner.meno || t('aof.partner')}`,
       horizont: num(aofCiele.predcasnaRentaPartnerVek) > 0
         ? Math.max(0, num(aofCiele.predcasnaRentaPartnerVek) - partnerVek)
         : '' as '',
@@ -105,7 +89,7 @@ export default function TabCiele() {
     }] : []),
     ...(aofCiele.rezervaMDCheckbox ? [{
       id: 'rezervaMD',
-      nazov: 'Rezerva na materskú dovolenku',
+      nazov: t('ciele.rezervaMD'),
       horizont: aofCiele.rezervaMDRoky || '' as '',
       potrebnaSuma: (aofCiele.rezervaMDRenta && aofCiele.rezervaMDDoba)
         ? num(aofCiele.rezervaMDRenta) * num(aofCiele.rezervaMDDoba) * 12
@@ -113,14 +97,14 @@ export default function TabCiele() {
     }] : []),
     ...(aofCiele.byvanieCheckbox ? [{
       id: 'byvanie',
-      nazov: aofCiele.byvanieNazov || 'Bývanie',
+      nazov: aofCiele.byvanieNazov || t('ciele.byvanie'),
       horizont: aofCiele.byvanieSplatnost || '' as '',
       potrebnaSuma: aofCiele.byvanieNesplatenyDiel || '' as '',
       mesacnaPlatba: byvanieSplatka,
     }] : []),
     ...deti.filter(d => d.cielSuma).map(d => ({
       id: `dite_${d.id}`,
-      nazov: d.meno || 'Dieťa',
+      nazov: d.meno || t('ciele.dieta'),
       horizont: (d.cielDoVeku && d.vek) ? Number(d.cielDoVeku) - Number(d.vek) : '' as '',
       potrebnaSuma: d.cielSuma || '' as '',
     })),
@@ -159,7 +143,7 @@ export default function TabCiele() {
   const totalMesacnaUlozka = selectedGoals.reduce((sum, g) => {
     const pmt = g.mesacnaPlatba !== undefined
       ? g.mesacnaPlatba
-      : calcPmt(num(g.potrebnaSuma), rInv, num(g.horizont));
+      : calcPMT_fv(num(g.potrebnaSuma), num(g.horizont), rInv);
     return sum + pmt;
   }, 0);
 
@@ -170,28 +154,28 @@ export default function TabCiele() {
       <div className="flex items-center justify-between mb-2 border-b border-[#D1D1D1] dark:border-[#4D4D4D] pb-4">
         <div>
           <h2 className="text-2xl font-extrabold text-[#171717] dark:text-white border-l-4 border-[#AB0534] pl-3">
-            Prioritná tabuľka cieľov
+            {t('ciele.title')}
           </h2>
           <p className="text-sm font-bold text-[#4D4D4D] dark:text-[#989FA7] mt-2 ml-4">
-            Kliknite na cieľ vľavo — zaradí sa do tabuľky podľa poradia. Kliknite znova na vyradenie.
+            {t('ciele.subtitle')}
           </p>
         </div>
         <div className="bg-black dark:bg-white text-white dark:text-black px-6 py-3 rounded-lg font-bold shadow-lg flex flex-col items-end">
-          <span className="text-[10px] uppercase tracking-widest opacity-80">Nutné mesačne investovať</span>
+          <span className="text-[10px] uppercase tracking-widest opacity-80">{t('ciele.nutneInvestovat')}</span>
           <span className="text-xl">{Math.round(totalMesacnaUlozka).toLocaleString('sk-SK')} €</span>
         </div>
       </div>
 
       {/* ÚROKOVÉ SADZBY */}
       <div className="flex items-center gap-6 bg-[#EAEAEA] dark:bg-[#1A1A1A] border border-[#D1D1D1] dark:border-[#333] rounded px-4 py-2 text-xs">
-        <span className="font-bold text-[#555] dark:text-[#AAA]">Úrokové sadzby:</span>
+        <span className="font-bold text-[#555] dark:text-[#AAA]">{t('ciele.urokoveSadzby')}</span>
         <div className="flex items-center gap-2">
-          <span className="font-bold">Investovanie</span>
+          <span className="font-bold">{t('ciele.investovanie')}</span>
           <input type="number" step="0.1" value={rInv || ""} onChange={e => setAofCiele({ urokInvestovanie: e.target.value === "" ? 0 : parseFloat(e.target.value) || 0 })} className="w-16 border text-center bg-white dark:bg-[#111] px-1 py-0.5 rounded" />
           <span>% p.a.</span>
         </div>
         <div className="flex items-center gap-2">
-          <span className="font-bold">Výplata / splátka</span>
+          <span className="font-bold">{t('ciele.vyplataSplatka')}</span>
           <input type="number" step="0.1" value={rVyp || ""} onChange={e => setAofCiele({ urokVyplata: e.target.value === "" ? 0 : parseFloat(e.target.value) || 0 })} className="w-16 border text-center bg-white dark:bg-[#111] px-1 py-0.5 rounded" />
           <span>% p.a.</span>
         </div>
@@ -202,7 +186,7 @@ export default function TabCiele() {
 
         {/* LEFT: Goal selection list */}
         <div className="w-[260px] flex-shrink-0 bg-[#EAEAEA] dark:bg-[#1A1A1A] border border-[#D1D1D1] dark:border-[#333] rounded shadow-sm text-xs">
-          <div className="bg-[#5C5C5C] dark:bg-[#333] text-white font-bold px-3 py-2 text-sm">Zoznam cieľov</div>
+          <div className="bg-[#5C5C5C] dark:bg-[#333] text-white font-bold px-3 py-2 text-sm">{t('ciele.zoznamCielov')}</div>
           <div className="divide-y divide-[#D1D1D1] dark:divide-[#333]">
             {allGoals.map(g => {
               const p = priorities[g.id] || 0;
@@ -232,19 +216,17 @@ export default function TabCiele() {
             <thead>
               <tr className="bg-[#5C5C5C] dark:bg-[#333] text-white text-[11px]">
                 <th className="px-2 py-2 text-left w-7">#</th>
-                <th className="px-2 py-2 text-left">Cieľ</th>
-                <th className="px-2 py-2 text-center">Časový<br />horizont<br />(roky)</th>
-                <th className="px-2 py-2 text-center">Potrebná<br />suma</th>
+                <th className="px-2 py-2 text-left">{t('ciele.ciel')}</th>
+                <th className="px-2 py-2 text-center">{t('ciele.casovyHorizont')}</th>
+                <th className="px-2 py-2 text-center">{t('ciele.potrebnaSuma')}</th>
                 <th className="px-2 py-2 text-center bg-[#3a3a3a] dark:bg-[#222]">
-                  Úrok<br />
-                  <span className="font-normal text-[10px]">investovanie</span>
+                  {t('ciele.urokInvest')}
                 </th>
                 <th className="px-2 py-2 text-center bg-[#3a3a3a] dark:bg-[#222]">
-                  Úrok<br />
-                  <span className="font-normal text-[10px]">výplata / splátka</span>
+                  {t('ciele.urokVyplata')}
                 </th>
-                <th className="px-2 py-2 text-center">Jednorazový<br />vklad</th>
-                <th className="px-2 py-2 text-center">Mesačná<br />platba</th>
+                <th className="px-2 py-2 text-center">{t('ciele.jednorazovyVklad')}</th>
+                <th className="px-2 py-2 text-center">{t('ciele.mesacnaPlatba')}</th>
                 <th className="w-6" />
               </tr>
             </thead>
@@ -252,7 +234,7 @@ export default function TabCiele() {
               {selectedGoals.length === 0 && (
                 <tr>
                   <td colSpan={9} className="text-center text-[#989FA7] py-10 bg-white dark:bg-[#111] italic">
-                    Vyberte ciele zo zoznamu vľavo kliknutím
+                    {t('ciele.vybreCiele')}
                   </td>
                 </tr>
               )}
@@ -261,9 +243,9 @@ export default function TabCiele() {
                 const horizont = num(g.horizont);
                 const mesacna = g.mesacnaPlatba !== undefined
                   ? g.mesacnaPlatba
-                  : calcPmt(pSuma, rInv, horizont);
+                  : calcPMT_fv(pSuma, horizont, rInv);
                 const jednorazovy = pSuma > 0
-                  ? calcPV(pSuma, rInv, horizont)
+                  ? calcPV(pSuma, horizont, rInv)
                   : 0;
 
                 return (
@@ -295,11 +277,11 @@ export default function TabCiele() {
             {selectedGoals.length > 0 && (
               <tfoot>
                 <tr className="bg-[#DCDCDC] dark:bg-[#2A2A2A] font-extrabold">
-                  <td colSpan={6} className="px-2 py-2 text-right text-xs">CELKOM:</td>
+                  <td colSpan={6} className="px-2 py-2 text-right text-xs">{t('ciele.celkom')}</td>
                   <td className="px-2 py-2 text-center text-[#1E5083]">
                     {(() => {
                       const total = selectedGoals.reduce((sum, g) => {
-                        return sum + calcPV(num(g.potrebnaSuma), rInv, num(g.horizont));
+                        return sum + calcPV(num(g.potrebnaSuma), num(g.horizont), rInv);
                       }, 0);
                       return total > 0 ? `${Math.round(total).toLocaleString('sk-SK')} €` : '';
                     })()}

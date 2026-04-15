@@ -32,7 +32,8 @@ export default function Dashboard() {
   };
 
   const handleExportJSON = () => {
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state, null, 2));
+    const { setKlient, setPartner, setHasPartner, setHasDeti, setDeti, setMajetok, setCashFlow, setAofCiele, setJazyk, loadVzoroveData, resetNovyPlan, ...data } = state;
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data, null, 2));
     const dlAnchorElem = document.createElement('a');
     dlAnchorElem.setAttribute("href",     dataStr     );
     dlAnchorElem.setAttribute("download", `ulozene_${klient.meno || 'klient'}.json`);

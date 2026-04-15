@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
 export interface Osoba {
   meno: string;
@@ -187,27 +188,39 @@ interface AppState {
   resetNovyPlan: () => void;
 }
 
-export const useAppStore = create<AppState>((set) => ({
-  ...VZOROVA_RODINA,
-  jazyk: 'SK',
+export const useAppStore = create<AppState>()(
+  persist(
+    (set) => ({
+      ...VZOROVA_RODINA,
+      jazyk: 'SK',
 
-  setKlient: (data) => set((state) => ({ klient: { ...state.klient, ...data } })),
-  setPartner: (data) => set((state) => ({ partner: { ...state.partner, ...data } })),
-  setHasPartner: (val) => set({ hasPartner: val }),
-  setHasDeti: (val) => set({ hasDeti: val }),
-  setDeti: (deti) => set({ deti }),
-  setMajetok: (majetok) => set({ majetok }),
-  setCashFlow: (data) => set((state) => ({ cashFlow: { ...state.cashFlow, ...data } })),
-  setAofCiele: (data) => set((state) => ({ aofCiele: { ...state.aofCiele, ...data } })),
-  setJazyk: (lang) => set({ jazyk: lang }),
+      setKlient: (data) => set((state) => ({ klient: { ...state.klient, ...data } })),
+      setPartner: (data) => set((state) => ({ partner: { ...state.partner, ...data } })),
+      setHasPartner: (val) => set({ hasPartner: val }),
+      setHasDeti: (val) => set({ hasDeti: val }),
+      setDeti: (deti) => set({ deti }),
+      setMajetok: (majetok) => set({ majetok }),
+      setCashFlow: (data) => set((state) => ({ cashFlow: { ...state.cashFlow, ...data } })),
+      setAofCiele: (data) => set((state) => ({ aofCiele: { ...state.aofCiele, ...data } })),
+      setJazyk: (lang) => set({ jazyk: lang }),
 
-  loadVzoroveData: () => set({
-    ...VZOROVA_RODINA,
-    jazyk: undefined as any,  // Keep current language
-  }),
+      loadVzoroveData: () => set((state) => ({
+        ...VZOROVA_RODINA,
+        jazyk: state.jazyk,  // Preserve current language
+      })),
 
-  resetNovyPlan: () => set((state) => ({
-    ...PRAZDNY_PLAN,
-    jazyk: state.jazyk,  // Keep current language
-  })),
-}));
+      resetNovyPlan: () => set((state) => ({
+        ...PRAZDNY_PLAN,
+        jazyk: state.jazyk,  // Preserve current language
+      })),
+    }),
+    {
+      name: 'life-planner-storage',
+      partialize: (state) => {
+        // Exclude functions from persistence
+        const { setKlient, setPartner, setHasPartner, setHasDeti, setDeti, setMajetok, setCashFlow, setAofCiele, setJazyk, loadVzoroveData, resetNovyPlan, ...data } = state;
+        return data;
+      },
+    }
+  )
+);
