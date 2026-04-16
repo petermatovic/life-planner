@@ -28,7 +28,7 @@ export default function TabAOF() {
   const {
     klient, partner, hasPartner, deti, hasDeti, majetok, cashFlow,
     setKlient, setPartner, setHasPartner, setDeti, setHasDeti, setMajetok, setCashFlow,
-    aofCiele, setAofCiele, addInyCiel
+    aofCiele, setAofCiele, addInyCiel, updateInyCiel, removeInyCiel
   } = useAppStore();
 
   // num, parseInput, uid, calcPMT_loan imported from @/utils/helpers
@@ -378,7 +378,7 @@ export default function TabAOF() {
           {aofCiele.ineCieleExpand && aofCiele.ineCiele.map(c => (
             <div key={c.id} className="flex items-center gap-4 mb-1">
               <div className="w-1/4 flex justify-between items-center gap-1">
-                <select value={c.nazov} onChange={e => setAofCiele({ ineCiele: aofCiele.ineCiele.map(x => x.id === c.id ? { ...x, nazov: e.target.value } : x) })} className="flex-1 border px-1 bg-white dark:bg-[#111] text-[11px]">
+                <select value={c.nazov} onChange={e => updateInyCiel(c.id, { nazov: e.target.value })} className="flex-1 border px-1 bg-white dark:bg-[#111] text-[11px]">
                   <option value="Auto">🚗 {t('aof.cielAuto')}</option>
                   <option value="Dovolenka">✈️ {t('aof.cielDovolenka')}</option>
                   <option value="Vzdelanie">🎓 {t('aof.cielVzdelanie')}</option>
@@ -392,12 +392,12 @@ export default function TabAOF() {
                   <option value="Dochodok">🏦 {t('aof.cielDochodok')}</option>
                   <option value="Ine">📌 {t('aof.cielIne')}</option>
                 </select>
-                <input type="checkbox" checked={c.checked} onChange={e => setAofCiele({ ineCiele: aofCiele.ineCiele.map(x => x.id === c.id ? { ...x, checked: e.target.checked } : x) })} />
+                <input type="checkbox" checked={c.checked} onChange={e => updateInyCiel(c.id, { checked: e.target.checked })} />
               </div>
               <div className={`flex-1 grid grid-cols-3 gap-2 transition-opacity ${!c.checked && 'opacity-50'}`}>
-                <input type="number" value={(c.hodnota) || ""} onChange={e => setAofCiele({ ineCiele: aofCiele.ineCiele.map(x => x.id === c.id ? { ...x, hodnota: Number(e.target.value) } : x) })} className="border text-center px-1 bg-white dark:bg-[#111]" />
-                <input type="number" value={(c.horizont) || ""} onChange={e => setAofCiele({ ineCiele: aofCiele.ineCiele.map(x => x.id === c.id ? { ...x, horizont: Number(e.target.value) } : x) })} className="border text-center px-1 bg-white dark:bg-[#111]" />
-                <button onClick={() => setAofCiele({ ineCiele: aofCiele.ineCiele.filter(x => x.id !== c.id) })} className="text-[#AB0534] w-min px-4"><Trash2 size={12} /></button>
+                <input type="number" value={(c.hodnota) || ""} onChange={e => updateInyCiel(c.id, { hodnota: Number(e.target.value) || '' })} className="border text-center px-1 bg-white dark:bg-[#111]" />
+                <input type="number" value={(c.horizont) || ""} onChange={e => updateInyCiel(c.id, { horizont: Number(e.target.value) || '' })} className="border text-center px-1 bg-white dark:bg-[#111]" />
+                <button type="button" onClick={() => removeInyCiel(c.id)} className="text-[#AB0534] w-min px-4"><Trash2 size={12} /></button>
               </div>
             </div>
           ))}

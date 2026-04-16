@@ -193,6 +193,8 @@ interface AppState {
   setCashFlow: (data: Partial<AppState['cashFlow']>) => void;
   setAofCiele: (data: Partial<AofCieleSetup>) => void;
   addInyCiel: () => void;
+  updateInyCiel: (id: number, data: Partial<InyCiel>) => void;
+  removeInyCiel: (id: number) => void;
   setJazyk: (lang: string) => void;
   loadVzoroveData: () => void;
   resetNovyPlan: () => void;
@@ -222,6 +224,22 @@ export const useAppStore = create<AppState>()(
         },
       })),
 
+      // Atomic update — prevents stale-closure array overwrites
+      updateInyCiel: (id, data) => set((state) => ({
+        aofCiele: {
+          ...state.aofCiele,
+          ineCiele: state.aofCiele.ineCiele.map(c => c.id === id ? { ...c, ...data } : c),
+        },
+      })),
+
+      // Atomic remove
+      removeInyCiel: (id) => set((state) => ({
+        aofCiele: {
+          ...state.aofCiele,
+          ineCiele: state.aofCiele.ineCiele.filter(c => c.id !== id),
+        },
+      })),
+
       setJazyk: (lang) => set({ jazyk: lang }),
 
       loadVzoroveData: () => set((state) => ({
@@ -238,7 +256,7 @@ export const useAppStore = create<AppState>()(
       name: 'life-planner-storage',
       partialize: (state) => {
         // Exclude functions from persistence
-        const { setKlient, setPartner, setHasPartner, setHasDeti, setDeti, setMajetok, setCashFlow, setAofCiele, addInyCiel, setJazyk, loadVzoroveData, resetNovyPlan, ...data } = state;
+        const { setKlient, setPartner, setHasPartner, setHasDeti, setDeti, setMajetok, setCashFlow, setAofCiele, addInyCiel, updateInyCiel, removeInyCiel, setJazyk, loadVzoroveData, resetNovyPlan, ...data } = state;
         return data;
       },
     }
