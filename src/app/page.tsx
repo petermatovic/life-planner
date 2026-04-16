@@ -32,7 +32,7 @@ export default function Dashboard() {
   };
 
   const handleExportJSON = () => {
-    const { setKlient, setPartner, setHasPartner, setHasDeti, setDeti, setMajetok, setCashFlow, setAofCiele, addInyCiel, updateInyCiel, removeInyCiel, setJazyk, loadVzoroveData, resetNovyPlan, ...data } = state;
+    const { setKlient, setPartner, setHasPartner, setHasDeti, setDeti, setMajetok, setCashFlow, setAofCiele, addInyCiel, updateInyCiel, removeInyCiel, setPrepoctyKlient, setPrepoctyPartner, setJazyk, loadVzoroveData, resetNovyPlan, ...data } = state;
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data, null, 2));
     const dlAnchorElem = document.createElement('a');
     dlAnchorElem.setAttribute("href",     dataStr     );

@@ -41,6 +41,24 @@ export interface GoalRate {
   urokVyplata?: number | '';
 }
 
+export interface PrepoctyOsoba {
+  noveUmrtie: number | '';
+  noveUmrtieKlesajuca: number | '';
+  noveKrytieRenty: number | '';
+  novePoistPN: number | '';
+  noveInvaliditaKonst: number | '';
+  noveTrvaleNasledky: number | '';
+  noveZavazneOchorenia: number | '';
+  aktualneUmrtie: number | '';
+  aktualneUmrtieKlesajuca: number | '';
+  aktualneKrytieRenty: number | '';
+  aktualnePoistPN: number | '';
+  aktualneInvaliditaKonst: number | '';
+  aktualneTrvaleNasledky: number | '';
+  aktualneZavazneOchorenia: number | '';
+  partnersPoistovna: boolean;
+}
+
 export interface AofCieleSetup {
   zakladnaRezerva: number | '';
   zabezpecenieKlientKapital: number | '';
@@ -123,6 +141,8 @@ const VZOROVA_RODINA = {
     urokInvestovanie: 8,
     urokVyplata: 4.5,
   } as AofCieleSetup,
+  prepoctyKlient: { noveUmrtie: '' as number|'', noveUmrtieKlesajuca: '' as number|'', noveKrytieRenty: '' as number|'', novePoistPN: '' as number|'', noveInvaliditaKonst: '' as number|'', noveTrvaleNasledky: '' as number|'', noveZavazneOchorenia: '' as number|'', aktualneUmrtie: '' as number|'', aktualneUmrtieKlesajuca: '' as number|'', aktualneKrytieRenty: '' as number|'', aktualnePoistPN: '' as number|'', aktualneInvaliditaKonst: '' as number|'', aktualneTrvaleNasledky: '' as number|'', aktualneZavazneOchorenia: '' as number|'', partnersPoistovna: true } as PrepoctyOsoba,
+  prepoctyPartner: { noveUmrtie: '' as number|'', noveUmrtieKlesajuca: '' as number|'', noveKrytieRenty: '' as number|'', novePoistPN: '' as number|'', noveInvaliditaKonst: '' as number|'', noveTrvaleNasledky: '' as number|'', noveZavazneOchorenia: '' as number|'', aktualneUmrtie: '' as number|'', aktualneUmrtieKlesajuca: '' as number|'', aktualneKrytieRenty: '' as number|'', aktualnePoistPN: '' as number|'', aktualneInvaliditaKonst: '' as number|'', aktualneTrvaleNasledky: '' as number|'', aktualneZavazneOchorenia: '' as number|'', partnersPoistovna: false } as PrepoctyOsoba,
 };
 
 // ── Prázdny stav (Nový plán) ──────────────────────────────────────────────────
@@ -157,6 +177,8 @@ const PRAZDNY_PLAN = {
     urokInvestovanie: 8,
     urokVyplata: 4.5,
   } as AofCieleSetup,
+  prepoctyKlient: { noveUmrtie: '' as number|'', noveUmrtieKlesajuca: '' as number|'', noveKrytieRenty: '' as number|'', novePoistPN: '' as number|'', noveInvaliditaKonst: '' as number|'', noveTrvaleNasledky: '' as number|'', noveZavazneOchorenia: '' as number|'', aktualneUmrtie: '' as number|'', aktualneUmrtieKlesajuca: '' as number|'', aktualneKrytieRenty: '' as number|'', aktualnePoistPN: '' as number|'', aktualneInvaliditaKonst: '' as number|'', aktualneTrvaleNasledky: '' as number|'', aktualneZavazneOchorenia: '' as number|'', partnersPoistovna: false } as PrepoctyOsoba,
+  prepoctyPartner: { noveUmrtie: '' as number|'', noveUmrtieKlesajuca: '' as number|'', noveKrytieRenty: '' as number|'', novePoistPN: '' as number|'', noveInvaliditaKonst: '' as number|'', noveTrvaleNasledky: '' as number|'', noveZavazneOchorenia: '' as number|'', aktualneUmrtie: '' as number|'', aktualneUmrtieKlesajuca: '' as number|'', aktualneKrytieRenty: '' as number|'', aktualnePoistPN: '' as number|'', aktualneInvaliditaKonst: '' as number|'', aktualneTrvaleNasledky: '' as number|'', aktualneZavazneOchorenia: '' as number|'', partnersPoistovna: false } as PrepoctyOsoba,
 };
 
 interface AppState {
@@ -182,6 +204,8 @@ interface AppState {
     zostatokUcet: number | '';
   };
   aofCiele: AofCieleSetup;
+  prepoctyKlient: PrepoctyOsoba;
+  prepoctyPartner: PrepoctyOsoba;
   jazyk: string;
 
   setKlient: (data: Partial<Osoba>) => void;
@@ -195,6 +219,8 @@ interface AppState {
   addInyCiel: () => void;
   updateInyCiel: (id: number, data: Partial<InyCiel>) => void;
   removeInyCiel: (id: number) => void;
+  setPrepoctyKlient: (data: Partial<PrepoctyOsoba>) => void;
+  setPrepoctyPartner: (data: Partial<PrepoctyOsoba>) => void;
   setJazyk: (lang: string) => void;
   loadVzoroveData: () => void;
   resetNovyPlan: () => void;
@@ -240,6 +266,9 @@ export const useAppStore = create<AppState>()(
         },
       })),
 
+      setPrepoctyKlient: (data) => set((state) => ({ prepoctyKlient: { ...state.prepoctyKlient, ...data } })),
+      setPrepoctyPartner: (data) => set((state) => ({ prepoctyPartner: { ...state.prepoctyPartner, ...data } })),
+
       setJazyk: (lang) => set({ jazyk: lang }),
 
       loadVzoroveData: () => set((state) => ({
@@ -256,7 +285,7 @@ export const useAppStore = create<AppState>()(
       name: 'life-planner-storage',
       partialize: (state) => {
         // Exclude functions from persistence
-        const { setKlient, setPartner, setHasPartner, setHasDeti, setDeti, setMajetok, setCashFlow, setAofCiele, addInyCiel, updateInyCiel, removeInyCiel, setJazyk, loadVzoroveData, resetNovyPlan, ...data } = state;
+        const { setKlient, setPartner, setHasPartner, setHasDeti, setDeti, setMajetok, setCashFlow, setAofCiele, addInyCiel, updateInyCiel, removeInyCiel, setPrepoctyKlient, setPrepoctyPartner, setJazyk, loadVzoroveData, resetNovyPlan, ...data } = state;
         return data;
       },
     }
