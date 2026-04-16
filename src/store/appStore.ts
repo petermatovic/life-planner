@@ -112,7 +112,7 @@ const VZOROVA_RODINA = {
     byvanieCheckbox: true, byvanieNazov: 'Refinancovanie',
     byvanieSumaUveru: 80000, byvanieSplatnost: 20, byvanieUrok: 2.5, byvanieNesplatenyDiel: 80000,
     // obr.2: MD unchecked □
-    rezervaMDCheckbox: false, rezervaMDRenta: '' as number | '', rezervaMDDoba: '' as number | '', rezervaMDRoky: '' as number | '', ineCieleExpand: false,
+    rezervaMDCheckbox: false, rezervaMDRenta: '' as number | '', rezervaMDDoba: '' as number | '', rezervaMDRoky: '' as number | '', ineCieleExpand: true,
     // obr.2: Predčasná renta □ oba, prázdne polia
     predcasnaRentaKlientCheckbox: false, predcasnaRentaKlientVyska: '' as number | '', predcasnaRentaKlientVek: '' as number | '',
     predcasnaRentaPartnerCheckbox: false, predcasnaRentaPartnerVyska: '' as number | '', predcasnaRentaPartnerVek: '' as number | '',
