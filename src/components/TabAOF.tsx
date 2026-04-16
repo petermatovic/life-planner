@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useAppStore } from '@/store/appStore';
 import { useTranslation } from '@/hooks/useTranslation';
 import { Trash2, CheckSquare, Square } from 'lucide-react';
@@ -30,6 +30,19 @@ export default function TabAOF() {
     setKlient, setPartner, setHasPartner, setDeti, setHasDeti, setMajetok, setCashFlow,
     aofCiele, setAofCiele, addInyCiel, updateInyCiel, removeInyCiel
   } = useAppStore();
+
+  // One-time cleanup for users who have old corrupted data in localStorage
+  useEffect(() => {
+    if (aofCiele.ineCiele.length > 2) {
+      // Find items that are completely empty (no hodnota, no horizont, default nazov)
+      const emptyItems = aofCiele.ineCiele.filter(c => c.nazov === 'Auto' && c.hodnota === '' && c.horizont === '');
+      // If there are multiple empty items, it's definitely the old bug
+      if (emptyItems.length > 1) {
+        const cleaned = aofCiele.ineCiele.filter(c => !(c.nazov === 'Auto' && c.hodnota === '' && c.horizont === ''));
+        setAofCiele({ ineCiele: cleaned.length ? cleaned : [emptyItems[0]] });
+      }
+    }
+  }, [aofCiele.ineCiele, setAofCiele]);
 
   // num, parseInput, uid, calcPMT_loan imported from @/utils/helpers
 
