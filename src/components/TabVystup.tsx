@@ -3,6 +3,7 @@ import React from 'react';
 import { useAppStore } from '@/store/appStore';
 import { useTranslation } from '@/hooks/useTranslation';
 import { Download, Printer, Upload } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, Legend, LabelList } from 'recharts';
 import { num, calcPMT_fv, calcFV, calcPMT_loan } from '@/utils/helpers';
 
 export default function TabVystup() {
@@ -231,6 +232,65 @@ export default function TabVystup() {
     inp.click();
   };
 
+  const optTotal = optSpotreba + optUvery + optMajetok + optRezerva || 1;
+  const sucTotal = sucSpotreba + sucUvery + sucMajetok + sucRezerva || 1;
+  const novTotal = noveSpotreba + noveUvery + noveMajetok + noveRezerva || 1;
+
+  const chartData = [
+    { 
+      name: t('aof.optimal'),
+      spotreba: (optSpotreba / optTotal) * 100,
+      uvery: (optUvery / optTotal) * 100,
+      majetok: (optMajetok / optTotal) * 100,
+      rezerva: (optRezerva / optTotal) * 100
+    },
+    { 
+      name: t('aof.sucasne'),
+      spotreba: (sucSpotreba / sucTotal) * 100,
+      uvery: (sucUvery / sucTotal) * 100,
+      majetok: (sucMajetok / sucTotal) * 100,
+      rezerva: (sucRezerva / sucTotal) * 100
+    },
+    { 
+      name: t('vystup.nove'),
+      spotreba: (noveSpotreba / novTotal) * 100,
+      uvery: (noveUvery / novTotal) * 100,
+      majetok: (noveMajetok / novTotal) * 100,
+      rezerva: (noveRezerva / novTotal) * 100
+    }
+  ];
+
+  const CustomLabel = (props: any) => {
+    const { x, y, width, height, value } = props;
+    if (value === undefined || value === null) return null;
+    
+    let numVal = 0;
+    if (Array.isArray(value) && value.length === 2) {
+      numVal = Number(value[1]) - Number(value[0]);
+    } else {
+      numVal = Number(value);
+    }
+    
+    if (isNaN(numVal)) return null;
+
+    const displayValue = `${Math.round(numVal)}%`;
+    
+    // For 0% or very small values, match Excel's outside/top placement
+    if (numVal < 0.1) {
+      return (
+        <text x={x + width / 2} y={y - 10} fill="#4D4D4D" textAnchor="middle" style={{ fontSize: '12px', fontWeight: 'bold' }}>
+          0%
+        </text>
+      );
+    }
+
+    return (
+      <text x={x + width / 2} y={y + height / 2} fill="#fff" textAnchor="middle" dominantBaseline="middle" style={{ fontSize: '12px', fontWeight: 'bold', textShadow: '0 1px 2px rgba(0,0,0,0.4)' }}>
+        {displayValue}
+      </text>
+    );
+  };
+
   return (
     <div className="flex flex-col gap-6 animate-in fade-in duration-300 pb-20 print:pb-2 print:gap-3">
 
@@ -255,6 +315,13 @@ export default function TabVystup() {
             <Printer size={14} /> {t('vystup.print')}
           </button>
         </div>
+      </div>
+
+      {/* COVER IMAGE - Replaced with minimal logo */}
+      <div className="w-full mb-4 print:mb-6 flex justify-between items-center border-b border-[#D1D1D1] dark:border-[#333] pb-4">
+         <div className="flex flex-col">
+            <span className="text-[#AB0534] font-black text-3xl tracking-wide">PARTNERS</span>
+         </div>
       </div>
 
       {/* ── MESAČNÝ CASH FLOW + MAJETOK ─────────────────────────────── */}
@@ -337,6 +404,41 @@ export default function TabVystup() {
               </tbody>
             </table>
           </div>
+          
+          {/* Graf - Finančné rozloženie nového plánu porovnanie (100% Stacked) */}
+          <div className="h-80 border-t border-[#D1D1D1] dark:border-[#333] p-4 bg-white dark:bg-[#1A1A1A]">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                data={chartData}
+                margin={{ top: 20, right: 30, left: 0, bottom: 20 }}
+                barSize={70}
+              >
+                <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="#EAEAEA" opacity={0.4} />
+                <XAxis dataKey="name" tick={{ fontSize: 12, fill: '#4D4D4D', fontWeight: 600 }} tickLine={false} axisLine={false} />
+                <YAxis tickFormatter={(val) => `${val}%`} tick={{ fontSize: 10, fill: '#989FA7', fontWeight: 700 }} tickLine={false} axisLine={false} orientation="right" />
+                <RechartsTooltip formatter={(value: any) => `${Math.round(Number(value))}%`} cursor={{fill: 'rgba(0,0,0,0.05)'}} contentStyle={{ borderRadius: '8px', fontSize: '12px', border: 'none', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }} />
+                <Legend 
+                  layout="vertical" 
+                  verticalAlign="middle" 
+                  align="left"
+                  iconType="square" 
+                  wrapperStyle={{ fontSize: '11px', fontWeight: 600, color: '#4D4D4D' }}
+                />
+                <Bar dataKey="spotreba" name={`${t('aof.spotreba')} 40%`} stackId="a" fill="#ED7D31" isAnimationActive={false}>
+                  <LabelList dataKey="spotreba" content={<CustomLabel />} />
+                </Bar>
+                <Bar dataKey="uvery" name={`${t('vystup.uveroveZatazenie')} 30%`} stackId="a" fill="#009CE0" isAnimationActive={false}>
+                  <LabelList dataKey="uvery" content={<CustomLabel />} />
+                </Bar>
+                <Bar dataKey="majetok" name={`${t('vystup.tvorbaMajetku')} 20%`} stackId="a" fill="#5E9F3D" isAnimationActive={false}>
+                  <LabelList dataKey="majetok" content={<CustomLabel />} />
+                </Bar>
+                <Bar dataKey="rezerva" name={`${t('vystup.rezervaLabel')} 10%`} stackId="a" fill="#9E480E" isAnimationActive={false}>
+                  <LabelList dataKey="rezerva" content={<CustomLabel />} />
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </div>
       </div>
 
@@ -384,8 +486,30 @@ export default function TabVystup() {
       )}
 
       {/* ── ZÁVER ────────────────────────────────────────────────────── */}
-      <div className="bg-[#FAFAFA] dark:bg-[#111111] p-6 rounded-xl border border-[#D1D1D1] dark:border-[#2A2A2A] text-center text-xs text-[#989FA7] print:hidden">
-        <p>{t('vystup.footer')}</p>
+      <div className="bg-[#FAFAFA] dark:bg-[#1A1A1A] p-6 rounded-xl border border-[#D1D1D1] dark:border-[#2A2A2A] mt-4">
+        
+        <div className="flex flex-col md:flex-row justify-between items-end gap-6 mb-6 pb-6 border-b border-[#D1D1D1] dark:border-[#333]">
+          <div className="w-full space-y-4">
+            <h3 className="text-sm font-bold text-[#4D4D4D] dark:text-[#989FA7] uppercase mb-2">{t('vystup.vypracoval')}</h3>
+            
+            <div className="flex items-center gap-2">
+              <input type="text" className="w-full md:w-1/2 bg-transparent border-b-2 border-[#171717] dark:border-white font-extrabold text-lg focus:outline-none focus:border-[#AB0534] transition-colors" />
+            </div>
+
+            <div className="flex flex-col md:flex-row gap-4 mt-2">
+              <div className="flex items-center gap-2 md:w-1/4">
+                <span className="text-xs font-bold text-[#989FA7]">{t('vystup.telefon')}:</span>
+                <input type="text" className="w-full bg-transparent border-b border-[#D1D1D1] dark:border-[#4D4D4D] text-sm focus:outline-none focus:border-[#AB0534]" />
+              </div>
+              <div className="flex items-center gap-2 md:w-1/3">
+                <span className="text-xs font-bold text-[#989FA7]">{t('vystup.email')}:</span>
+                <input type="email" className="w-full bg-transparent border-b border-[#D1D1D1] dark:border-[#4D4D4D] text-sm focus:outline-none focus:border-[#AB0534]" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p className="text-center text-xs text-[#989FA7] print:hidden">{t('vystup.footer')}</p>
       </div>
     </div>
   );

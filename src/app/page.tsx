@@ -185,12 +185,25 @@ export default function Dashboard() {
         </div>
 
         {/* View Router */}
-        <div className="flex-1 overflow-y-auto p-4 md:p-8 max-w-[1400px] w-full mx-auto custom-scrollbar">
-          {activeTab === 'AOF' && <TabAOF />}
-          {activeTab === 'Prepocty' && <TabPrepocty />}
-          {activeTab === 'Ciele' && <TabCiele />}
-          {activeTab === 'FinancnyPlan' && <TabFinancnyPlan />}
-          {activeTab === 'Vystup' && <TabVystup />}
+        <div className="flex-1 overflow-y-auto w-full custom-scrollbar print:overflow-visible">
+          
+          {/* Interactive UI (Screen Only) */}
+          <div className="p-4 md:p-8 max-w-[1400px] mx-auto print:hidden">
+            {activeTab === 'AOF' && <TabAOF />}
+            {activeTab === 'Prepocty' && <TabPrepocty />}
+            {activeTab === 'Ciele' && <TabCiele />}
+            {activeTab === 'FinancnyPlan' && <TabFinancnyPlan />}
+            {activeTab === 'Vystup' && <TabVystup />}
+          </div>
+
+          {/* Sequential Print Layout (Print Only) */}
+          <div className="hidden print:block w-full max-w-none p-4 m-0 print:bg-white text-black print:text-black">
+            <div className="print:break-after-page mb-8 print:mb-0"><TabAOF /></div>
+            <div className="print:break-after-page mb-8 print:mb-0"><TabCiele /></div>
+            <div className="print:break-after-page mb-8 print:mb-0"><TabPrepocty /></div>
+            <div className="print:break-after-page mb-8 print:mb-0"><TabFinancnyPlan /></div>
+            <div><TabVystup /></div>
+          </div>
         </div>
       </main>
     </div>

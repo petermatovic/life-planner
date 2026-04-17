@@ -31,19 +31,6 @@ export default function TabAOF() {
     aofCiele, setAofCiele, addInyCiel, updateInyCiel, removeInyCiel
   } = useAppStore();
 
-  // One-time cleanup for users who have old corrupted data in localStorage
-  useEffect(() => {
-    if (aofCiele.ineCiele.length > 2) {
-      // Find items that are completely empty (no hodnota, no horizont, default nazov)
-      const emptyItems = aofCiele.ineCiele.filter(c => c.nazov === 'Auto' && c.hodnota === '' && c.horizont === '');
-      // If there are multiple empty items, it's definitely the old bug
-      if (emptyItems.length > 1) {
-        const cleaned = aofCiele.ineCiele.filter(c => !(c.nazov === 'Auto' && c.hodnota === '' && c.horizont === ''));
-        setAofCiele({ ineCiele: cleaned.length ? cleaned : [emptyItems[0]] });
-      }
-    }
-  }, [aofCiele.ineCiele, setAofCiele]);
-
   // num, parseInput, uid, calcPMT_loan imported from @/utils/helpers
 
   const prijemMesacne = num(klient.cistyMesacne) + num(klient.pasivnyMesacne) + (hasPartner ? num(partner.cistyMesacne) + num(partner.pasivnyMesacne) : 0);
@@ -142,18 +129,18 @@ export default function TabAOF() {
                   <div key={d.id} className="flex gap-1 items-center">
                     <input type="text" value={d.meno || ''} onChange={(e) => setDeti(deti.map(x => x.id === d.id ? { ...x, meno: e.target.value } : x))} placeholder={t('aof.meno')} className="w-1/2 p-0.5 px-1 border bg-white dark:bg-[#111]" />
                     <input type="number" value={d.vek || ''} placeholder={t('aof.vek')} onChange={(e: any) => setDeti(deti.map(x => x.id === d.id ? { ...x, vek: Number(e.target.value) || '' } : x))} className="w-1/3 p-0.5 px-1 border bg-white dark:bg-[#111]" />
-                    <button onClick={() => setDeti(deti.filter(x => x.id !== d.id))} className="text-[#AB0534]"><Trash2 size={10} /></button>
+                    <button type="button" onClick={() => setDeti(deti.filter(x => x.id !== d.id))} className="text-[#AB0534]"><Trash2 size={10} /></button>
                   </div>
                 ))}
               </div>
-              <button onClick={() => setDeti([...deti, { id: uid(), vek: '' }])} className="w-full text-center border-dashed border py-0.5 text-[#989FA7] bg-white dark:bg-[#111]">{t('aof.pridat')}</button>
+              <button type="button" onClick={() => setDeti([...deti, { id: uid(), vek: '' }])} className="w-full text-center border-dashed border py-0.5 text-[#989FA7] bg-white dark:bg-[#111]">{t('aof.pridat')}</button>
             </div>
           </div>
 
           <div className="bg-[#FAFAFA] dark:bg-[#1A1A1A] rounded p-2 border border-[#ECEDED] dark:border-[#2A2A2A] shadow-sm flex-1 flex flex-col">
             <div className="flex justify-between items-center mb-1">
               <h2 className="font-extrabold text-[10px] uppercase tracking-wide">{t('aof.majetok')}</h2>
-              <button className="text-[9px] font-bold" onClick={() => setMajetok([...majetok, { id: uid(), nazov: 'Byt', typ: 'Fyzický', hodnota: '' }])}>{t('aof.pridat')}</button>
+              <button type="button" className="text-[9px] font-bold" onClick={() => setMajetok([...majetok, { id: uid(), nazov: 'Byt', typ: 'Fyzický', hodnota: '' }])}>{t('aof.pridat')}</button>
             </div>
             <div className="space-y-1 overflow-auto max-h-[80px]">
               {majetok.map(m => (
@@ -162,7 +149,7 @@ export default function TabAOF() {
                     <option value="Byt">{t('aof.majetokByt')}</option><option value="Dom">{t('aof.majetokDom')}</option><option value="Auto">{t('aof.majetokAuto')}</option><option value="Ine">{t('aof.majetokIne')}</option>
                   </select>
                   <input type="number" value={(m.hodnota) || ""} placeholder={t('aof.aktualnaHodnota')} onChange={(e) => setMajetok(majetok.map(x => x.id === m.id ? { ...x, hodnota: Number(e.target.value) || '' } : x))} className="w-1/3 text-[10px] border px-1 text-right bg-white dark:bg-[#111]" />
-                  <button onClick={() => setMajetok(majetok.filter(x => x.id !== m.id))} className="text-[#AB0534]"><Trash2 size={10} /></button>
+                  <button type="button" onClick={() => setMajetok(majetok.filter(x => x.id !== m.id))} className="text-[#AB0534]"><Trash2 size={10} /></button>
                 </div>
               ))}
             </div>
@@ -379,8 +366,7 @@ export default function TabAOF() {
             <div className="w-1/4 font-extrabold flex justify-between items-center">
               {t('aof.ineCiele')}
               <div className="flex items-center gap-2">
-                <button onClick={addInyCiel} className="text-[10px] bg-white dark:bg-[#333] px-1 border rounded">{t('aof.pridat')} +</button>
-                <input type="checkbox" checked={aofCiele.ineCieleExpand} onChange={e => setAofCiele({ ineCieleExpand: e.target.checked })} />
+                <button type="button" onClick={addInyCiel} className="text-[10px] bg-white dark:bg-[#333] px-1 border rounded">{t('aof.pridat')} +</button>
               </div>
             </div>
             <div className="flex-1 grid grid-cols-3 gap-2">
@@ -388,7 +374,7 @@ export default function TabAOF() {
               <div className="text-center font-bold">{t('aof.oKolkoRokov')}</div>
             </div>
           </div>
-          {aofCiele.ineCieleExpand && aofCiele.ineCiele.map(c => (
+          {aofCiele.ineCiele.map(c => (
             <div key={c.id} className="flex items-center gap-4 mb-1">
               <div className="w-1/4 flex justify-between items-center gap-1">
                 <select value={c.nazov} onChange={e => updateInyCiel(c.id, { nazov: e.target.value })} className="flex-1 border px-1 bg-white dark:bg-[#111] text-[11px]">

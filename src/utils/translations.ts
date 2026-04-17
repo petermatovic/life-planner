@@ -142,6 +142,7 @@ export const translations: Record<string, any> = {
       rezerva: 'Rezerva',
       byvanie: 'Bývanie',
       dieta: 'Dieťa',
+      zostavaNaRozdelenie: 'Zostáva na rozdelenie',
     },
     ciele: {
       title: 'Prioritná tabuľka cieľov',
@@ -190,7 +191,14 @@ export const translations: Record<string, any> = {
       vyskaRenty: 'Výška renty',
       dobaVyplaty: 'Doba výplaty',
       pozadovana: 'Požadovaná suma',
-      naplnenie: 'Naplnenie cieľa'
+      naplnenie: 'Naplnenie cieľa',
+      vypracoval: 'Vypracoval(a):',
+      vypracovalMeno: 'Meno poradcu',
+      telefon: 'Telefón',
+      email: 'E-mail',
+      podpis: 'Podpis:',
+      coverText: 'SVOJU BUDÚCNOSŤ TVORÍTE UŽ DNES',
+      coverSubtext: 'Finančný plán PARTNERS'
     }
   },
   EN: {
@@ -336,6 +344,7 @@ export const translations: Record<string, any> = {
       rezerva: 'Reserve',
       byvanie: 'Housing',
       dieta: 'Child',
+      zostavaNaRozdelenie: 'Remaining allocable',
     },
     ciele: {
       title: 'Priority Table of Goals',
@@ -384,7 +393,14 @@ export const translations: Record<string, any> = {
       vyskaRenty: 'Annuity amount',
       dobaVyplaty: 'Payout period',
       pozadovana: 'Required amount',
-      naplnenie: 'Goal fulfillment'
+      naplnenie: 'Goal fulfillment',
+      vypracoval: 'Prepared by:',
+      vypracovalMeno: 'Advisor Name',
+      telefon: 'Phone',
+      email: 'Email',
+      podpis: 'Signature:',
+      coverText: 'YOU SHAPE YOUR FUTURE TODAY',
+      coverSubtext: 'Financial plan PARTNERS'
     }
   }, BG: {
     sidebar: {
@@ -529,6 +545,7 @@ export const translations: Record<string, any> = {
       rezerva: 'Резерв',
       byvanie: 'Жилище',
       dieta: 'Дете',
+      zostavaNaRozdelenie: 'Остава за разпределение',
     },
     ciele: {
       title: 'Приоритетна таблица на целите',
@@ -577,7 +594,14 @@ export const translations: Record<string, any> = {
       vyskaRenty: 'Размер на рентата',
       dobaVyplaty: 'Период на изплащане',
       pozadovana: 'Необходима сума',
-      naplnenie: 'Изпълнение'
+      naplnenie: 'Изпълнение',
+      vypracoval: 'Изготвил:',
+      vypracovalMeno: 'Име на консултанта',
+      telefon: 'Телефон',
+      email: 'Имейл',
+      podpis: 'Подпис:',
+      coverText: 'ВИЕ СЪЗДАВАТЕ ВАШЕТО БЪДЕЩЕ ДНЕС',
+      coverSubtext: 'Финансов план PARTNERS'
     }
   }
 };

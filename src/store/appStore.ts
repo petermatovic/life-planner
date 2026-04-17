@@ -14,7 +14,7 @@ export interface Osoba {
 }
 
 export interface Dieta {
-  id: number;
+  id: string;
   meno?: string;
   vek: number | '';
   cielSuma?: number | '';
@@ -22,14 +22,14 @@ export interface Dieta {
 }
 
 export interface Majetok {
-  id: number;
+  id: string;
   typ: string;
   nazov: string;
   hodnota: number | '';
 }
 
 export interface InyCiel {
-  id: number;
+  id: string;
   nazov: string;
   hodnota: number | '';
   horizont: number | '';
@@ -39,6 +39,12 @@ export interface InyCiel {
 export interface GoalRate {
   urokInvest?: number | '';
   urokVyplata?: number | '';
+  vklad?: number | '';
+}
+
+export interface PlanOverride {
+  pmt?: number | '';
+  vklad?: number | '';
 }
 
 export interface PrepoctyOsoba {
@@ -96,6 +102,7 @@ export interface AofCieleSetup {
 
   goalPriorities: Record<string, number>;
   goalRates: Record<string, GoalRate>;
+  planNaMieru: Record<string, PlanOverride>;
   urokInvestovanie: number;
   urokVyplata: number;
 }
@@ -108,10 +115,10 @@ const VZOROVA_RODINA = {
   partner: { meno: 'Jana', vekPos: 32, hruby: 2000, cistyMesacne: 1500, cistyRocne: 1000, pasivnyMesacne: '' as number | '', pasivnyRocne: '' as number | '', fajciar: false },
   hasPartner: true,
   // obr.1+2: deti Janko vek5, suma 20000, do veku 20 (o koľko rokov = 15)
-  deti: [{ id: 1, meno: 'Janko', vek: 5, cielSuma: 20000, cielDoVeku: 20 }] as Dieta[],
+  deti: [{ id: 'deti_1', meno: 'Janko', vek: 5, cielSuma: 20000, cielDoVeku: 20 }] as Dieta[],
   hasDeti: true,
   // obr.1: Majetok – Byt 200 000 €
-  majetok: [{ id: 1, nazov: 'Byt', typ: 'Fyzický', hodnota: 200000 }] as Majetok[],
+  majetok: [{ id: 'maj_1', nazov: 'Byt', typ: 'Fyzický', hodnota: 200000 }] as Majetok[],
   cashFlow: {
     spotrebaMesacne: 1200, spotrebaRocne: 2000,       // obr.1: 1200 / 2000
     uverySplatka: 400,    uveryZostatok: 80000,        // obr.1: 400 / 80000
@@ -126,18 +133,26 @@ const VZOROVA_RODINA = {
     zabezpecenieKlientRenta: 1500, zabezpeceniePartnerRenta: 1200,      // obr.2: 1500/1200
     zabezpecenieKlientRentaRoky: '20r', zabezpeceniePartnerRentaRoky: '20r',
     sociCheckboxKlient: true, sociCheckboxPartner: true, sociSuma: '',   // obr.2: ✓867/✓633
-    // obr.2: Refinancovanie 80000 / 20r / 2.5% → splátka 424€
+    // obr.2: Refinancovanie 80000 / 20r / 6.5% → splátka 464€
     byvanieCheckbox: true, byvanieNazov: 'Refinancovanie',
-    byvanieSumaUveru: 80000, byvanieSplatnost: 20, byvanieUrok: 2.5, byvanieNesplatenyDiel: 80000,
+    byvanieSumaUveru: 80000, byvanieSplatnost: 20, byvanieUrok: 6.5, byvanieNesplatenyDiel: 80000,
     // obr.2: MD unchecked □
     rezervaMDCheckbox: false, rezervaMDRenta: '' as number | '', rezervaMDDoba: '' as number | '', rezervaMDRoky: '' as number | '', ineCieleExpand: true,
     // obr.2: Predčasná renta □ oba, prázdne polia
     predcasnaRentaKlientCheckbox: false, predcasnaRentaKlientVyska: '' as number | '', predcasnaRentaKlientVek: '' as number | '',
     predcasnaRentaPartnerCheckbox: false, predcasnaRentaPartnerVyska: '' as number | '', predcasnaRentaPartnerVek: '' as number | '',
     // obr.2: Iné ciele – Auto 20000 / 5 rokov
-    ineCiele: [{ id: 101, nazov: 'Auto', hodnota: 20000, horizont: 5, checked: true }] as InyCiel[],
+    ineCiele: [{ id: 'ciel_101', nazov: 'Auto', hodnota: 20000, horizont: 5, checked: true }] as InyCiel[],
     goalPriorities: {},
-    goalRates: {} as Record<string, GoalRate>,
+    goalRates: {
+      predRentaPartner: { urokVyplata: 4.5 },
+      predRentaKlient: { urokVyplata: 4.5 },
+      rentaKlient20: { urokInvest: 5, urokVyplata: 4.5 },
+      rentaPartner20: { urokInvest: 5, urokVyplata: 4.5 },
+      rezerva: { urokInvest: 7 },
+      ciel_101: { urokInvest: 3.0 }
+    } as Record<string, GoalRate>,
+    planNaMieru: {} as Record<string, PlanOverride>,
     urokInvestovanie: 8,
     urokVyplata: 4.5,
   } as AofCieleSetup,
@@ -174,6 +189,7 @@ const PRAZDNY_PLAN = {
     ineCiele: [] as InyCiel[],
     goalPriorities: {},
     goalRates: {} as Record<string, GoalRate>,
+    planNaMieru: {} as Record<string, PlanOverride>,
     urokInvestovanie: 8,
     urokVyplata: 4.5,
   } as AofCieleSetup,
@@ -217,8 +233,8 @@ interface AppState {
   setCashFlow: (data: Partial<AppState['cashFlow']>) => void;
   setAofCiele: (data: Partial<AofCieleSetup>) => void;
   addInyCiel: () => void;
-  updateInyCiel: (id: number, data: Partial<InyCiel>) => void;
-  removeInyCiel: (id: number) => void;
+  updateInyCiel: (id: string, data: Partial<InyCiel>) => void;
+  removeInyCiel: (id: string) => void;
   setPrepoctyKlient: (data: Partial<PrepoctyOsoba>) => void;
   setPrepoctyPartner: (data: Partial<PrepoctyOsoba>) => void;
   setJazyk: (lang: string) => void;
@@ -241,14 +257,21 @@ export const useAppStore = create<AppState>()(
       setCashFlow: (data) => set((state) => ({ cashFlow: { ...state.cashFlow, ...data } })),
       setAofCiele: (data) => set((state) => ({ aofCiele: { ...state.aofCiele, ...data } })),
 
-      // Atomic add — reads latest state inside set() to avoid stale closure duplicates
-      addInyCiel: () => set((state) => ({
-        aofCiele: {
-          ...state.aofCiele,
-          ineCiele: [...state.aofCiele.ineCiele, { id: uid(), nazov: 'Auto', hodnota: '' as number | '', horizont: '' as number | '', checked: true }],
-          ineCieleExpand: true,
-        },
-      })),
+      // Simple atomic push with ID generated outside to prevent React StrictMode duplicate ID bugs
+      addInyCiel: () => {
+        const newId = uid();
+        set((state) => {
+          // Prevent exact same ID from being added if updater runs twice
+          if (state.aofCiele.ineCiele.some(c => c.id === newId)) return state;
+          
+          return {
+            aofCiele: {
+              ...state.aofCiele,
+              ineCiele: [...state.aofCiele.ineCiele, { id: newId, nazov: 'Auto', hodnota: '' as number | '', horizont: '' as number | '', checked: true }],
+            },
+          };
+        });
+      },
 
       // Atomic update — prevents stale-closure array overwrites
       updateInyCiel: (id, data) => set((state) => ({

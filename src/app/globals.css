@@ -47,3 +47,36 @@ body {
   font-family: var(--font-sans);
 }
 
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 10mm;
+  }
+  html, body, main, #root, .custom-scrollbar {
+    height: auto !important;
+    overflow: visible !important;
+    max-height: none !important;
+  }
+  body {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    background-color: white !important;
+    color: black !important;
+  }
+  .print\:break-after-page {
+    page-break-after: always;
+    break-after: page;
+  }
+  
+  /* Ensure the printed container spans full width without clipping */
+  .print\:max-w-none {
+    max-width: none !important;
+    width: 100% !important;
+  }
+  
+  /* Scale content slightly to fit better horizontally if needed */
+  .print-scale {
+    transform: scale(0.95);
+    transform-origin: top left;
+  }
+}

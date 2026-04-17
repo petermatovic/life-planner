@@ -25,11 +25,13 @@ export default function TabPrepocty() {
     klient, partner, hasPartner, aofCiele,
     prepoctyKlient, prepoctyPartner,
     setPrepoctyKlient, setPrepoctyPartner,
+    setKlient, setPartner,
   } = useAppStore();
 
   const renderOsoba = (
     osobaLabel: string,
     osobaData: typeof klient,
+    setOsobaData: (data: Partial<typeof klient>) => void,
     prepocty: PrepoctyOsoba,
     setPrepocty: (data: Partial<PrepoctyOsoba>) => void,
     isKlient: boolean,
@@ -106,7 +108,17 @@ export default function TabPrepocty() {
             <div className="flex items-center gap-1"><span className="font-bold">Hrubý príjem:</span><span className="bg-orange-100/50 dark:bg-[#333] px-2 py-0.5 border border-orange-200 dark:border-[#4D4D4D] rounded min-w-[80px] text-right">{hruby.toLocaleString()} €</span></div>
             <div className="flex items-center gap-1"><span className="font-bold">Príjem čistý:</span><span className="bg-orange-100/50 dark:bg-[#333] px-2 py-0.5 border border-orange-200 dark:border-[#4D4D4D] rounded min-w-[80px] text-right">{cisty.toLocaleString()} €</span></div>
             <div className="flex items-center gap-1 ml-auto"><span className="font-bold">vek</span><span className="bg-orange-100/50 dark:bg-[#333] px-2 py-0.5 border border-orange-200 dark:border-[#4D4D4D] rounded w-12 text-center">{vek}</span></div>
-            <div className="flex items-center gap-1"><span className="font-bold">fajčiar</span><span className="bg-orange-100/50 dark:bg-[#333] px-2 py-0.5 border border-orange-200 dark:border-[#4D4D4D] rounded min-w-[40px] text-center italic">{fajciar ? 'áno' : 'nie'}</span></div>
+            <div className="flex items-center gap-1">
+              <span className="font-bold">fajčiar</span>
+              <select
+                value={fajciar ? 'ano' : 'nie'}
+                onChange={e => setOsobaData({ fajciar: e.target.value === 'ano' })}
+                className="bg-orange-100/50 dark:bg-[#333] px-1 py-0.5 border border-orange-200 dark:border-[#4D4D4D] rounded text-center italic text-xs outline-none focus:border-[#AB0534]"
+              >
+                <option value="ano">áno</option>
+                <option value="nie">nie</option>
+              </select>
+            </div>
           </div>
         </div>
 
@@ -312,8 +324,8 @@ export default function TabPrepocty() {
     <div className="flex flex-col gap-6 animate-in fade-in duration-300">
       <h2 className="text-2xl font-extrabold text-[#171717] dark:text-white border-l-4 border-[#AB0534] pl-3">Prepočty Zabezpečenia Príjmu</h2>
 
-      {renderOsoba('KLIENT', klient, prepoctyKlient, setPrepoctyKlient, true)}
-      {hasPartner && renderOsoba('PARTNER', partner, prepoctyPartner, setPrepoctyPartner, false)}
+      {renderOsoba('KLIENT', klient, setKlient, prepoctyKlient, setPrepoctyKlient, true)}
+      {hasPartner && renderOsoba('PARTNER', partner, setPartner, prepoctyPartner, setPrepoctyPartner, false)}
     </div>
   );
 }

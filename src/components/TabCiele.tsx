@@ -3,7 +3,7 @@ import React from 'react';
 import { useAppStore } from '@/store/appStore';
 import { useTranslation } from '@/hooks/useTranslation';
 import { Trash2 } from 'lucide-react';
-import { num, calcPMT_fv, calcPV, calcPMT_loan } from '@/utils/helpers';
+import { num, calcPMT_fv, calcPV, calcPMT_loan, calcFV_single } from '@/utils/helpers';
 
 /* ─── Goal type flags: which rates apply to each goal type ─────────────────── */
 type GoalRateMode = 'none' | 'invest' | 'both' | 'loan';
@@ -155,7 +155,7 @@ export default function TabCiele() {
     }
   };
 
-  const setGoalRate = (goalId: string, field: 'urokInvest' | 'urokVyplata', value: number | '') => {
+  const setGoalRate = (goalId: string, field: 'urokInvest' | 'urokVyplata' | 'vklad', value: number | '') => {
     setAofCiele({
       goalRates: {
         ...goalRates,
@@ -185,17 +185,29 @@ export default function TabCiele() {
     .sort((a, b) => (priorities[a.id] || 0) - (priorities[b.id] || 0));
 
   const totalMesacnaUlozka = selectedGoals.reduce((sum, g) => {
-    const mode = getGoalRateMode(g.id);
     if (g.mesacnaPlatba !== undefined) return sum + g.mesacnaPlatba;
-    if (g.potrebnaSuma === '-' || num(g.potrebnaSuma) <= 0) return sum;
-    const rInv = getGoalInvestRate(g.id);
+    
+    const mode = getGoalRateMode(g.id);
+    const pSuma = g.potrebnaSuma === '-' ? 0 : num(g.potrebnaSuma);
     const horizont = num(g.horizont);
+    const rootVklad = goalRates[g.id]?.vklad;
+    const vkladVal = num(rootVklad);
+    
+    if (pSuma <= 0) return sum;
+
     if (mode === 'none' || horizont <= 0) {
-      // Simple division for no-rate goals
+      // Simple division for no-rate goals, offset by vklad
+      const remaining = Math.max(0, pSuma - vkladVal);
       const n = horizont > 0 ? horizont * 12 : 1;
-      return sum + num(g.potrebnaSuma) / n;
+      return sum + remaining / n;
     }
-    return sum + calcPMT_fv(num(g.potrebnaSuma), horizont, rInv);
+    
+    // Future value of lump sum
+    const rInv = getGoalInvestRate(g.id);
+    const fvOfeVklad = calcFV_single(vkladVal, horizont, rInv);
+    const remainingSuma = Math.max(0, pSuma - fvOfeVklad);
+    
+    return sum + (horizont > 0 ? calcPMT_fv(remainingSuma, horizont, rInv) : 0);
   }, 0);
 
   return (
@@ -210,10 +222,6 @@ export default function TabCiele() {
           <p className="text-sm font-bold text-[#4D4D4D] dark:text-[#989FA7] mt-2 ml-4">
             {t('ciele.subtitle')}
           </p>
-        </div>
-        <div className="bg-black dark:bg-white text-white dark:text-black px-6 py-3 rounded-lg font-bold shadow-lg flex flex-col items-end">
-          <span className="text-[10px] uppercase tracking-widest opacity-80">{t('ciele.nutneInvestovat')}</span>
-          <span className="text-xl">{Math.round(totalMesacnaUlozka).toLocaleString('sk-SK')} €</span>
         </div>
       </div>
 
@@ -282,20 +290,22 @@ export default function TabCiele() {
                 const rInv = getGoalInvestRate(g.id);
                 const rVyp = getGoalVyplataRate(g.id);
 
+                const vkladStr = goalRates[g.id]?.vklad;
+                const vkladVal = num(vkladStr);
+
                 let mesacna = 0;
                 if (g.mesacnaPlatba !== undefined) {
                   mesacna = g.mesacnaPlatba;
                 } else if (pSuma > 0) {
                   if (mode === 'none') {
-                    mesacna = horizont > 0 ? pSuma / (horizont * 12) : pSuma;
+                    const remaining = Math.max(0, pSuma - vkladVal);
+                    mesacna = horizont > 0 ? remaining / (horizont * 12) : remaining;
                   } else {
-                    mesacna = horizont > 0 ? calcPMT_fv(pSuma, horizont, rInv) : 0;
+                    const fvOfeVklad = calcFV_single(vkladVal, horizont, rInv);
+                    const remainingSuma = Math.max(0, pSuma - fvOfeVklad);
+                    mesacna = horizont > 0 ? calcPMT_fv(remainingSuma, horizont, rInv) : 0;
                   }
                 }
-
-                const jednorazovy = pSuma > 0 && horizont > 0 && mode !== 'none'
-                  ? calcPV(pSuma, horizont, rInv)
-                  : 0;
 
                 const customInvest = goalRates[g.id]?.urokInvest;
                 const customVyplata = goalRates[g.id]?.urokVyplata;
@@ -335,14 +345,35 @@ export default function TabCiele() {
                     {/* Úrok výplata/splátka */}
                     <td className="px-1 py-1 text-center">
                       {mode === 'both' ? (
-                        <span className="font-bold text-[#555]">{rVyp}%</span>
+                        <select
+                          value={customVyplata !== undefined && customVyplata !== '' ? String(customVyplata) : String(rVypDefault)}
+                          onChange={e => {
+                            const v = parseFloat(e.target.value);
+                            setGoalRate(g.id, 'urokVyplata', isNaN(v) ? '' : v);
+                          }}
+                          className="w-full text-center text-[10px] border bg-white dark:bg-[#111] px-0.5 py-0.5 rounded"
+                        >
+                          {[0, 1, 2, 3, 4, 4.5, 5, 6, 7, 8, 9, 10, 12].map(r => (
+                            <option key={r} value={r}>{r}%</option>
+                          ))}
+                        </select>
                       ) : (
                         <span className="text-[#999]">-</span>
                       )}
                     </td>
 
-                    <td className="px-2 py-2 text-center font-bold text-[#1E5083]">
-                      {jednorazovy > 0 ? `${Math.round(jednorazovy).toLocaleString('sk-SK')} €` : '–'}
+                    <td className="px-1 py-1 text-center font-bold text-[#1E5083]">
+                      {(pSuma > 0 && g.mesacnaPlatba === undefined) ? (
+                        <input
+                          type="number"
+                          value={vkladStr === undefined ? '' : vkladStr}
+                          onChange={e => setGoalRate(g.id, 'vklad', e.target.value === '' ? '' : Number(e.target.value))}
+                          className="w-16 text-center text-xs px-1 py-0.5 border border-[#D1D1D1] dark:border-[#4D4D4D] bg-[#FFF2E5] dark:bg-[#332211] rounded"
+                          placeholder="0"
+                        />
+                      ) : (
+                        <span className="text-[#999]">-</span>
+                      )}
                     </td>
                     <td className="px-2 py-2 text-center font-extrabold text-[#166E36] text-sm">
                       {mesacna > 0 ? `${Math.round(mesacna).toLocaleString('sk-SK')} €` : '–'}
@@ -363,10 +394,7 @@ export default function TabCiele() {
                   <td className="px-2 py-2 text-center text-[#1E5083]">
                     {(() => {
                       const total = selectedGoals.reduce((sum, g) => {
-                        const mode = getGoalRateMode(g.id);
-                        if (mode === 'none' || g.potrebnaSuma === '-') return sum;
-                        const rInv = getGoalInvestRate(g.id);
-                        return sum + calcPV(num(g.potrebnaSuma), num(g.horizont), rInv);
+                        return sum + num(goalRates[g.id]?.vklad);
                       }, 0);
                       return total > 0 ? `${Math.round(total).toLocaleString('sk-SK')} €` : '';
                     })()}
